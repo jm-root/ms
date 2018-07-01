@@ -16,13 +16,11 @@ var _fnclient2 = _interopRequireDefault(_fnclient);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var fly = new _fly2.default();
-
 var client = (0, _fnclient2.default)(fly);
 
 exports.default = client;
 module.exports = exports['default'];
-},{"../fnclient":3,"flyio/dist/npm/fly":4}],2:[function(require,module,exports){
-(function (global){
+},{"../fnclient":3,"flyio/dist/npm/fly":5}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33,42 +31,16 @@ var _client = require('./client');
 
 var _client2 = _interopRequireDefault(_client);
 
+var _module2 = require('../module');
+
+var _module3 = _interopRequireDefault(_module2);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var moduleClient = function moduleClient() {
-  var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'ms-http-client';
-
-  var app = this;
-  app.clientModules.http = _client2.default;
-  app.clientModules.https = _client2.default;
-
-  return {
-    name: name,
-    unuse: function unuse() {
-      delete app.clientModules.http;
-    }
-  };
-};
-
-var $ = {
-  moduleClient: moduleClient
-};
-
-if (typeof global !== 'undefined' && global) {
-  global.jm || (global.jm = {});
-  var jm = global.jm;
-  if (jm.ms) {
-    for (var key in $) {
-      jm.ms.root.use($[key]);
-    }
-  }
-}
-
-$.client = _client2.default;
+var $ = (0, _module3.default)(_client2.default);
 exports.default = $;
-module.exports = exports['default'];
-}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./client":1}],3:[function(require,module,exports){
+_module3.default.exports = exports['default'];
+},{"../module":4,"./client":1}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -85,62 +57,136 @@ var _utils2 = _interopRequireDefault(_utils);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
 var defaultPort = 3000;
 var defaultUri = 'http://localhost:' + defaultPort;
 
 var fnclient = function fnclient($) {
-  return function () {
+  return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
     var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    var cb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+    var uri, timeout, doc;
+    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            uri = opts.uri || defaultUri;
+            timeout = opts.timeout || 0;
+            doc = {
+              request: function () {
+                var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(opts) {
+                  var type,
+                      headers,
+                      noHeaders,
+                      _opts,
+                      url,
+                      doc,
+                      _args = arguments;
 
-    var err = null;
-    var doc = null;
-    var uri = opts.uri || defaultUri;
-    var timeout = opts.timeout || 0;
+                  return regeneratorRuntime.wrap(function _callee$(_context) {
+                    while (1) {
+                      switch (_context.prev = _context.next) {
+                        case 0:
+                          opts = _utils2.default.preRequest.apply(this, _args);
+                          type = opts.type || 'get';
+                          headers = opts.headers || {};
+                          noHeaders = ['host', 'if-none-match', 'content-type', 'content-length', 'connection'];
 
-    doc = {
-      request: function request(opts, cb) {
-        var r = _utils2.default.preRequest.apply(this, arguments);
-        opts = r.opts;
-        cb = r.cb;
-        var type = opts.type || 'get';
-        var headers = opts.headers || {};
-        var noHeaders = ['host', 'if-none-match', 'content-type', 'content-length', 'connection'];
-        noHeaders.forEach(function (key) {
-          if (headers[key]) delete headers[key];
-        });
-        if (opts.ips) {
-          headers['x-forwarded-for'] = opts.ips.toString();
+                          noHeaders.forEach(function (key) {
+                            if (headers[key]) delete headers[key];
+                          });
+                          if (opts.ips) {
+                            headers['x-forwarded-for'] = opts.ips.toString();
+                          }
+                          if (opts.lng) {
+                            headers['lng'] = opts.lng;
+                          }
+
+                          _opts = {
+                            timeout: opts.timeout || timeout,
+                            headers: headers
+                          };
+                          url = uri + opts.uri;
+                          _context.next = 11;
+                          return $[type](url, opts.data, _opts);
+
+                        case 11:
+                          doc = _context.sent;
+                          return _context.abrupt('return', doc);
+
+                        case 13:
+                        case 'end':
+                          return _context.stop();
+                      }
+                    }
+                  }, _callee, this);
+                }));
+
+                function request(_x2) {
+                  return _ref2.apply(this, arguments);
+                }
+
+                return request;
+              }()
+            };
+
+            _jmEvent2.default.enableEvent(doc);
+            setTimeout(function () {
+              doc.emit('open');
+            }, 1);
+            return _context2.abrupt('return', doc);
+
+          case 6:
+          case 'end':
+            return _context2.stop();
         }
-        if (opts.lng) {
-          headers['lng'] = opts.lng;
-        }
-
-        var _opts = {
-          timeout: opts.timeout || timeout,
-          headers: headers
-        };
-        var url = uri + opts.uri;
-        var p = $[type](url, opts.data, _opts);
-        if (!cb) return p;
-
-        p.then(function (doc) {
-          cb(null, doc.data);
-        }).catch(function (e) {
-          cb(e, e.response.data);
-        });
       }
-    };
-    _jmEvent2.default.enableEvent(doc);
-
-    if (cb) cb(err, doc);
-    doc.emit('open');
-  };
+    }, _callee2, this);
+  }));
 };
 
 exports.default = fnclient;
 module.exports = exports['default'];
-},{"jm-event":5,"jm-ms-core/lib/utils":6}],4:[function(require,module,exports){
+},{"jm-event":6,"jm-ms-core/lib/utils":7}],4:[function(require,module,exports){
+(function (global){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports.default = function (client) {
+  var $ = function $() {
+    var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'ms-http-client';
+
+    var app = this;
+    app.clientModules.http = client;
+    app.clientModules.https = client;
+
+    return {
+      name: name,
+      unuse: function unuse() {
+        delete app.clientModules.http;
+        delete app.clientModules.https;
+      }
+    };
+  };
+  $.client = client;
+
+  if (typeof global !== 'undefined' && global) {
+    global.jm || (global.jm = {});
+    var jm = global.jm;
+    if (jm.ms) {
+      jm.ms.root.use($);
+    }
+  }
+
+  return $;
+};
+
+module.exports = exports['default'];
+}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],5:[function(require,module,exports){
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -649,7 +695,7 @@ module.exports = Fly;
 /***/ })
 /******/ ]);
 });
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -920,7 +966,7 @@ if (typeof global !== 'undefined' && global) {
 exports.default = $;
 module.exports = exports['default'];
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -929,529 +975,44 @@ Object.defineProperty(exports, "__esModule", {
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var _jmUtils = require('jm-utils');
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-var _jmUtils2 = _interopRequireDefault(_jmUtils);
-
-var _jmErr = require('jm-err');
-
-var _jmErr2 = _interopRequireDefault(_jmErr);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var utils = _jmUtils2.default.utils;
-utils.enableType = function (obj, types) {
-  if (!Array.isArray(types)) {
-    types = [types];
-  }
-  types.forEach(function (type) {
-    if (typeof Promise !== 'undefined') {
-      obj[type] = function (uri, data, params, timeout, cb) {
-        var opts = uri;
-        if (typeof uri === 'string') {
-          var r = utils.preRequest.apply(this, arguments);
-          opts = r.opts;
-          cb = r.cb;
-        } else {
-          cb = data;
-        }
-        opts.type = type;
-
-        if (cb) {
-          this[type](opts).then(function (doc) {
-            cb(null, doc);
-          }).catch(function (err) {
-            cb(err);
-          });
-          return this;
-        }
-
-        return new Promise(function (resolve, reject) {
-          obj.request(opts, function (err, doc) {
-            if (!err && doc && doc.err) err = _jmErr2.default.err(doc);
-            if (err) return reject(err);
-            resolve(doc);
-          });
-        });
-      };
-    } else {
-      obj[type] = function (uri, data, params, timeout, cb) {
-        if (typeof uri === 'string') {
-          return obj.request(uri, type, data, params, timeout, cb);
-        }
-        uri.type = type;
-        return obj.request(uri, data);
-      };
-    }
-  });
-};
-
-utils.preRequest = function (uri, type, data, params, timeout, cb) {
+var preRequest = function preRequest(uri, type, data, opts) {
   // uri为对象时直接返回
-  if (typeof uri !== 'string') {
-    return {
-      opts: uri,
-      cb: type
-    };
+  if ((typeof uri === 'undefined' ? 'undefined' : _typeof(uri)) === 'object') {
+    return uri;
   }
-
-  var opts = {
-    uri: uri
-  };
 
   var r = {
-    opts: opts
+    uri: uri
 
-    // 第2个参数可能为空，cb，timeout, data
+    // 第2个参数可能为空，data
   };if (type === undefined) {
     return r;
-  }
-  if (typeof type === 'function') {
-    r.cb = type;
-    return r;
-  }
-  if (typeof type === 'number') {
-    return utils.preRequest(uri, null, null, null, type, data);
   } else if (type && (typeof type === 'undefined' ? 'undefined' : _typeof(type)) === 'object') {
-    return utils.preRequest(uri, null, type, data, params, timeout);
+    return preRequest(uri, null, type, data);
   } else if (typeof type === 'string') {
-    opts.type = type;
+    r.type = type;
   }
 
-  // 第3个参数可能为空，cb，timeout, data
+  // 第3个参数可能为空，data
   if (data === undefined) {
     return r;
-  }
-  if (typeof data === 'function') {
-    r.cb = data;
-    return r;
-  }
-  if (typeof data === 'number') {
-    return utils.preRequest(uri, type, null, null, data, params);
   } else if (data && (typeof data === 'undefined' ? 'undefined' : _typeof(data)) === 'object') {
-    opts.data = data;
+    r.data = data;
   }
 
-  // 第4个参数可能为空，cb，timeout, params
-  if (params === undefined) {
+  // 第4个参数可能为空，附加参数对象
+  if (opts === undefined) {
     return r;
-  }
-  if (typeof params === 'function') {
-    r.cb = params;
-    return r;
-  }
-  if (typeof params === 'number') {
-    return utils.preRequest(uri, type, data, null, params, timeout);
-  } else if (params && (typeof params === 'undefined' ? 'undefined' : _typeof(params)) === 'object') {
-    opts.params = params;
-  }
-
-  // 第5个参数可能为空，cb，timeout
-  if (timeout === undefined) {
-    return r;
-  }
-  if (typeof timeout === 'function') {
-    r.cb = timeout;
-    return r;
-  }
-  if (typeof timeout === 'number') {
-    opts.timeout = timeout;
-  }
-
-  // 第6个参数可能为空，cb
-  if (cb === undefined) {
-    return r;
-  }
-  if (typeof cb === 'function') {
-    r.cb = cb;
-    return r;
+  } else if (opts && (typeof opts === 'undefined' ? 'undefined' : _typeof(opts)) === 'object') {
+    r = Object.assign(r, opts);
   }
 
   return r;
 };
 
-exports.default = utils;
-module.exports = exports['default'];
-},{"jm-err":7,"jm-utils":10}],7:[function(require,module,exports){
-(function (global){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _locale = require('./locale');
-
-var _locale2 = _interopRequireDefault(_locale);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/**
- * common error defines
- *
- */
-var Err = {
-  SUCCESS: {
-    err: 0,
-    msg: 'Success'
-  },
-
-  FAIL: {
-    err: 1,
-    msg: 'Fail'
-  },
-
-  FA_SYS: {
-    err: 2,
-    msg: 'System Error'
-  },
-
-  FA_NETWORK: {
-    err: 3,
-    msg: 'Network Error'
-  },
-
-  FA_PARAMS: {
-    err: 4,
-    msg: 'Parameter Error'
-  },
-
-  FA_BUSY: {
-    err: 5,
-    msg: 'Busy'
-  },
-
-  FA_TIMEOUT: {
-    err: 6,
-    msg: 'Time Out'
-  },
-
-  FA_ABORT: {
-    err: 7,
-    msg: 'Abort'
-  },
-
-  FA_NOTREADY: {
-    err: 8,
-    msg: 'Not Ready'
-  },
-
-  FA_NOTEXISTS: {
-    err: 9,
-    msg: 'Not Exists'
-  },
-
-  FA_EXISTS: {
-    err: 8,
-    msg: 'Already Exists'
-  },
-
-  OK: {
-    err: 200,
-    msg: 'OK'
-  },
-
-  FA_BADREQUEST: {
-    err: 400,
-    msg: 'Bad Request'
-  },
-
-  FA_NOAUTH: {
-    err: 401,
-    msg: 'Unauthorized'
-  },
-
-  FA_NOPERMISSION: {
-    err: 403,
-    msg: 'Forbidden'
-  },
-
-  FA_NOTFOUND: {
-    err: 404,
-    msg: 'Not Found'
-  },
-
-  FA_INTERNALERROR: {
-    err: 500,
-    msg: 'Internal Server Error'
-  },
-
-  FA_UNAVAILABLE: {
-    err: 503,
-    msg: 'Service Unavailable'
-  }
-}; /**
-    * err module.
-    * @module err
-    */
-
-Err.t = _locale2.default;
-
-/**
- * return message from template
- *
- * ```javascript
- * errMsg('sampe ${name} ${value}', {name: 'jeff', value: 123});
- * // return 'sample jeff 123'
- * ```
- *
- * @param {String} msg message template
- * @param {Object} opts params
- * @return {String} final message
- */
-var errMsg = function errMsg(msg, opts) {
-  if (opts) {
-    for (var key in opts) {
-      msg = msg.split('${' + key + '}').join(opts[key]);
-    }
-  }
-  return msg;
-};
-
-/**
- * return an Error Object
- * @param {Object|String} E Err object or a message template
- * @param {Object} [opts] params
- * @return {Error}
- */
-var err = function err(E, opts) {
-  if (typeof E === 'string') {
-    E = {
-      msg: E
-    };
-  }
-  var msg = errMsg(E.msg, opts);
-  var e = new Error(msg);
-  E.err && (e.code = E.err);
-  return e;
-};
-
-/**
- * enable Err Object, errMsg and err function for obj
- * @param {Object} obj target object
- * @param {String} [name] name to bind
- * @return {boolean}
- */
-var enableErr = function enableErr(obj) {
-  var name = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'Err';
-
-  if (obj[name]) return false;
-  obj[name] = Err;
-  obj.err = err;
-  obj.errMsg = errMsg;
-  return true;
-};
-
-/**
- * disable Err Object, errMsg and err function for obj
- * @param {Object} obj target object
- * @param {String} [name] name to bind
- */
-var disableErr = function disableErr(obj) {
-  var name = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'Err';
-
-  if (!obj[name]) return;
-  delete obj[name];
-  delete obj.err;
-  delete obj.errMsg;
-};
-
-var $ = {
-  Err: Err,
-  errMsg: errMsg,
-  err: err,
-  enableErr: enableErr,
-  disableErr: disableErr
-};
-
-if (typeof global !== 'undefined' && global) {
-  global.jm || (global.jm = {});
-  var jm = global.jm;
-  if (!jm.enableErr) {
-    enableErr(jm);
-    for (var key in $) {
-      jm[key] = $[key];
-    }
-  }
-}
-
-exports.default = $;
-module.exports = exports['default'];
-}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./locale":8}],8:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports.default = function (msg, lng) {
-  if (!lng || !lngs[lng]) return null;
-  return lngs[lng][msg];
-};
-
-var _zh_CN = require('./zh_CN');
-
-var _zh_CN2 = _interopRequireDefault(_zh_CN);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var lngs = {
-  zh_CN: _zh_CN2.default
-
-  /**
-   * translate
-   * @param {string} msg - msg to be translate
-   * @param {string} lng - language
-   * @return {String | null}
-   */
-};;
-module.exports = exports['default'];
-},{"./zh_CN":9}],9:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = {
-  'Success': '成功',
-  'Fail': '失败',
-  'System Error': '系统错误',
-  'Network Error': '网络错误',
-  'Parameter Error': '参数错误',
-  'Busy': '忙',
-  'Time Out': '超时',
-  'Abort': '中止',
-  'Not Ready': '未准备好',
-  'Not Exists': '不存在',
-  'Already Exists': '已存在',
-  'OK': 'OK',
-  'Bad Request': '错误请求',
-  'Unauthorized': '未验证',
-  'Forbidden': '无权限',
-  'Not Found': '未找到',
-  'Internal Server Error': '服务器内部错误',
-  'Service Unavailable': '无效服务'
-};
-module.exports = exports['default'];
-},{}],10:[function(require,module,exports){
-(function (global){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var argsClass = '[object Arguments]';
-var arrayClass = '[object Array]';
-var boolClass = '[object Boolean]';
-var dateClass = '[object Date]';
-var funcClass = '[object Function]';
-var numberClass = '[object Number]';
-var objectClass = '[object Object]';
-var regexpClass = '[object RegExp]';
-var stringClass = '[object String]';
-
-/** Used to identify object classifications that `cloneDeep` supports */
-var cloneableClasses = {};
-cloneableClasses[funcClass] = false;
-cloneableClasses[argsClass] = true;
-cloneableClasses[arrayClass] = true;
-cloneableClasses[boolClass] = true;
-cloneableClasses[dateClass] = true;
-cloneableClasses[numberClass] = true;
-cloneableClasses[objectClass] = true;
-cloneableClasses[regexpClass] = true;
-cloneableClasses[stringClass] = true;
-
-var ctorByClass = {};
-ctorByClass[arrayClass] = Array;
-ctorByClass[boolClass] = Boolean;
-ctorByClass[dateClass] = Date;
-ctorByClass[objectClass] = Object;
-ctorByClass[numberClass] = Number;
-ctorByClass[regexpClass] = RegExp;
-ctorByClass[stringClass] = String;
-
-/** Used to match regexp flags from their coerced string values */
-var reFlags = /\w*$/;
-
-var cloneDeep = function cloneDeep(obj) {
-  if ((typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) !== 'object' || !obj) return obj;
-  if (Array.isArray(obj)) {
-    var _ret = [];
-    obj.forEach(function (item) {
-      _ret.push(cloneDeep(item));
-    });
-    return _ret;
-  }
-  var className = toString.call(obj);
-  if (!cloneableClasses[className]) {
-    return obj;
-  }
-  var ctor = ctorByClass[className];
-  switch (className) {
-    case boolClass:
-    case dateClass:
-      return new ctor(+obj);
-
-    case numberClass:
-    case stringClass:
-      return new ctor(obj);
-
-    case regexpClass:
-      return ctor(obj.source, reFlags.exec(obj));
-  }
-
-  var ret = {};
-  var keys = Object.keys(obj);
-  keys.forEach(function (key) {
-    ret[key] = cloneDeep(obj[key]);
-  });
-  return ret;
-};
-
-var merge = function merge(obj1, obj2) {
-  if ((typeof obj1 === 'undefined' ? 'undefined' : _typeof(obj1)) !== 'object' || !obj1) return obj1;
-  if (Array.isArray(obj1)) {
-    obj2.forEach(function (item) {
-      if (obj1.indexOf(item) === -1) {
-        obj1.push(item);
-      }
-    });
-    return obj1;
-  }
-  var keys = Object.keys(obj2);
-  keys.forEach(function (key) {
-    if (obj1[key] && _typeof(obj1[key]) === 'object' && _typeof(obj2[key]) === 'object') {
-      merge(obj1[key], obj2[key]);
-    } else {
-      obj1[key] = obj2[key];
-    }
-  });
-  return obj1;
-};
-
 var utils = {
-  // 高效slice
-  slice: function slice(a, start, end) {
-    start = start || 0;
-    end = end || a.length;
-    if (start < 0) start += a.length;
-    if (end < 0) end += a.length;
-    var r = new Array(end - start);
-    for (var i = start; i < end; i++) {
-      r[i - start] = a[i];
-    }
-    return r;
-  },
-
-  formatJSON: function formatJSON(obj) {
-    return JSON.stringify(obj, null, 2);
-  },
-
   getUriProtocol: function getUriProtocol(uri) {
     if (!uri) return null;
     return uri.substring(0, uri.indexOf(':'));
@@ -1469,41 +1030,44 @@ var utils = {
     return uri;
   },
 
-  cloneDeep: cloneDeep,
-
-  merge: merge
-};
-
-var moduleUtils = function moduleUtils() {
-  var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'utils';
-
-  var app = this;
-  app[name] = utils;
-
-  return {
-    name: name,
-    unuse: function unuse() {
-      delete app[name];
+  enableType: function enableType(obj, types) {
+    var self = this;
+    if (!Array.isArray(types)) {
+      types = [types];
     }
-  };
+    types.forEach(function (type) {
+      obj[type] = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+        var opts,
+            doc,
+            _args = arguments;
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                opts = self.preRequest.apply(this, _args);
+
+                opts.type = type;
+                _context.next = 4;
+                return obj.request(opts);
+
+              case 4:
+                doc = _context.sent;
+                return _context.abrupt('return', doc);
+
+              case 6:
+              case 'end':
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+    });
+  },
+
+  preRequest: preRequest
+
 };
 
-var $ = {
-  utils: utils,
-  moduleUtils: moduleUtils
-};
-
-if (typeof global !== 'undefined' && global) {
-  global.jm || (global.jm = {});
-  var jm = global.jm;
-  if (!jm.utils) {
-    for (var key in $) {
-      jm[key] = $[key];
-    }
-  }
-}
-
-exports.default = $;
+exports.default = utils;
 module.exports = exports['default'];
-}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}]},{},[2])

@@ -1,23 +1,23 @@
-let expect = chai.expect
-import client from '../src/client'
+let mdl = require('../src')
+let client = mdl.client
+let MS = require('jm-ms-core')
+let ms = new MS()
 
 describe('client', () => {
-  test('client', done => {
-    client({
-      uri: 'http://api.jamma.cn'
-    }, function (err, c) {
-      c.request('/', function (err, doc) {
-        expect(doc).to.be.an('object')
-        c.request('/')
-          .then(doc => {
-            expect(doc).to.be.an('object')
-            done()
-          })
-          .catch(e => {
-            console.log(e)
-            done()
-          })
-      })
-    })
+  test('client', async () => {
+    let $ = await client({uri: 'http://api.test.jamma.cn'})
+    await $.onReady()
+    let doc = await $.request('/')
+    console.log(doc)
+    expect(doc).toBeTruthy()
+  })
+
+  test('module', async () => {
+    ms.use(mdl)
+    let $ = await ms.client({uri: 'http://api.test.jamma.cn'})
+    await $.onReady()
+    let doc = await $.request('/sso')
+    console.log(doc)
+    expect(doc).toBeTruthy()
   })
 })

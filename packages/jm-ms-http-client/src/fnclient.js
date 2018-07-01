@@ -5,17 +5,13 @@ const defaultPort = 3000
 const defaultUri = 'http://localhost:' + defaultPort
 
 let fnclient = function ($) {
-  return function (opts = {}, cb = null) {
-    let err = null
-    let doc = null
+  return async function (opts = {}) {
     let uri = opts.uri || defaultUri
     let timeout = opts.timeout || 0
 
-    doc = {
-      request: function (opts, cb) {
-        let r = utils.preRequest.apply(this, arguments)
-        opts = r.opts
-        cb = r.cb
+    let doc = {
+      async request (opts) {
+        opts = utils.preRequest.apply(this, arguments)
         let type = opts.type || 'get'
         let headers = opts.headers || {}
         let noHeaders = ['host', 'if-none-match', 'content-type', 'content-length', 'connection']
@@ -34,22 +30,20 @@ let fnclient = function ($) {
           headers: headers
         }
         let url = uri + opts.uri
-        let p = $[type](url, opts.data, _opts)
-        if (!cb) return p
-
-        p
-          .then(doc => {
-            cb(null, doc.data)
-          })
-          .catch(e => {
-            cb(e, e.response.data)
-          })
+        try {
+          let doc = await $[type](url, opts.data, _opts)
+          return doc.data
+        } catch (e) {
+          e.response && e.response.data && (e.data = e.response.data)
+          throw e
+        }
+      },
+      async onReady () {
+        return true
       }
     }
     event.enableEvent(doc)
-
-    if (cb) cb(err, doc)
-    doc.emit('open')
+    return doc
   }
 }
 
