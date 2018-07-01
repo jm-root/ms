@@ -32,6 +32,8 @@ var _err2 = _interopRequireDefault(_err);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
@@ -39,8 +41,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  */
 var Root = function () {
   /**
-     * create a root
-     */
+   * create a root
+   */
   function Root() {
     _classCallCheck(this, Root);
 
@@ -52,10 +54,10 @@ var Root = function () {
   }
 
   /**
-     * create a router
-     * @param {Object} opts
-     * @return {Router}
-     */
+   * create a router
+   * @param {Object} opts
+   * @return {Router}
+   */
 
 
   _createClass(Root, [{
@@ -67,190 +69,271 @@ var Root = function () {
       var app = new _router2.default(opts);
 
       /**
-           * 添加代理
-           * 支持多种参数格式, 例如
-           * proxy({uri:uri, target:target, changeOrigin:true}, cb)
-           * proxy(uri, target, changeOrigin, cb)
-           * proxy(uri, target, cb)
-           * 可以没有回调函数cb
-           * proxy({uri:uri, target:target, changeOrigin:true})
-           * proxy(uri, target, changeOrigin)
-           * proxy(uri, target)
-           * @param {String} uri
-           * @param {String} target
-           * @param {boolean} changeOrigin 是否改变原始uri
-           * @param {function} cb 回调cb(err,doc)
-           */
-      app.proxy = function (uri, target, changeOrigin, cb) {
-        var opts = uri;
-        if (typeof uri === 'string') {
-          opts = {
-            uri: uri,
-            target: target
-          };
-          if (typeof changeOrigin === 'boolean') {
-            opts.changeOrigin = changeOrigin;
-          } else if (changeOrigin && typeof changeOrigin === 'function') {
-            cb = changeOrigin;
-          }
-        } else {
-          cb = target;
-        }
-        opts || (opts = {});
-        cb || (cb = function cb(err, doc) {
-          if (err) throw err;
-        });
-        if (!opts.target) {
-          var doc = _jmErr2.default.Err.FA_PARAMS;
-          var err = _jmErr2.default.err(doc);
-          cb(err, doc);
-        }
-        this.emit('proxy', opts);
-        if (typeof opts.target === 'string') {
-          opts.target = { uri: opts.target };
-        }
-        if (opts.changeOrigin) {
-          self.client(opts.target, function (err, client) {
-            if (err) return cb(err, client);
-            app.use(opts.uri, function (opts, cb) {
-              client.request(opts, cb);
-            });
-            cb(err, client);
-          });
-        } else {
-          self.proxy(opts.target, function (err, doc) {
-            if (err) return cb(err, doc);
-            app.use(opts.uri, doc);
-            cb(err, doc);
-          });
-        }
-      };
+       * 添加代理
+       * proxy({uri:uri, target:target, changeOrigin:true})
+       * proxy(uri, target, changeOrigin)
+       * proxy(uri, target)
+       * @param {String} uri
+       * @param {String} target
+       * @param {boolean} changeOrigin 是否改变原始uri
+       */
+      app.proxy = function () {
+        var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(uri, target, changeOrigin) {
+          var opts, doc, err, client;
+          return regeneratorRuntime.wrap(function _callee$(_context) {
+            while (1) {
+              switch (_context.prev = _context.next) {
+                case 0:
+                  opts = uri;
+
+                  if (typeof uri === 'string') {
+                    opts = {
+                      uri: uri,
+                      target: target,
+                      changeOrigin: changeOrigin
+                    };
+                  }
+                  opts || (opts = {});
+
+                  if (opts.target) {
+                    _context.next = 7;
+                    break;
+                  }
+
+                  doc = _jmErr2.default.Err.FA_PARAMS;
+                  err = _jmErr2.default.err(doc);
+                  throw err;
+
+                case 7:
+                  this.emit('proxy', opts);
+                  if (typeof opts.target === 'string') {
+                    opts.target = { uri: opts.target };
+                  }
+                  _context.next = 11;
+                  return self.client(opts.target);
+
+                case 11:
+                  client = _context.sent;
+
+
+                  if (opts.changeOrigin) {
+                    app.use(opts.uri, client.request.bind(client));
+                  } else {
+                    app.use(opts.uri, client);
+                  }
+
+                case 13:
+                case 'end':
+                  return _context.stop();
+              }
+            }
+          }, _callee, this);
+        }));
+
+        return function (_x2, _x3, _x4) {
+          return _ref.apply(this, arguments);
+        };
+      }();
       return app;
     }
 
     /**
-       * create a client
-       * @param {Object} opts
-       * @example
-       * opts参数:{
-       *  type: 类型(可选, 默认http)
-       *  uri: uri(可选, 默认http://127.0.0.1)
-       *  timeout: 请求超时(可选, 单位毫秒, 默认0表示不检测超时)
-       * }
-       * @param {function} cb 回调cb(err,doc)
-       * @return {Root} - for chaining
-       */
+     * create a client
+     * @param {Object} opts
+     * @example
+     * opts参数:{
+     *  type: 类型(可选, 默认http)
+     *  uri: uri(可选, 默认http://127.0.0.1)
+     *  timeout: 请求超时(可选, 单位毫秒, 默认0表示不检测超时)
+     * }
+     * @return {Promise}
+     */
 
   }, {
     key: 'client',
-    value: function client() {
-      var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-      var cb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+    value: function () {
+      var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+        var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        var err, doc, type, fn;
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                err = null;
+                doc = null;
+                type = 'http';
 
-      var err = null;
-      var doc = null;
-      var type = 'http';
-      opts.uri && (type = _utils2.default.getUriProtocol(opts.uri));
-      opts.type && (type = opts.type);
-      type = type.toLowerCase();
-      var fn = this.clientModules[type];
-      if (!fn) {
-        doc = _err2.default.FA_INVALIDTYPE;
-        err = _jmErr2.default.err(doc);
-        if (cb) cb(err, doc);
-      } else {
-        fn(opts, function (err, doc) {
-          if (!err) _utils2.default.enableType(doc, ['get', 'post', 'put', 'delete']);
-          if (cb) cb(err, doc);
-        });
+                opts.uri && (type = _utils2.default.getUriProtocol(opts.uri));
+                opts.type && (type = opts.type);
+                type = type.toLowerCase();
+                fn = this.clientModules[type];
+
+                if (fn) {
+                  _context2.next = 11;
+                  break;
+                }
+
+                doc = _err2.default.FA_INVALID_TYPE;
+                err = _jmErr2.default.err(doc);
+                throw err;
+
+              case 11:
+                _context2.next = 13;
+                return fn(opts);
+
+              case 13:
+                doc = _context2.sent;
+
+                if (doc) _utils2.default.enableType(doc, ['get', 'post', 'put', 'delete']);
+                return _context2.abrupt('return', doc);
+
+              case 16:
+              case 'end':
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+
+      function client() {
+        return _ref2.apply(this, arguments);
       }
-      return this;
-    }
+
+      return client;
+    }()
 
     /**
-       * create a server
-       * @param {Object} app
-       * @param {Object} opts
-       * @example
-       * opts参数:{
+     * create a server
+     * @param {Object} app
+     * @param {Object} opts
+     * @example
+     * opts参数:{
        *  uri: 网址(可选)
        *  type: 类型(可选, 默认http)
        *  host: 主机(可选, 默认127.0.0.1)
        *  port: 端口(可选, 默认80, 根据type不同默认值也不同)
        * }
-       * @param {function} cb 回调cb(err,doc)
-       * @return {Root} - for chaining
-       */
+     * @return {Promise}
+     */
 
   }, {
     key: 'server',
-    value: function server() {
-      var app = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-      var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-      var cb = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+    value: function () {
+      var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+        var app = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+        var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+        var err, doc, type, fn;
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                err = null;
+                doc = null;
+                type = 'http';
 
-      var err = null;
-      var doc = null;
-      var type = 'http';
-      opts.uri && (type = _utils2.default.getUriProtocol(opts.uri));
-      opts.type && (type = opts.type);
-      type = type.toLowerCase();
-      var fn = this.serverModules[type];
-      if (!fn) {
-        doc = _err2.default.FA_INVALIDTYPE;
-        err = _jmErr2.default.err(doc);
-        if (cb) cb(err, doc);
-      } else {
-        app.emit('server', opts);
-        fn(app, opts, cb);
+                opts.uri && (type = _utils2.default.getUriProtocol(opts.uri));
+                opts.type && (type = opts.type);
+                type = type.toLowerCase();
+                fn = this.serverModules[type];
+
+                if (fn) {
+                  _context3.next = 11;
+                  break;
+                }
+
+                doc = _err2.default.FA_INVALID_TYPE;
+                err = _jmErr2.default.err(doc);
+                throw err;
+
+              case 11:
+                app.emit('server', opts);
+                _context3.next = 14;
+                return fn(app, opts);
+
+              case 14:
+                doc = _context3.sent;
+                return _context3.abrupt('return', doc);
+
+              case 16:
+              case 'end':
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function server() {
+        return _ref3.apply(this, arguments);
       }
-      return this;
-    }
+
+      return server;
+    }()
 
     /**
-       * 创建一个代理路由
-       * 支持多种参数格式, 例如
-       * proxy({uri:uri}, cb)
-       * proxy(uri, cb)
-       * 可以没有回调函数cb
-       * proxy({uri:uri})
-       * proxy(uri)
-       * @param {Object} opts 参数
-       * @example
-       * opts参数:{
+     * 创建一个代理路由
+     * 支持多种参数格式, 例如
+     * proxy({uri:uri})
+     * proxy(uri)
+     * @param {Object} opts 参数
+     * @example
+     * opts参数:{
        *  uri: 目标uri(必填)
        * }
-       * @param {function} cb 回调cb(err,doc)
-       * @return {Router}
-       */
+     * @return {Promise}
+     */
 
   }, {
     key: 'proxy',
-    value: function proxy() {
-      var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-      var cb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+    value: function () {
+      var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
+        var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        var err, doc, app, client;
+        return regeneratorRuntime.wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                err = null;
+                doc = null;
 
-      var err = null;
-      var doc = null;
-      if (typeof opts === 'string') {
-        opts = { uri: opts };
+                if (typeof opts === 'string') {
+                  opts = { uri: opts };
+                }
+
+                if (opts.uri) {
+                  _context4.next = 7;
+                  break;
+                }
+
+                doc = _jmErr2.default.Err.FA_PARAMS;
+                err = _jmErr2.default.err(doc);
+                throw err;
+
+              case 7:
+                app = this.router();
+                _context4.next = 10;
+                return this.client(opts);
+
+              case 10:
+                client = _context4.sent;
+
+                app.use(client.request.bind(client));
+                app.client = client;
+                return _context4.abrupt('return', app);
+
+              case 14:
+              case 'end':
+                return _context4.stop();
+            }
+          }
+        }, _callee4, this);
+      }));
+
+      function proxy() {
+        return _ref4.apply(this, arguments);
       }
-      if (!opts.uri) {
-        doc = _jmErr2.default.Err.FA_PARAMS;
-        err = _jmErr2.default.err(doc);
-        if (!cb) throw err;
-      }
-      var app = this.router();
-      this.client(opts, function (err, client) {
-        if (err) return cb(err, client);
-        app.use(function (opts, cb) {
-          client.request(opts, cb);
-        });
-        app.client = client;
-        if (cb) cb(null, app);
-      });
-      return app;
-    }
+
+      return proxy;
+    }()
   }]);
 
   return Root;
@@ -267,21 +350,9 @@ if (typeof global !== 'undefined' && global) {
     var ms = jm.ms;
     _jmEvent2.default.enableEvent(ms);
     ms.root = root;
-
-    ms.proxy = function (opts, cb) {
-      root.proxy(opts, cb);
-      return ms;
-    };
-
-    ms.client = function (opts, cb) {
-      root.client(opts, cb);
-      return ms;
-    };
-
-    ms.server = function (opts, cb) {
-      root.server(opts, cb);
-      return ms;
-    };
+    ms.proxy = root.proxy.bind(root);
+    ms.client = root.client.bind(root);
+    ms.server = root.server.bind(root);
   }
 }
 

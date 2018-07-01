@@ -66,17 +66,15 @@ describe('route', () => {
       fn: handle
     })
     let doc = await o.handle({})
-    console.log(doc)
+    expect(doc.sex).toBeTruthy()
   })
 
   test('handle chain', async () => {
     let o = new Route({
       fn: [handle1, handle]
     })
-    let t0 = Date.now()
     let doc = await o.handle({})
-    console.log(`time: ${ Date.now() - t0}`)
-    console.log(doc)
+    expect(doc.sex).toBeTruthy()
   })
 
   test('handle chain error', async () => {
@@ -87,8 +85,7 @@ describe('route', () => {
     o
       .handle({})
       .catch(e => {
-        console.log(`time: ${ Date.now() - t0}`)
-        console.log(e)
+        expect(e).toBeTruthy()
       })
   })
 

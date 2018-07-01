@@ -12,6 +12,8 @@ var _pathToRegexp2 = _interopRequireDefault(_pathToRegexp);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
@@ -19,16 +21,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  */
 var Route = function () {
   /**
-     * create a route.
-     * @param {Object} opts params
-     * @example
-     * opts:{
-     *  uri: 接口路径(必填)
-     *  type: 请求类型(可选)
-     *  fn: 接口处理函数 function(opts, cb, next){}(必填)
-     *
-     * }
-     */
+   * create a route.
+   * @param {Object} opts params
+   * @example
+   * opts:{
+   *  uri: 接口路径(必填)
+   *  type: 请求类型(可选)
+   *  fn: 接口处理函数 function(opts, cb, next){}(必填)
+   *
+   * }
+   */
   function Route() {
     var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
@@ -69,41 +71,64 @@ var Route = function () {
 
   _createClass(Route, [{
     key: 'handle',
-    value: function handle(opts, cb, next) {
-      var idx = 0;
-      var fns = this.fns;
-      if (fns.length === 0) {
-        return next();
-      }
-      _next();
-      function _next(err, doc) {
-        if (err) {
-          if (err === 'route') {
-            return next();
-          } else {
-            return cb(err, doc);
+    value: function () {
+      var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(opts) {
+        var fns, i, len, fn, doc;
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                fns = this.fns;
+                i = 0, len = fns.length;
+
+              case 2:
+                if (!(i < len)) {
+                  _context.next = 12;
+                  break;
+                }
+
+                fn = fns[i];
+                _context.next = 6;
+                return fn(opts);
+
+              case 6:
+                doc = _context.sent;
+
+                if (!(doc !== undefined)) {
+                  _context.next = 9;
+                  break;
+                }
+
+                return _context.abrupt('return', doc);
+
+              case 9:
+                i++;
+                _context.next = 2;
+                break;
+
+              case 12:
+              case 'end':
+                return _context.stop();
+            }
           }
-        }
-        var fn = fns[idx++];
-        if (!fn) {
-          return next(err);
-        }
-        try {
-          fn(opts, cb, _next);
-        } catch (err) {
-          _next(err);
-        }
+        }, _callee, this);
+      }));
+
+      function handle(_x2) {
+        return _ref.apply(this, arguments);
       }
-    }
+
+      return handle;
+    }()
 
     /**
-       * Check if this route matches `uri`, if so
-       * populate `.params`.
-       *
-       * @param {String} uri
-       * @return {Boolean}
-       * @api private
-       */
+     * Check if this route matches `uri`, if so
+     * populate `.params`.
+     *
+     * @param {String} uri
+     * @return {Boolean}
+     * @api private
+     */
 
   }, {
     key: 'match',

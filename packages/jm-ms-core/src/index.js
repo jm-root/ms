@@ -88,7 +88,7 @@ class Root {
     type = type.toLowerCase()
     let fn = this.clientModules[type]
     if (!fn) {
-      doc = Err.FA_INVALIDTYPE
+      doc = Err.FA_INVALID_TYPE
       err = error.err(doc)
       throw err
     }
@@ -119,7 +119,7 @@ class Root {
     type = type.toLowerCase()
     let fn = this.serverModules[type]
     if (!fn) {
-      doc = Err.FA_INVALIDTYPE
+      doc = Err.FA_INVALID_TYPE
       err = error.err(doc)
       throw err
     }

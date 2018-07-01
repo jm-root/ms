@@ -6,145 +6,97 @@ Object.defineProperty(exports, "__esModule", {
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var _jmUtils = require('jm-utils');
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-var _jmUtils2 = _interopRequireDefault(_jmUtils);
-
-var _jmErr = require('jm-err');
-
-var _jmErr2 = _interopRequireDefault(_jmErr);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var utils = _jmUtils2.default.utils;
-utils.enableType = function (obj, types) {
-  if (!Array.isArray(types)) {
-    types = [types];
-  }
-  types.forEach(function (type) {
-    if (typeof Promise !== 'undefined') {
-      obj[type] = function (uri, data, params, timeout, cb) {
-        var opts = uri;
-        if (typeof uri === 'string') {
-          var r = utils.preRequest.apply(this, arguments);
-          opts = r.opts;
-          cb = r.cb;
-        } else {
-          cb = data;
-        }
-        opts.type = type;
-
-        if (cb) {
-          this[type](opts).then(function (doc) {
-            cb(null, doc);
-          }).catch(function (err) {
-            cb(err);
-          });
-          return this;
-        }
-
-        return new Promise(function (resolve, reject) {
-          obj.request(opts, function (err, doc) {
-            if (!err && doc && doc.err) err = _jmErr2.default.err(doc);
-            if (err) return reject(err);
-            resolve(doc);
-          });
-        });
-      };
-    } else {
-      obj[type] = function (uri, data, params, timeout, cb) {
-        if (typeof uri === 'string') {
-          return obj.request(uri, type, data, params, timeout, cb);
-        }
-        uri.type = type;
-        return obj.request(uri, data);
-      };
-    }
-  });
-};
-
-utils.preRequest = function (uri, type, data, params, timeout, cb) {
+var preRequest = function preRequest(uri, type, data, opts) {
   // uri为对象时直接返回
-  if (typeof uri !== 'string') {
-    return {
-      opts: uri,
-      cb: type
-    };
+  if ((typeof uri === 'undefined' ? 'undefined' : _typeof(uri)) === 'object') {
+    return uri;
   }
-
-  var opts = {
-    uri: uri
-  };
 
   var r = {
-    opts: opts
+    uri: uri
 
-    // 第2个参数可能为空，cb，timeout, data
+    // 第2个参数可能为空，data
   };if (type === undefined) {
     return r;
-  }
-  if (typeof type === 'function') {
-    r.cb = type;
-    return r;
-  }
-  if (typeof type === 'number') {
-    return utils.preRequest(uri, null, null, null, type, data);
   } else if (type && (typeof type === 'undefined' ? 'undefined' : _typeof(type)) === 'object') {
-    return utils.preRequest(uri, null, type, data, params, timeout);
+    return preRequest(uri, null, type, data);
   } else if (typeof type === 'string') {
-    opts.type = type;
+    r.type = type;
   }
 
-  // 第3个参数可能为空，cb，timeout, data
+  // 第3个参数可能为空，data
   if (data === undefined) {
     return r;
-  }
-  if (typeof data === 'function') {
-    r.cb = data;
-    return r;
-  }
-  if (typeof data === 'number') {
-    return utils.preRequest(uri, type, null, null, data, params);
   } else if (data && (typeof data === 'undefined' ? 'undefined' : _typeof(data)) === 'object') {
-    opts.data = data;
+    r.data = data;
   }
 
-  // 第4个参数可能为空，cb，timeout, params
-  if (params === undefined) {
+  // 第4个参数可能为空，附加参数对象
+  if (opts === undefined) {
     return r;
-  }
-  if (typeof params === 'function') {
-    r.cb = params;
-    return r;
-  }
-  if (typeof params === 'number') {
-    return utils.preRequest(uri, type, data, null, params, timeout);
-  } else if (params && (typeof params === 'undefined' ? 'undefined' : _typeof(params)) === 'object') {
-    opts.params = params;
-  }
-
-  // 第5个参数可能为空，cb，timeout
-  if (timeout === undefined) {
-    return r;
-  }
-  if (typeof timeout === 'function') {
-    r.cb = timeout;
-    return r;
-  }
-  if (typeof timeout === 'number') {
-    opts.timeout = timeout;
-  }
-
-  // 第6个参数可能为空，cb
-  if (cb === undefined) {
-    return r;
-  }
-  if (typeof cb === 'function') {
-    r.cb = cb;
-    return r;
+  } else if (opts && (typeof opts === 'undefined' ? 'undefined' : _typeof(opts)) === 'object') {
+    r = Object.assign(r, opts);
   }
 
   return r;
+};
+
+var utils = {
+  getUriProtocol: function getUriProtocol(uri) {
+    if (!uri) return null;
+    return uri.substring(0, uri.indexOf(':'));
+  },
+
+  getUriPath: function getUriPath(uri) {
+    var idx = uri.indexOf('//');
+    if (idx === -1) return '';
+    idx = uri.indexOf('/', idx + 2);
+    if (idx === -1) return '';
+    uri = uri.substr(idx);
+    idx = uri.indexOf('#');
+    if (idx === -1) idx = uri.indexOf('?');
+    if (idx !== -1) uri = uri.substr(0, idx);
+    return uri;
+  },
+
+  enableType: function enableType(obj, types) {
+    var self = this;
+    if (!Array.isArray(types)) {
+      types = [types];
+    }
+    types.forEach(function (type) {
+      obj[type] = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+        var opts,
+            doc,
+            _args = arguments;
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                opts = self.preRequest.apply(this, _args);
+
+                opts.type = type;
+                _context.next = 4;
+                return obj.request(opts);
+
+              case 4:
+                doc = _context.sent;
+                return _context.abrupt('return', doc);
+
+              case 6:
+              case 'end':
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+    });
+  },
+
+  preRequest: preRequest
+
 };
 
 exports.default = utils;

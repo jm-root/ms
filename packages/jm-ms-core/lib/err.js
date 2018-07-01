@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 var ERRCODE = 900;
 
 exports.default = {
-  FA_INVALIDTYPE: {
+  FA_INVALID_TYPE: {
     err: ERRCODE++,
     msg: 'invalid type'
   }

@@ -1,6 +1,35 @@
 const utils = require('../src/utils')
 
+const $ = utils
+
 describe('utils', () => {
+  test('getUriProtocol', () => {
+    expect($.getUriProtocol('http://127.0.0.1/abc') === 'http').toBeTruthy()
+  })
+  test('getUriPath', () => {
+    expect($.getUriPath('http://127.0.0.1/abc') === '/abc').toBeTruthy()
+    expect($.getUriPath('http://127.0.0.1/abc/index.html') === '/abc/index.html').toBeTruthy()
+    expect($.getUriPath('http://127.0.0.1/abc/index.html#abc') === '/abc/index.html').toBeTruthy()
+    expect($.getUriPath('http://127.0.0.1/abc/index.html?a=1&b=2') === '/abc/index.html').toBeTruthy()
+    expect($.getUriPath('http://127.0.0.1/abc/index.html#abc?a=1&b=2') === '/abc/index.html').toBeTruthy()
+  })
+  test('enableType', async () => {
+    let o = null
+    let doc = null
+    let request = opts => {
+      return 1
+    }
+    o = {request}
+    $.enableType(o, 'get')
+    doc = await o.get()
+    expect(doc === 1).toBeTruthy()
+
+    o = {request}
+    $.enableType(o, ['get', 'post'])
+    doc = await o.post()
+    expect(doc === 1).toBeTruthy()
+
+  })
   test('preRequest', () => {
     let v = ['uri', 'type', 'data', 'params', 'timeout']
     let uri = '/test'
@@ -23,13 +52,13 @@ describe('utils', () => {
     let check = (obj1, obj2) => {
       for (let key of v) {
         if (obj1[key] !== obj2[key]) {
-          console.log('obj1: %s obj2: %s', utils.formatJSON(obj1), utils.formatJSON(obj2))
+          console.log('obj1: %s !== obj2: %s', obj1, obj2)
           return false
         }
       }
       return true
     }
-    let pre = utils.preRequest
+    let pre = $.preRequest
 
     // request({uri:uri, type:type, data:data, params:params, timeout:timeout}, cb)
     expect(check(pre(opts), opts)).toBeTruthy()
