@@ -1,10 +1,8 @@
-import chai from 'chai'
-
 let expect = chai.expect
 import client from '../src/client'
 
-describe('client', function () {
-  it('client', function (done) {
+describe('client', () => {
+  test('client', done => {
     client({
       uri: 'http://api.jamma.cn'
     }, function (err, c) {
