@@ -1,29 +1,23 @@
 const MS = require('../src')
 const utils = require('../src/utils')
 
-let handle = (opts, cb, next) => {
-  cb(null, {ret: 1})
+let handle = opts => {
+  return opts
 }
 
-let cb = (err, doc) => {
-  if (err) console.log(err.stack)
-  if (doc) console.log('%j', doc)
-}
+let ms = new MS()
+let app = ms.router()
 
-let msTest = new MS()
-let app = msTest.router()
-
-let mdlTest = function (opts, cb) {
+let mdlTest = function (opts) {
   let app = this
-  app.clientModules.http = (opts, cb) => {
+  app.clientModules.http = (opts) => {
     let client = {
-      request: function (opts, cb) {
-        let r = utils.preRequest.apply(this, arguments)
-        r.cb(null, {ret: true})
+      request: function (opts) {
+        opts = utils.preRequest.apply(this, arguments)
+        return opts
       }
     }
-    cb(null, client)
-    return true
+    return client
   }
 
   return {
@@ -37,29 +31,30 @@ let mdlTest = function (opts, cb) {
 describe('ms', () => {
   test('router', () => {
     expect(app).toBeTruthy()
-    app.add('/', handle)
-    app.request('/', cb)
-  })
-
-  test('router promise', () => {
-    expect(app).toBeTruthy()
-    app.add('/', 'get', handle)
-    app.get('/')
+    app
+      .add('/', 'get', handle)
+      .get('/')
       .then(function (doc) {
-        cb(null, doc)
+        console.log(doc)
       })
       .catch(function (err) {
-        cb(err)
+        console.log(err)
       })
   })
 
   test('use', () => {
-    msTest.use(mdlTest)
-    msTest.client({uri: 'http://ww.ja.cnom'}, function (err, doc) {
-      expect(doc).toBeTruthy()
-      doc.get('/', function (err, doc) {
-        expect(doc.ret).toBeTruthy()
+    ms
+      .use(mdlTest)
+      .client({uri: 'http://api.jamma.cn'})
+      .then(doc => {
+        expect(doc).toBeTruthy()
+        return doc.get('/')
       })
-    })
+      .then(function (doc) {
+        console.log(doc)
+      })
+      .catch(function (err) {
+        console.log(err)
+      })
   })
 })
