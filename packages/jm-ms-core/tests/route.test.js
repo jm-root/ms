@@ -1,48 +1,16 @@
 const Route = require('../src/route')
 
-let cb_default = () => {
+let handle1 = async (opts = {}) => {
+  opts.name = 'jeff'
 }
 
-class Context {
-  get callback () {
-    return this._cb || cb_default
-  }
-
-  set callback (val) {
-    this._cb = cb
-  }
-
-  set body (val) {
-    this.callback(null, val)
-  }
-
-  set error (val) {
-    this.callback(val)
-  }
-
-  handle (opts, cb, next) {
-    this.params = opts.params
-  }
+let handle2 = async (opts = {}) => {
+  throw new Error('err message')
 }
 
-let h = function (opts) {
-  this.body = {ret: 123}
-}
-
-let ctx = new Context()
-ctx.handle = h
-ctx.handle()
-
-let handle1 = (opts, cb, next) => {
-  next()
-}
-
-let handle2 = (opts, cb, next) => {
-  next(new Error('err'), {ret: 0})
-}
-
-let handle = (opts, cb, next) => {
-  cb(null, {ret: 1})
+let handle = (opts = {}) => {
+  opts.sex = 1
+  return opts
 }
 
 let cb = (err, doc) => {
@@ -67,7 +35,7 @@ describe('route', () => {
     expect(o.uri === undefined && o.params === undefined).toBeTruthy()
     expect(o.match('/')).toBeTruthy()
     expect(o.uri === '/' && o.params).toBeTruthy()
-    expect(o.match('/abc')).not.toBeTruthy()
+    expect(!o.match('/abc')).toBeTruthy()
 
     o = new Route({
       end: false,
@@ -93,15 +61,35 @@ describe('route', () => {
     expect(o.uri === undefined && o.params === undefined).toBeTruthy()
   })
 
-  test('handle', () => {
+  test('handle', async () => {
     let o = new Route({
       fn: handle
     })
-    o.handle({}, cb, cb)
+    let doc = await o.handle({})
+    console.log(doc)
+  })
 
-    o = new Route({
+  test('handle chain', async () => {
+    let o = new Route({
+      fn: [handle1, handle]
+    })
+    let t0 = Date.now()
+    let doc = await o.handle({})
+    console.log(`time: ${ Date.now() - t0}`)
+    console.log(doc)
+  })
+
+  test('handle chain error', async () => {
+    let o = new Route({
       fn: [handle1, handle2, handle]
     })
-    o.handle({}, cb, cb)
+    let t0 = Date.now()
+    o
+      .handle({})
+      .catch(e => {
+        console.log(`time: ${ Date.now() - t0}`)
+        console.log(e)
+      })
   })
+
 })

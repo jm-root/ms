@@ -6,10 +6,11 @@ utils.enableType = function (obj, types) {
     types = [types]
   }
   types.forEach(function (type) {
-    obj[type] = function () {
+    obj[type] = async function () {
       let opts = utils.preRequest.apply(this, arguments)
       opts.type = type
-      return obj.request(opts)
+      let doc = await obj.request(opts)
+      return doc
     }
   })
 }

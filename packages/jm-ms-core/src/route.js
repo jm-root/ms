@@ -5,16 +5,16 @@ import pathtoRegexp from 'path-to-regexp'
  */
 class Route {
   /**
-     * create a route.
-     * @param {Object} opts params
-     * @example
-     * opts:{
-     *  uri: 接口路径(必填)
-     *  type: 请求类型(可选)
-     *  fn: 接口处理函数 function(opts, cb, next){}(必填)
-     *
-     * }
-     */
+   * create a route.
+   * @param {Object} opts params
+   * @example
+   * opts:{
+   *  uri: 接口路径(必填)
+   *  type: 请求类型(可选)
+   *  fn: 接口处理函数 function(opts, cb, next){}(必填)
+   *
+   * }
+   */
   constructor (opts = {}) {
     this.uri = opts.uri || '/'
     this.type = opts.type
@@ -53,37 +53,23 @@ class Route {
     return this._fns
   }
 
-  handle (opts, cb, next) {
-    let idx = 0
+  async handle (opts) {
     let fns = this.fns
-    if (fns.length === 0) {
-      return next()
-    }
-    _next()
-    function _next (err, doc) {
-      if (err) {
-        if (err === 'route') { return next() } else { return cb(err, doc) }
-      }
-      let fn = fns[idx++]
-      if (!fn) {
-        return next(err)
-      }
-      try {
-        fn(opts, cb, _next)
-      } catch (err) {
-        _next(err)
-      }
+    for (let i = 0, len = fns.length; i < len; i++) {
+      let fn = fns[i]
+      let doc = await fn(opts)
+      if (doc !== undefined) return doc
     }
   }
 
   /**
-     * Check if this route matches `uri`, if so
-     * populate `.params`.
-     *
-     * @param {String} uri
-     * @return {Boolean}
-     * @api private
-     */
+   * Check if this route matches `uri`, if so
+   * populate `.params`.
+   *
+   * @param {String} uri
+   * @return {Boolean}
+   * @api private
+   */
   match (uri, type) {
     this.params = undefined
     this.uri = undefined
