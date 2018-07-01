@@ -1,9 +1,8 @@
-import chai from 'chai';
 let expect = chai.expect;
 import client from '../src/client';
 
-describe('client', function () {
-    it('client', function () {
+describe('client', () => {
+    test('client', () => {
         client({
             uri: 'ws://localhost:3100',
         }, function (err, doc) {
