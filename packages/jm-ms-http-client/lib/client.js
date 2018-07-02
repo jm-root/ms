@@ -8,7 +8,7 @@ var _flyio = require('flyio');
 
 var _flyio2 = _interopRequireDefault(_flyio);
 
-var _fnclient = require('./fnclient');
+var _fnclient = require('./core/fnclient');
 
 var _fnclient2 = _interopRequireDefault(_fnclient);
 

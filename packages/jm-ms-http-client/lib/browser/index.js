@@ -8,7 +8,7 @@ var _client = require('./client');
 
 var _client2 = _interopRequireDefault(_client);
 
-var _mdl = require('../mdl');
+var _mdl = require('../core/mdl');
 
 var _mdl2 = _interopRequireDefault(_mdl);
 

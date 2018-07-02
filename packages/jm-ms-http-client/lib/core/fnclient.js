@@ -19,22 +19,21 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 var defaultPort = 3000;
 var defaultUri = 'http://localhost:' + defaultPort;
 
-var fnclient = function fnclient($) {
+var fnclient = function fnclient(_adapter) {
   return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
     var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    var uri, timeout, doc;
+    var adapter, uri, timeout, doc;
     return regeneratorRuntime.wrap(function _callee3$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
           case 0:
-            opts.$ && ($ = opts.$);
+            adapter = opts.adapter || _adapter;
             uri = opts.uri || defaultUri;
             timeout = opts.timeout || 0;
             doc = {
               request: function () {
                 var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(opts) {
-                  var type,
-                      headers,
+                  var headers,
                       noHeaders,
                       _opts,
                       url,
@@ -46,7 +45,6 @@ var fnclient = function fnclient($) {
                       switch (_context.prev = _context.next) {
                         case 0:
                           opts = _utils2.default.preRequest.apply(this, _args);
-                          type = opts.type || 'get';
                           headers = opts.headers || {};
                           noHeaders = ['host', 'if-none-match', 'content-type', 'content-length', 'connection'];
 
@@ -61,31 +59,32 @@ var fnclient = function fnclient($) {
                           }
 
                           _opts = {
+                            method: opts.type || 'get',
                             timeout: opts.timeout || timeout,
                             headers: headers
                           };
                           url = uri + opts.uri;
-                          _context.prev = 9;
-                          _context.next = 12;
-                          return $[type](url, opts.data, _opts);
+                          _context.prev = 8;
+                          _context.next = 11;
+                          return adapter.request(url, opts.data, _opts);
 
-                        case 12:
+                        case 11:
                           _doc = _context.sent;
                           return _context.abrupt('return', _doc.data);
 
-                        case 16:
-                          _context.prev = 16;
-                          _context.t0 = _context['catch'](9);
+                        case 15:
+                          _context.prev = 15;
+                          _context.t0 = _context['catch'](8);
 
                           _context.t0.response && _context.t0.response.data && (_context.t0.data = _context.t0.response.data);
                           throw _context.t0;
 
-                        case 20:
+                        case 19:
                         case 'end':
                           return _context.stop();
                       }
                     }
-                  }, _callee, this, [[9, 16]]);
+                  }, _callee, this, [[8, 15]]);
                 }));
 
                 function request(_x2) {
