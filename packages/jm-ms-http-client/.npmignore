@@ -1,9 +1,8 @@
 .git
 .idea
 .svn
-examples
-src
 bench
 docs
-test
+examples
+src
 tests
