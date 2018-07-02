@@ -1,21 +1,10 @@
 # jm-ms-ws-client
 
-websocket plugin for jm-ms-core
+websocket client plugin for jm-ms-core
 
-## server events
+## adapter
 
-```javascript
-
-```
-
-- connection
-a new client connected. and we got a new session created.
-
-- close
-a session closed.
-
-- message
-recevied a message.
+参考 WebSocket 实现
 
 ## client events
 

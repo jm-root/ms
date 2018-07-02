@@ -1,5 +1,5 @@
 import client from './client'
-import mdl from '../mdl'
+import mdl from '../core/mdl'
 
 let $ = mdl(client)
 $.client = client

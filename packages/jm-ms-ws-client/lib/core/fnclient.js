@@ -27,14 +27,15 @@ var defaultPort = 3100;
 var defaultUri = 'ws://localhost:' + defaultPort;
 var errNetwork = _jmErr2.default.err(Err.FA_NETWORK);
 
-var fnclient = function fnclient(fnCreateWS) {
+var fnclient = function fnclient(_Adapter) {
   return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
     var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    var doc, uri, timeout, id, cbs, path, prefix, ws, autoReconnect, reconnectTimer, reconnectionDelay, DEFAULT_MAX_RECONNECT_ATTEMPTS, maxReconnectAttempts, onmessage;
+    var Adapter, doc, uri, timeout, id, cbs, path, prefix, ws, autoReconnect, reconnectTimer, reconnectionDelay, DEFAULT_MAX_RECONNECT_ATTEMPTS, maxReconnectAttempts, onmessage;
     return regeneratorRuntime.wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
+            Adapter = opts.Adapter || _Adapter;
             doc = null;
             uri = opts.uri || defaultUri;
             timeout = opts.timeout || 0;
@@ -166,13 +167,20 @@ var fnclient = function fnclient(fnCreateWS) {
               this.autoReconnect = autoReconnect;
               doc.emit('connect');
               var self = doc;
-              var onopen = function onopen(event) {
+              ws = new Adapter(this.uri);
+              ws.on('message', function (message) {
+                onmessage(message);
+              });
+              ws.on('open', function () {
                 id = 0;
                 cbs = {};
                 self.connected = true;
                 self.emit('open');
-              };
-              var onclose = function onclose(event) {
+              });
+              ws.on('error', function (event) {
+                doc.emit('error', event);
+              });
+              ws.on('close', function (event) {
                 self.connected = false;
                 ws = null;
                 self.emit('close', event);
@@ -188,19 +196,12 @@ var fnclient = function fnclient(fnCreateWS) {
                     self.connect();
                   }, self.reconnectionDelay);
                 }
-              };
-              var onerror = function onerror(event) {
-                doc.emit('error', event);
-              };
-              ws = fnCreateWS(this.uri, onmessage);
-              ws.onopen = onopen;
-              ws.onerror = onerror;
-              ws.onclose = onclose;
+              });
             };
             doc.connect();
             return _context2.abrupt('return', doc);
 
-          case 21:
+          case 22:
           case 'end':
             return _context2.stop();
         }

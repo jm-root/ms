@@ -7,7 +7,7 @@ describe('client', () => {
   test('client', async () => {
     let $ = await client({uri: 'ws://gateway.test.jamma.cn'})
     await $.onReady()
-    let doc = await $.request('/sso')
+    let doc = await $.request('/acl')
     console.log(doc)
     expect(doc).toBeTruthy()
   })
@@ -16,7 +16,7 @@ describe('client', () => {
     ms.use(mdl)
     let $ = await ms.client({uri: 'ws://gateway.test.jamma.cn'})
     await $.onReady()
-    let doc = await $.request('/sso')
+    let doc = await $.request('/acl')
     console.log(doc)
     expect(doc).toBeTruthy()
   })

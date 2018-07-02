@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _fnclient = require('../fnclient');
+var _fnclient = require('../core/fnclient');
 
 var _fnclient2 = _interopRequireDefault(_fnclient);
 
@@ -18,7 +18,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var client = (0, _fnclient2.default)(_ws2.default);
 exports.default = client;
 module.exports = exports['default'];
-},{"../fnclient":4,"./ws":3}],2:[function(require,module,exports){
+},{"../core/fnclient":4,"./ws":3}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -29,7 +29,7 @@ var _client = require('./client');
 
 var _client2 = _interopRequireDefault(_client);
 
-var _mdl = require('../mdl');
+var _mdl = require('../core/mdl');
 
 var _mdl2 = _interopRequireDefault(_mdl);
 
@@ -39,24 +39,72 @@ var $ = (0, _mdl2.default)(_client2.default);
 $.client = _client2.default;
 exports.default = $;
 module.exports = exports['default'];
-},{"../mdl":5,"./client":1}],3:[function(require,module,exports){
-"use strict";
+},{"../core/mdl":5,"./client":1}],3:[function(require,module,exports){
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-exports.default = function (uri, onmessage) {
-  var ws = new WebSocket(uri);
-  ws.onmessage = function (event) {
-    onmessage(event.data);
-  };
-  return ws;
-};
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-;
-module.exports = exports["default"];
-},{}],4:[function(require,module,exports){
+var _jmEvent = require('jm-event');
+
+var _jmEvent2 = _interopRequireDefault(_jmEvent);
+
+var _jmErr = require('jm-err');
+
+var _jmErr2 = _interopRequireDefault(_jmErr);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Err = _jmErr2.default.Err;
+var errNetwork = _jmErr2.default.err(Err.FA_NETWORK);
+
+var Adapter = function () {
+  function Adapter(uri) {
+    _classCallCheck(this, Adapter);
+
+    var self = this;
+    _jmEvent2.default.enableEvent(this);
+    var ws = new WebSocket(uri);
+    this.ws = ws;
+    ws.on('message', function (event) {
+      self.emit('message', event.data);
+    });
+    ws.onopen = function () {
+      self.emit('open');
+    };
+    ws.onerror = function (event) {
+      self.emit('error', event);
+    };
+    ws.onclose = function (event) {
+      self.emit('close', event);
+    };
+  }
+
+  _createClass(Adapter, [{
+    key: 'send',
+    value: function send() {
+      if (!this.ws) throw errNetwork;
+      this.ws.send.apply(this.ws, arguments);
+    }
+  }, {
+    key: 'close',
+    value: function close() {
+      if (!this.ws) throw errNetwork;
+      this.ws.close.apply(this.ws, arguments);
+    }
+  }]);
+
+  return Adapter;
+}();
+
+exports.default = Adapter;
+module.exports = exports['default'];
+},{"jm-err":6,"jm-event":9}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -86,14 +134,15 @@ var defaultPort = 3100;
 var defaultUri = 'ws://localhost:' + defaultPort;
 var errNetwork = _jmErr2.default.err(Err.FA_NETWORK);
 
-var fnclient = function fnclient(fnCreateWS) {
+var fnclient = function fnclient(_Adapter) {
   return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
     var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    var doc, uri, timeout, id, cbs, path, prefix, ws, autoReconnect, reconnectTimer, reconnectionDelay, DEFAULT_MAX_RECONNECT_ATTEMPTS, maxReconnectAttempts, onmessage;
+    var Adapter, doc, uri, timeout, id, cbs, path, prefix, ws, autoReconnect, reconnectTimer, reconnectionDelay, DEFAULT_MAX_RECONNECT_ATTEMPTS, maxReconnectAttempts, onmessage;
     return regeneratorRuntime.wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
+            Adapter = opts.Adapter || _Adapter;
             doc = null;
             uri = opts.uri || defaultUri;
             timeout = opts.timeout || 0;
@@ -225,13 +274,20 @@ var fnclient = function fnclient(fnCreateWS) {
               this.autoReconnect = autoReconnect;
               doc.emit('connect');
               var self = doc;
-              var onopen = function onopen(event) {
+              ws = new Adapter(this.uri);
+              ws.on('message', function (message) {
+                onmessage(message);
+              });
+              ws.on('open', function () {
                 id = 0;
                 cbs = {};
                 self.connected = true;
                 self.emit('open');
-              };
-              var onclose = function onclose(event) {
+              });
+              ws.on('error', function (event) {
+                doc.emit('error', event);
+              });
+              ws.on('close', function (event) {
                 self.connected = false;
                 ws = null;
                 self.emit('close', event);
@@ -247,19 +303,12 @@ var fnclient = function fnclient(fnCreateWS) {
                     self.connect();
                   }, self.reconnectionDelay);
                 }
-              };
-              var onerror = function onerror(event) {
-                doc.emit('error', event);
-              };
-              ws = fnCreateWS(this.uri, onmessage);
-              ws.onopen = onopen;
-              ws.onerror = onerror;
-              ws.onclose = onclose;
+              });
             };
             doc.connect();
             return _context2.abrupt('return', doc);
 
-          case 21:
+          case 22:
           case 'end':
             return _context2.stop();
         }

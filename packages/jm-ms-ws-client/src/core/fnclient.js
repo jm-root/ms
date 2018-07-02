@@ -9,8 +9,9 @@ const defaultPort = 3100
 const defaultUri = 'ws://localhost:' + defaultPort
 let errNetwork = error.err(Err.FA_NETWORK)
 
-let fnclient = function (fnCreateWS) {
+let fnclient = function (_Adapter) {
   return async function (opts = {}) {
+    let Adapter = opts.Adapter || _Adapter
     let doc = null
     let uri = opts.uri || defaultUri
     let timeout = opts.timeout || 0
@@ -109,13 +110,20 @@ let fnclient = function (fnCreateWS) {
       this.autoReconnect = autoReconnect
       doc.emit('connect')
       let self = doc
-      let onopen = function (event) {
+      ws = new Adapter(this.uri)
+      ws.on('message', message => {
+        onmessage(message)
+      })
+      ws.on('open', () => {
         id = 0
         cbs = {}
         self.connected = true
         self.emit('open')
-      }
-      let onclose = function (event) {
+      })
+      ws.on('error', event => {
+        doc.emit('error', event)
+      })
+      ws.on('close', event => {
         self.connected = false
         ws = null
         self.emit('close', event)
@@ -131,14 +139,7 @@ let fnclient = function (fnCreateWS) {
             self.connect()
           }, self.reconnectionDelay)
         }
-      }
-      let onerror = function (event) {
-        doc.emit('error', event)
-      }
-      ws = fnCreateWS(this.uri, onmessage)
-      ws.onopen = onopen
-      ws.onerror = onerror
-      ws.onclose = onclose
+      })
     }
     doc.connect()
     return doc
