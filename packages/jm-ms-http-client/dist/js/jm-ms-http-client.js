@@ -9,39 +9,17 @@ var _fly = require('flyio/dist/npm/fly');
 
 var _fly2 = _interopRequireDefault(_fly);
 
-var _fnclient = require('../core/fnclient');
-
-var _fnclient2 = _interopRequireDefault(_fnclient);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var fly = new _fly2.default();
-var client = (0, _fnclient2.default)(fly);
-
-exports.default = client;
-module.exports = exports['default'];
-},{"../core/fnclient":3,"flyio/dist/npm/fly":5}],2:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _client = require('./client');
-
-var _client2 = _interopRequireDefault(_client);
-
-var _mdl = require('../core/mdl');
+var _mdl = require('../mdl');
 
 var _mdl2 = _interopRequireDefault(_mdl);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var $ = (0, _mdl2.default)(_client2.default);
-$.client = _client2.default;
+var fly = new _fly2.default();
+var $ = (0, _mdl2.default)(fly);
 exports.default = $;
 module.exports = exports['default'];
-},{"../core/mdl":4,"./client":1}],3:[function(require,module,exports){
+},{"../mdl":3,"flyio/dist/npm/fly":4}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -175,7 +153,7 @@ var fnclient = function fnclient(_adapter) {
 
 exports.default = fnclient;
 module.exports = exports['default'];
-},{"jm-event":6,"jm-ms-core/lib/utils":7}],4:[function(require,module,exports){
+},{"jm-event":5,"jm-ms-core/lib/utils":6}],3:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -183,7 +161,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-exports.default = function (client) {
+exports.default = function (adapter) {
+  var client = (0, _fnclient2.default)(adapter);
   var $ = function $() {
     var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'ms-http-client';
 
@@ -208,12 +187,19 @@ exports.default = function (client) {
     }
   }
 
+  $.client = client;
   return $;
 };
 
+var _fnclient = require('./fnclient');
+
+var _fnclient2 = _interopRequireDefault(_fnclient);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 module.exports = exports['default'];
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],5:[function(require,module,exports){
+},{"./fnclient":2}],4:[function(require,module,exports){
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -722,7 +708,7 @@ module.exports = Fly;
 /***/ })
 /******/ ]);
 });
-},{}],6:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -993,7 +979,7 @@ if (typeof global !== 'undefined' && global) {
 exports.default = $;
 module.exports = exports['default'];
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],7:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1097,4 +1083,4 @@ var utils = {
 
 exports.default = utils;
 module.exports = exports['default'];
-},{}]},{},[2])
+},{}]},{},[1])

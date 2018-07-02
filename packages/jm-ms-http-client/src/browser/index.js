@@ -1,6 +1,6 @@
-import client from './client'
-import mdl from '../core/mdl'
+import Fly from 'flyio/dist/npm/fly'
+import mdl from '../mdl'
 
-let $ = mdl(client)
-$.client = client
+let fly = new Fly()
+let $ = mdl(fly)
 export default $

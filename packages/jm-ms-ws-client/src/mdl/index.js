@@ -1,4 +1,7 @@
-export default function (client) {
+import fnclient from './fnclient'
+
+export default function (Adapter) {
+  let client = fnclient(Adapter)
   let $ = function (name = 'ms-ws-client') {
     let app = this
     app.clientModules.ws = client
@@ -19,5 +22,6 @@ export default function (client) {
     }
   }
 
+  $.client = client
   return $
 }

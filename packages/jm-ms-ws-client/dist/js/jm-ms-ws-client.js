@@ -5,41 +5,20 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _fnclient = require('../core/fnclient');
-
-var _fnclient2 = _interopRequireDefault(_fnclient);
-
 var _ws = require('./ws');
 
 var _ws2 = _interopRequireDefault(_ws);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var client = (0, _fnclient2.default)(_ws2.default);
-exports.default = client;
-module.exports = exports['default'];
-},{"../core/fnclient":4,"./ws":3}],2:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _client = require('./client');
-
-var _client2 = _interopRequireDefault(_client);
-
-var _mdl = require('../core/mdl');
+var _mdl = require('../mdl');
 
 var _mdl2 = _interopRequireDefault(_mdl);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var $ = (0, _mdl2.default)(_client2.default);
-$.client = _client2.default;
+var $ = (0, _mdl2.default)(_ws2.default);
 exports.default = $;
 module.exports = exports['default'];
-},{"../core/mdl":5,"./client":1}],3:[function(require,module,exports){
+},{"../mdl":4,"./ws":2}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -104,7 +83,7 @@ var Adapter = function () {
 
 exports.default = Adapter;
 module.exports = exports['default'];
-},{"jm-err":6,"jm-event":9}],4:[function(require,module,exports){
+},{"jm-err":5,"jm-event":8}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -319,7 +298,7 @@ var fnclient = function fnclient(_Adapter) {
 
 exports.default = fnclient;
 module.exports = exports['default'];
-},{"jm-err":6,"jm-event":9,"jm-ms-core/lib/utils":10}],5:[function(require,module,exports){
+},{"jm-err":5,"jm-event":8,"jm-ms-core/lib/utils":9}],4:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -327,7 +306,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-exports.default = function (client) {
+exports.default = function (Adapter) {
+  var client = (0, _fnclient2.default)(Adapter);
   var $ = function $() {
     var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'ms-ws-client';
 
@@ -350,12 +330,19 @@ exports.default = function (client) {
     }
   }
 
+  $.client = client;
   return $;
 };
 
+var _fnclient = require('./fnclient');
+
+var _fnclient2 = _interopRequireDefault(_fnclient);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 module.exports = exports['default'];
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],6:[function(require,module,exports){
+},{"./fnclient":3}],5:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -561,7 +548,7 @@ if (typeof global !== 'undefined' && global) {
 exports.default = $;
 module.exports = exports['default'];
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./locale":7}],7:[function(require,module,exports){
+},{"./locale":6}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -590,7 +577,7 @@ var lngs = {
    */
 };;
 module.exports = exports['default'];
-},{"./zh_CN":8}],8:[function(require,module,exports){
+},{"./zh_CN":7}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -617,7 +604,7 @@ exports.default = {
   'Service Unavailable': '无效服务'
 };
 module.exports = exports['default'];
-},{}],9:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -888,7 +875,7 @@ if (typeof global !== 'undefined' && global) {
 exports.default = $;
 module.exports = exports['default'];
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],10:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -992,4 +979,4 @@ var utils = {
 
 exports.default = utils;
 module.exports = exports['default'];
-},{}]},{},[2])
+},{}]},{},[1])

@@ -1,6 +1,5 @@
-import client from './client'
-import mdl from './core/mdl'
+import Adapter from './ws'
+import mdl from './mdl'
 
-let $ = mdl(client)
-$.client = client
+let $ = mdl(Adapter)
 export default $

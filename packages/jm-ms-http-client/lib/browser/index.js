@@ -4,17 +4,17 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _client = require('./client');
+var _fly = require('flyio/dist/npm/fly');
 
-var _client2 = _interopRequireDefault(_client);
+var _fly2 = _interopRequireDefault(_fly);
 
-var _mdl = require('../core/mdl');
+var _mdl = require('../mdl');
 
 var _mdl2 = _interopRequireDefault(_mdl);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var $ = (0, _mdl2.default)(_client2.default);
-$.client = _client2.default;
+var fly = new _fly2.default();
+var $ = (0, _mdl2.default)(fly);
 exports.default = $;
 module.exports = exports['default'];

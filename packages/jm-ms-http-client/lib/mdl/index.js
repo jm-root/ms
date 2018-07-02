@@ -4,7 +4,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-exports.default = function (client) {
+exports.default = function (adapter) {
+  var client = (0, _fnclient2.default)(adapter);
   var $ = function $() {
     var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'ms-http-client';
 
@@ -29,7 +30,14 @@ exports.default = function (client) {
     }
   }
 
+  $.client = client;
   return $;
 };
+
+var _fnclient = require('./fnclient');
+
+var _fnclient2 = _interopRequireDefault(_fnclient);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 module.exports = exports['default'];

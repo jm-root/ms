@@ -1,4 +1,7 @@
-export default function (client) {
+import fnclient from './fnclient'
+
+export default function (adapter) {
+  let client = fnclient(adapter)
   let $ = function (name = 'ms-http-client') {
     let app = this
     app.clientModules.http = client
@@ -21,5 +24,6 @@ export default function (client) {
     }
   }
 
+  $.client = client
   return $
 }
