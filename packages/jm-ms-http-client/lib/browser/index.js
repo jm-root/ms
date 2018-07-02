@@ -8,12 +8,13 @@ var _client = require('./client');
 
 var _client2 = _interopRequireDefault(_client);
 
-var _module2 = require('../module');
+var _mdl = require('../mdl');
 
-var _module3 = _interopRequireDefault(_module2);
+var _mdl2 = _interopRequireDefault(_mdl);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var $ = (0, _module3.default)(_client2.default);
+var $ = (0, _mdl2.default)(_client2.default);
+$.client = _client2.default;
 exports.default = $;
-_module3.default.exports = exports['default'];
+module.exports = exports['default'];

@@ -12,6 +12,19 @@ describe('client', () => {
     expect(doc).toBeTruthy()
   })
 
+  test('client with $', async () => {
+    let $$ = {
+      async get (opts) {
+        return {data: opts}
+      }
+    }
+    let $ = await client({uri: 'http://api.test.jamma.cn', $: $$})
+    await $.onReady()
+    let doc = await $.request('/')
+    console.log(doc)
+    expect(doc).toBeTruthy()
+  })
+
   test('module', async () => {
     ms.use(mdl)
     let $ = await ms.client({uri: 'http://api.test.jamma.cn'})

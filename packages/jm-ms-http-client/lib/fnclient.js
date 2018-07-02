@@ -20,13 +20,14 @@ var defaultPort = 3000;
 var defaultUri = 'http://localhost:' + defaultPort;
 
 var fnclient = function fnclient($) {
-  return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+  return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
     var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     var uri, timeout, doc;
-    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+    return regeneratorRuntime.wrap(function _callee3$(_context3) {
       while (1) {
-        switch (_context2.prev = _context2.next) {
+        switch (_context3.prev = _context3.next) {
           case 0:
+            opts.$ && ($ = opts.$);
             uri = opts.uri || defaultUri;
             timeout = opts.timeout || 0;
             doc = {
@@ -37,7 +38,7 @@ var fnclient = function fnclient($) {
                       noHeaders,
                       _opts,
                       url,
-                      doc,
+                      _doc,
                       _args = arguments;
 
                   return regeneratorRuntime.wrap(function _callee$(_context) {
@@ -64,19 +65,27 @@ var fnclient = function fnclient($) {
                             headers: headers
                           };
                           url = uri + opts.uri;
-                          _context.next = 11;
+                          _context.prev = 9;
+                          _context.next = 12;
                           return $[type](url, opts.data, _opts);
 
-                        case 11:
-                          doc = _context.sent;
-                          return _context.abrupt('return', doc);
+                        case 12:
+                          _doc = _context.sent;
+                          return _context.abrupt('return', _doc.data);
 
-                        case 13:
+                        case 16:
+                          _context.prev = 16;
+                          _context.t0 = _context['catch'](9);
+
+                          _context.t0.response && _context.t0.response.data && (_context.t0.data = _context.t0.response.data);
+                          throw _context.t0;
+
+                        case 20:
                         case 'end':
                           return _context.stop();
                       }
                     }
-                  }, _callee, this);
+                  }, _callee, this, [[9, 16]]);
                 }));
 
                 function request(_x2) {
@@ -84,21 +93,40 @@ var fnclient = function fnclient($) {
                 }
 
                 return request;
+              }(),
+              onReady: function () {
+                var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+                  return regeneratorRuntime.wrap(function _callee2$(_context2) {
+                    while (1) {
+                      switch (_context2.prev = _context2.next) {
+                        case 0:
+                          return _context2.abrupt('return', true);
+
+                        case 1:
+                        case 'end':
+                          return _context2.stop();
+                      }
+                    }
+                  }, _callee2, this);
+                }));
+
+                function onReady() {
+                  return _ref3.apply(this, arguments);
+                }
+
+                return onReady;
               }()
             };
 
             _jmEvent2.default.enableEvent(doc);
-            setTimeout(function () {
-              doc.emit('open');
-            }, 1);
-            return _context2.abrupt('return', doc);
+            return _context3.abrupt('return', doc);
 
           case 6:
           case 'end':
-            return _context2.stop();
+            return _context3.stop();
         }
       }
-    }, _callee2, this);
+    }, _callee3, this);
   }));
 };
 

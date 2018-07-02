@@ -20,7 +20,6 @@ exports.default = function (client) {
       }
     };
   };
-  $.client = client;
 
   if (typeof global !== 'undefined' && global) {
     global.jm || (global.jm = {});

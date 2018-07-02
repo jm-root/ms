@@ -6,6 +6,7 @@ const defaultUri = 'http://localhost:' + defaultPort
 
 let fnclient = function ($) {
   return async function (opts = {}) {
+    opts.$ && ($ = opts.$)
     let uri = opts.uri || defaultUri
     let timeout = opts.timeout || 0
 
