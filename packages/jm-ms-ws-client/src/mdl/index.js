@@ -5,11 +5,13 @@ export default function (Adapter) {
   let $ = function (name = 'ms-ws-client') {
     let app = this
     app.clientModules.ws = client
+    app.clientModules.wss = client
 
     return {
       name: name,
       unuse: () => {
         delete app.clientModules.ws
+        delete app.clientModules.wss
       }
     }
   }

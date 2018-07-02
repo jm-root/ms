@@ -34,8 +34,6 @@ var Adapter = function () {
     var ws = new _ws2.default(uri);
     this.ws = ws;
     ws.on('message', function (data, flags) {
-      // flags.binary will be set if a binary data is received.
-      // flags.masked will be set if the data was masked.
       self.emit('message', data);
     });
     ws.onopen = function () {

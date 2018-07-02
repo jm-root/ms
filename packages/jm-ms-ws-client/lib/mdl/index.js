@@ -11,11 +11,13 @@ exports.default = function (Adapter) {
 
     var app = this;
     app.clientModules.ws = client;
+    app.clientModules.wss = client;
 
     return {
       name: name,
       unuse: function unuse() {
         delete app.clientModules.ws;
+        delete app.clientModules.wss;
       }
     };
   };
