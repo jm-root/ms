@@ -1,6 +1,6 @@
 {
   "name": "jm-ms-ws-client",
-  "version": "2.0.0",
+  "version": "2.0.1-0",
   "description": "websocket client plugin for jm-ms-core",
   "main": "./lib/index",
   "scripts": {
@@ -51,9 +51,9 @@
     "gulp-sequence": "^0.4.6",
     "gulp-uglify": "^3.0.0",
     "gulp-util": "^3.0.8",
-    "jm-log4js": "^1.1.0",
-    "jm-ms-core": "^2.0.0",
     "jest": "^23.1.0",
+    "jm-log4js": "^1.1.0",
+    "jm-ms-core": "^2.0.1-0",
     "jshint": "^2.9.4"
   }
 }
