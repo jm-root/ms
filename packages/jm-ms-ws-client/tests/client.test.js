@@ -1,18 +1,23 @@
-let expect = chai.expect;
-import client from '../src/client';
+let mdl = require('../src')
+let client = mdl.client
+let MS = require('jm-ms-core')
+let ms = new MS()
 
 describe('client', () => {
-    test('client', () => {
-        client({
-            uri: 'ws://localhost:3100',
-        }, function (err, doc) {
-            if(err) console.error(err.stack);
-            expect(doc).to.be.an('object');
-            doc.on('open', function () {
-                doc.request('/', function (err, doc) {
-                    console.log(doc);
-                });
-            });
-        });
-    });
-});
+  test('client', async () => {
+    let $ = await client({uri: 'ws://gateway.test.jamma.cn'})
+    await $.onReady()
+    let doc = await $.request('/sso')
+    console.log(doc)
+    expect(doc).toBeTruthy()
+  })
+
+  test('module', async () => {
+    ms.use(mdl)
+    let $ = await ms.client({uri: 'ws://gateway.test.jamma.cn'})
+    await $.onReady()
+    let doc = await $.request('/sso')
+    console.log(doc)
+    expect(doc).toBeTruthy()
+  })
+})

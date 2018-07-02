@@ -10,8 +10,7 @@ const defaultUri = 'ws://localhost:' + defaultPort
 let errNetwork = error.err(Err.FA_NETWORK)
 
 let fnclient = function (fnCreateWS) {
-  return function (opts = {}, cb = null) {
-    let err = null
+  return async function (opts = {}) {
     let doc = null
     let uri = opts.uri || defaultUri
     let timeout = opts.timeout || 0
@@ -37,22 +36,33 @@ let fnclient = function (fnCreateWS) {
       reconnectionDelay: reconnectionDelay,
       maxReconnectAttempts: maxReconnectAttempts,
 
-      request: function (opts, cb) {
-        let r = utils.preRequest.apply(this, arguments)
-        opts = r.opts
-        cb = r.cb
-        if (!this.connected) return cb(errNetwork, Err.FA_NETWORK)
+      onReady: function () {
+        let self = this
+        return new Promise(function (resolve, reject) {
+          if (self.connected) return resolve(self.connected)
+          self.on('open', function () {
+            resolve(self.connected)
+          })
+        })
+      },
+
+      async request (opts) {
+        opts = utils.preRequest.apply(this, arguments)
+        if (!this.connected) throw errNetwork
         opts.uri = this.prefix + (opts.uri || '')
-        if (cb) {
-          if (id >= MAXID) id = 0
-          id++
-          cbs[id] = cb
-          opts.id = id
-        }
+        if (id >= MAXID) id = 0
+        id++
+        opts.id = id
         ws.send(JSON.stringify(opts))
+        return new Promise((resolve, reject) => {
+          cbs[id] = {
+            resolve,
+            reject
+          }
+        })
       },
       send: function () {
-        if (!this.connected) return
+        if (!this.connected) throw errNetwork
         ws.send.apply(ws, arguments)
       },
       close: function () {
@@ -79,12 +89,15 @@ let fnclient = function (fnCreateWS) {
       }
       if (json.id) {
         if (cbs[json.id]) {
+          let p = cbs[json.id]
           let err = null
           let doc = json.data
           if (doc.err) {
             err = new Error(doc.msg)
+            p.reject(err)
+          } else {
+            p.resolve(doc)
           }
-          cbs[json.id](err, doc)
           delete cbs[json.id]
         }
       }
@@ -127,9 +140,8 @@ let fnclient = function (fnCreateWS) {
       ws.onerror = onerror
       ws.onclose = onclose
     }
-
-    if (cb) cb(err, doc)
     doc.connect()
+    return doc
   }
 }
 
