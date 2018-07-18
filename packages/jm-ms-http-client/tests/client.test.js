@@ -4,7 +4,7 @@ const MS = require('jm-ms-core')
 const client = mdl.client
 const ms = new MS()
 const uri = 'http://gateway.test.jamma.cn'
-describe('client', () => {
+describe('client', async () => {
   test('client', async () => {
     let $ = await client({uri})
     await $.onReady()

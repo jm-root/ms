@@ -5,7 +5,7 @@ const ms = new MS()
 const client = mdl.client
 const uri = 'ws://gateway.test.jamma.cn'
 
-describe('client', () => {
+describe('client', async () => {
   test('client', async () => {
     let $ = await client({uri})
     await $.onReady()
