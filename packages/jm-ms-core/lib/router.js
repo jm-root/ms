@@ -239,6 +239,10 @@ class Router {
     return doc
   }
 
+  notify (opts) {
+    this.request.apply(this, arguments)
+  }
+
   async execute (opts) {
     let self = this
     let routes = self.routes

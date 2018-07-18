@@ -114,6 +114,18 @@ describe('router', () => {
 
   })
 
+  test('notify', async () => {
+    o
+      .clear()
+      // * add({uri:uri, type:type, fn:fn})
+      .add({
+        uri: '/t1',
+        type: 'get',
+        fn: handle
+      })
+      .notify('/t1', 'get')
+  })
+
   test('use', () => {
     let uri = '/test'
     let fn = handle
