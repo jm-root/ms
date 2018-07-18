@@ -1,14 +1,8 @@
-'use strict';
+let ERRCODE = 900
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var ERRCODE = 900;
-
-exports.default = {
+module.exports = {
   FA_INVALID_TYPE: {
     err: ERRCODE++,
     msg: 'invalid type'
   }
-};
-module.exports = exports['default'];
+}

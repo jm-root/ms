@@ -4,11 +4,15 @@ ms core
 MicroService core lib
 
 设计目标
-1, 支持uri匹配
-2, 支持函数链
+- 支持uri匹配
+- 支持函数链
+- proxy
+- client
+- server
 
+## Route
 
-### Matcher
+## Matcher
 
 匹配器，用于更换匹配规则
 
@@ -26,3 +30,4 @@ MicroService core lib
 
 ### notify
 
+## Root

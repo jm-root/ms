@@ -1,4 +1,4 @@
-const Route = require('../src')
+const Route = require('../lib')
 
 let fn = (opts = {}) => {
   opts.sex = 1

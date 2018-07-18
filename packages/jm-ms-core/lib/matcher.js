@@ -1,23 +1,9 @@
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _pathToRegexp = require('path-to-regexp');
-
-var _pathToRegexp2 = _interopRequireDefault(_pathToRegexp);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+const pathtoRegexp = require('path-to-regexp')
 
 /**
  * Class representing a matcher.
  */
-var Matcher = function () {
+class Matcher {
   /**
    * create a matcher.
    * @param {Object} opts
@@ -30,25 +16,21 @@ var Matcher = function () {
    *  end: When false the path will match at the beginning. (default: true)
    * }
    */
-  function Matcher() {
-    var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  constructor (opts = {}) {
+    let uri = opts.uri || '/'
+    let type = opts.type
+    type && (type = type.toLowerCase())
+    this.type = type
+    this.keys = []
 
-    _classCallCheck(this, Matcher);
-
-    var uri = opts.uri || '/';
-    var type = opts.type;
-    type && (type = type.toLowerCase());
-    this.type = type;
-    this.keys = [];
-
-    this.regexp = (0, _pathToRegexp2.default)(uri, this.keys, opts);
+    this.regexp = pathtoRegexp(uri, this.keys, opts)
 
     if (uri === '/' && opts.end === false) {
-      this.fast_slash = true;
+      this.fast_slash = true
     }
 
     if (type === undefined) {
-      this.allType = true;
+      this.allType = true
     }
   }
 
@@ -60,55 +42,45 @@ var Matcher = function () {
    * @return {Object}
    * @api private
    */
+  match (opts = {}) {
+    let params
+    let uri = opts.uri
 
+    let type = opts.type
+    type && (type = type.toLowerCase())
 
-  _createClass(Matcher, [{
-    key: 'match',
-    value: function match() {
-      var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    if (type !== this.type && !this.allType) return false
+    if (uri === null || uri === undefined) return false
 
-      var params = void 0;
-      var uri = opts.uri;
-
-      var type = opts.type;
-      type && (type = type.toLowerCase());
-
-      if (type !== this.type && !this.allType) return false;
-      if (uri === null || uri === undefined) return false;
-
-      if (this.fast_slash) {
-        // fast uri non-ending match for / (everything matches)
-        params = {};
-        uri = '';
-        return {
-          params: params,
-          uri: uri
-        };
-      }
-
-      var m = this.regexp.exec(uri);
-
-      if (!m) return false;
-
-      // store values
-      params = {};
-      uri = m[0];
-      var keys = this.keys;
-      for (var i = 1; i < m.length; i++) {
-        var key = keys[i - 1];
-        var prop = key.name;
-        params[prop] = m[i];
-      }
-
+    if (this.fast_slash) {
+      // fast uri non-ending match for / (everything matches)
+      params = {}
+      uri = ''
       return {
-        params: params,
-        uri: uri
-      };
+        params,
+        uri
+      }
     }
-  }]);
 
-  return Matcher;
-}();
+    let m = this.regexp.exec(uri)
 
-exports.default = Matcher;
-module.exports = exports['default'];
+    if (!m) return false
+
+    // store values
+    params = {}
+    uri = m[0]
+    let keys = this.keys
+    for (let i = 1; i < m.length; i++) {
+      let key = keys[i - 1]
+      let prop = key.name
+      params[prop] = m[i]
+    }
+
+    return {
+      params,
+      uri
+    }
+  }
+}
+
+module.exports = Matcher

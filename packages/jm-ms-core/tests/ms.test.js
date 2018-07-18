@@ -1,5 +1,5 @@
-const MS = require('../src')
-const utils = require('../src/utils')
+const MS = require('../lib')
+const utils = require('../lib/utils')
 
 let handle = opts => {
   return opts

@@ -1,43 +1,21 @@
-'use strict';
+const fnclient = require('./fnclient')
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports.default = function (Adapter) {
-  var client = (0, _fnclient2.default)(Adapter);
-  var $ = function $() {
-    var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'ms-ws-client';
-
-    var app = this;
-    app.clientModules.ws = client;
-    app.clientModules.wss = client;
+module.exports = function (Adapter) {
+  let client = fnclient(Adapter)
+  let $ = function (name = 'ms-ws-client') {
+    let app = this
+    app.clientModules.ws = client
+    app.clientModules.wss = client
 
     return {
       name: name,
-      unuse: function unuse() {
-        delete app.clientModules.ws;
-        delete app.clientModules.wss;
+      unuse: () => {
+        delete app.clientModules.ws
+        delete app.clientModules.wss
       }
-    };
-  };
-
-  if (typeof global !== 'undefined' && global) {
-    global.jm || (global.jm = {});
-    var jm = global.jm;
-    if (jm.ms) {
-      jm.ms.root.use($);
     }
   }
 
-  $.client = client;
-  return $;
-};
-
-var _fnclient = require('./fnclient');
-
-var _fnclient2 = _interopRequireDefault(_fnclient);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-module.exports = exports['default'];
+  $.client = client
+  return $
+}

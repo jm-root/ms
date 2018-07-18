@@ -24,23 +24,40 @@ async function fn2(opts={}){
 }
 ```
 
-## 函数组合 compose
-
-多个函数可以组合成一个函数
-
-```
-function fn1(opts={}){
-}
-
-async function fn2(opts={}){
-}
-
-let fn = compose(fn1, fn2)
-```
-
-
 ## 路由 Route
+
+### 构造函数
+
+接收一个或者多个函数作为参数
+
+```
+new Route(fn)
+
+new Route([fn1, fn2]])
+
+new Route(fn1, fn2)
+
+```
 
 ### async function execute(opts={})
 
 路由执行
+
+顺序执行route中的函数，如果任一函数有返回值，则中断执行过程，并返回该值
+
+```
+let fn = () => {
+    return {ret: 1}
+}
+
+let route = new Route(fn)
+
+// async
+let doc = await route.execute()
+
+// 或者
+route.execute()
+    .then(doc=>{})
+    .catch(e=>{})
+
+```

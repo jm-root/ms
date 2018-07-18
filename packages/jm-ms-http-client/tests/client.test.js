@@ -1,13 +1,14 @@
-let mdl = require('../src')
-let client = mdl.client
-let MS = require('jm-ms-core')
-let ms = new MS()
+const mdl = require('../lib')
+const MS = require('jm-ms-core')
 
+const client = mdl.client
+const ms = new MS()
+const uri = 'http://gateway.test.jamma.cn'
 describe('client', () => {
   test('client', async () => {
-    let $ = await client({uri: 'http://gateway.test.jamma.cn'})
+    let $ = await client({uri})
     await $.onReady()
-    let doc = await $.request('/acl')
+    let doc = await $.request('/config')
     console.log(doc)
     expect(doc).toBeTruthy()
   })
@@ -18,18 +19,18 @@ describe('client', () => {
         return {data: data}
       }
     }
-    let $ = await client({uri: 'http://gateway.test.jamma.cn', adapter})
+    let $ = await client({uri, adapter})
     await $.onReady()
-    let doc = await $.request('/acl', {name: 'jeff'})
+    let doc = await $.request('/config', {name: 'jeff'})
     console.log(doc)
     expect(doc).toBeTruthy()
   })
 
   test('module', async () => {
     ms.use(mdl)
-    let $ = await ms.client({uri: 'http://gateway.test.jamma.cn'})
+    let $ = await ms.client({uri})
     await $.onReady()
-    let doc = await $.request('/acl')
+    let doc = await $.request('/config')
     console.log(doc)
     expect(doc).toBeTruthy()
   })

@@ -1,22 +1,24 @@
-let mdl = require('../src')
-let client = mdl.client
-let MS = require('jm-ms-core')
-let ms = new MS()
+const mdl = require('../lib')
+const MS = require('jm-ms-core')
+
+const ms = new MS()
+const client = mdl.client
+const uri = 'ws://gateway.test.jamma.cn'
 
 describe('client', () => {
   test('client', async () => {
-    let $ = await client({uri: 'ws://gateway.test.jamma.cn'})
+    let $ = await client({uri})
     await $.onReady()
-    let doc = await $.request('/acl')
+    let doc = await $.request('/config')
     console.log(doc)
     expect(doc).toBeTruthy()
   })
 
   test('module', async () => {
     ms.use(mdl)
-    let $ = await ms.client({uri: 'ws://gateway.test.jamma.cn'})
+    let $ = await ms.client({uri})
     await $.onReady()
-    let doc = await $.request('/acl')
+    let doc = await $.request('/config')
     console.log(doc)
     expect(doc).toBeTruthy()
   })

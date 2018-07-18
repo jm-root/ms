@@ -2,7 +2,4 @@
 .idea
 .svn
 bench
-docs
-examples
-src
 tests

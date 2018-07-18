@@ -1,4 +1,4 @@
-const Matcher = require('../src/matcher')
+const Matcher = require('../lib/matcher')
 
 describe('matcher', () => {
   test('Matcher', () => {

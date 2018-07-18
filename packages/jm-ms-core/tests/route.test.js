@@ -1,4 +1,4 @@
-const Route = require('../src/route')
+const Route = require('../lib/route')
 
 let handle1 = async (opts = {}) => {
   opts.name = 'jeff'

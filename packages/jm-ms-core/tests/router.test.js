@@ -1,4 +1,4 @@
-const Router = require('../src/router')
+const Router = require('../lib/router')
 
 let handle1 = (opts) => {
   console.log('handle1: %j', opts)
