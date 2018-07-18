@@ -14,6 +14,7 @@ class Root {
    */
   constructor () {
     mdl.enableModule(this)
+    event.enableEvent(this)
     this.utils = utils
     this.clientModules = {}
     this.serverModules = {}
