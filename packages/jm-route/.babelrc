@@ -3,6 +3,7 @@
     "env"
   ],
   "plugins": [
+    "transform-runtime",
     "add-module-exports"
   ]
 }

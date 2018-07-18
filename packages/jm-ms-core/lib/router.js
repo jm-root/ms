@@ -46,22 +46,18 @@ var Router = function () {
    * @param {Object} opts 参数
    * @example
    * opts参数:{
-   *  mergeParams: 是否合并参数(可选)
    *  sensitive: 是否大小写敏感(可选)
    *  strict: 是否检查末尾的分隔符(可选)
    * }
    */
   function Router() {
-    var _this = this;
-
     var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
     _classCallCheck(this, Router);
 
     this._routes = [];
-    ['mergeParams', 'sensitive', 'strict'].forEach(function (key) {
-      opts[key] && (_this[key] = opts[key]);
-    });
+    this.sensitive = opts.sensitive;
+    this.strict = opts.strict;
     // alias methods
     _utils2.default.enableType(this, ['get', 'post', 'put', 'delete']);
     _jmEvent2.default.enableEvent(this);
@@ -107,11 +103,7 @@ var Router = function () {
       }
 
       this.emit('add', opts);
-      var o = {};
-      for (var key in opts) {
-        o[key] = opts[key];
-      }
-      if (o.mergeParams === undefined) o.mergeParams = this.mergeParams;
+      var o = Object.assign({}, opts);
       if (o.sensitive === undefined) o.sensitive = this.sensitive;
       if (o.strict === undefined) o.strict = this.strict;
       this._routes.push(new _route2.default(o));
@@ -170,7 +162,7 @@ var Router = function () {
      * @example
      * opts参数:{
      *  uri: 接口路径(可选)
-     *  fn: 接口处理函数 router实例 或者 function(opts, cb){}(支持函数数组) 或者含有request或handle函数的对象(必填)
+     *  fn: 接口处理函数 router实例 或者 function(opts){}(支持函数数组) 或者含有request或execute函数的对象(必填)
      * }
      * @return {Router} for chaining
      */
@@ -182,7 +174,7 @@ var Router = function () {
 
       var err = null;
       var doc = null;
-      if (opts && opts instanceof Router) {
+      if (opts && (typeof opts === 'undefined' ? 'undefined' : _typeof(opts)) === 'object' && !opts.fn) {
         opts = {
           fn: opts
         };
@@ -196,19 +188,15 @@ var Router = function () {
       this.emit('use', opts);
       opts.strict = false;
       opts.end = false;
-      opts.uri = opts.uri || '/';
-      if (opts.fn instanceof Router) {
+      opts.uri || (opts.uri = '/');
+      if (_typeof(opts.fn) === 'object') {
         var router = opts.fn;
-        opts.router = router;
-        opts.fn = router.handle.bind(router);
-      } else if (_typeof(opts.fn) === 'object') {
-        var _router = opts.fn;
-        if (_router.request) {
-          opts.router = _router;
-          opts.fn = _router.request.bind(_router);
-        } else if (_router.handle) {
-          opts.router = _router;
-          opts.fn = _router.handle.bind(_router);
+        if (router.request) {
+          opts.router = router;
+          opts.fn = router.request.bind(router);
+        } else if (router.execute) {
+          opts.router = router;
+          opts.fn = router.execute.bind(router);
         }
       }
       return this._add(opts);
@@ -306,7 +294,7 @@ var Router = function () {
                   opts = _utils2.default.preRequest.apply(this, _args);
                 }
                 _context.next = 3;
-                return this.handle(opts);
+                return this.execute(opts);
 
               case 3:
                 doc = _context.sent;
@@ -336,7 +324,7 @@ var Router = function () {
       return request;
     }()
   }, {
-    key: 'handle',
+    key: 'execute',
     value: function () {
       var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(opts) {
         var self, routes, parentParams, parentUri, done, uri, i, len, route, match, doc, restore;
@@ -364,7 +352,7 @@ var Router = function () {
 
               case 9:
                 if (!(i < len)) {
-                  _context2.next = 36;
+                  _context2.next = 29;
                   break;
                 }
 
@@ -377,75 +365,63 @@ var Router = function () {
                   break;
                 }
 
-                return _context2.abrupt('continue', 33);
+                return _context2.abrupt('continue', 26);
 
               case 15:
-                match = route.match(opts.uri, opts.type);
+                match = route.match(opts);
 
                 if (match) {
                   _context2.next = 18;
                   break;
                 }
 
-                return _context2.abrupt('continue', 33);
+                return _context2.abrupt('continue', 26);
 
               case 18:
 
-                opts.params = Object.assign({}, parentParams, route.params);
+                opts.params = Object.assign({}, parentParams, match.params);
 
                 if (route.router) {
-                  opts.baseUri = parentUri + route.uri;
-                  opts.uri = opts.uri.replace(route.uri, '');
+                  opts.baseUri = parentUri + match.uri;
+                  opts.uri = opts.uri.replace(match.uri, '');
                 }
-                _context2.prev = 20;
-                _context2.next = 23;
-                return route.handle(opts);
+                _context2.next = 22;
+                return route.execute(opts);
 
-              case 23:
+              case 22:
                 doc = _context2.sent;
 
                 if (!(doc !== undefined)) {
-                  _context2.next = 27;
+                  _context2.next = 26;
                   break;
                 }
 
                 done();
                 return _context2.abrupt('return', doc);
 
-              case 27:
-                _context2.next = 33;
-                break;
-
-              case 29:
-                _context2.prev = 29;
-                _context2.t0 = _context2['catch'](20);
-
-                done();
-                throw _context2.t0;
-
-              case 33:
+              case 26:
                 i++;
                 _context2.next = 9;
                 break;
 
-              case 36:
+              case 29:
                 done();
 
                 // restore obj props after function
 
-              case 37:
+              case 30:
               case 'end':
                 return _context2.stop();
             }
           }
-        }, _callee2, this, [[20, 29]]);
+        }, _callee2, this);
       }));
 
-      function handle(_x5) {
+      function execute(_x5) {
         return _ref2.apply(this, arguments);
       }
 
-      return handle;
+      return execute;
     }()
   }, {
     key: 'routes',

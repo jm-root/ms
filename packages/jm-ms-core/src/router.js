@@ -18,16 +18,14 @@ class Router {
    * @param {Object} opts 参数
    * @example
    * opts参数:{
-   *  mergeParams: 是否合并参数(可选)
    *  sensitive: 是否大小写敏感(可选)
    *  strict: 是否检查末尾的分隔符(可选)
    * }
    */
   constructor (opts = {}) {
-    this._routes = [];
-    ['mergeParams', 'sensitive', 'strict'].forEach((key) => {
-      opts[key] && (this[key] = opts[key])
-    })
+    this._routes = []
+    this.sensitive = opts.sensitive
+    this.strict = opts.strict
     // alias methods
     utils.enableType(this, ['get', 'post', 'put', 'delete'])
     event.enableEvent(this)
@@ -68,11 +66,7 @@ class Router {
     }
 
     this.emit('add', opts)
-    let o = {}
-    for (let key in opts) {
-      o[key] = opts[key]
-    }
-    if (o.mergeParams === undefined) o.mergeParams = this.mergeParams
+    let o = Object.assign({}, opts)
     if (o.sensitive === undefined) o.sensitive = this.sensitive
     if (o.strict === undefined) o.strict = this.strict
     this._routes.push(new Route(o))
@@ -128,14 +122,14 @@ class Router {
    * @example
    * opts参数:{
    *  uri: 接口路径(可选)
-   *  fn: 接口处理函数 router实例 或者 function(opts, cb){}(支持函数数组) 或者含有request或handle函数的对象(必填)
+   *  fn: 接口处理函数 router实例 或者 function(opts){}(支持函数数组) 或者含有request或execute函数的对象(必填)
    * }
    * @return {Router} for chaining
    */
   _use (opts = {}) {
     let err = null
     let doc = null
-    if (opts && opts instanceof Router) {
+    if (opts && typeof opts === 'object' && !opts.fn) {
       opts = {
         fn: opts
       }
@@ -149,19 +143,15 @@ class Router {
     this.emit('use', opts)
     opts.strict = false
     opts.end = false
-    opts.uri = opts.uri || '/'
-    if (opts.fn instanceof Router) {
-      let router = opts.fn
-      opts.router = router
-      opts.fn = router.handle.bind(router)
-    } else if (typeof opts.fn === 'object') {
+    opts.uri || (opts.uri = '/')
+    if (typeof opts.fn === 'object') {
       let router = opts.fn
       if (router.request) {
         opts.router = router
         opts.fn = router.request.bind(router)
-      } else if (router.handle) {
+      } else if (router.execute) {
         opts.router = router
-        opts.fn = router.handle.bind(router)
+        opts.fn = router.execute.bind(router)
       }
     }
     return this._add(opts)
@@ -244,12 +234,12 @@ class Router {
     if (typeof opts !== 'object') {
       opts = utils.preRequest.apply(this, arguments)
     }
-    let doc = await this.handle(opts)
+    let doc = await this.execute(opts)
     if (doc === undefined) { throw errNotfound }
     return doc
   }
 
-  async handle (opts) {
+  async execute (opts) {
     let self = this
     let routes = self.routes
     let parentParams = opts.params
@@ -265,24 +255,19 @@ class Router {
       if (!route) {
         continue
       }
-      let match = route.match(opts.uri, opts.type)
+      let match = route.match(opts)
       if (!match) continue
 
-      opts.params = Object.assign({}, parentParams, route.params)
+      opts.params = Object.assign({}, parentParams, match.params)
 
       if (route.router) {
-        opts.baseUri = parentUri + route.uri
-        opts.uri = opts.uri.replace(route.uri, '')
+        opts.baseUri = parentUri + match.uri
+        opts.uri = opts.uri.replace(match.uri, '')
       }
-      try {
-        let doc = await route.handle(opts)
-        if (doc !== undefined) {
-          done()
-          return doc
-        }
-      } catch (e) {
+      let doc = await route.execute(opts)
+      if (doc !== undefined) {
         done()
-        throw e
+        return doc
       }
     }
     done()

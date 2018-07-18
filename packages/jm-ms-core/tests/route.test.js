@@ -26,46 +26,11 @@ describe('route', () => {
     expect(o).toBeTruthy()
   })
 
-  test('match', () => {
-    let o = new Route({
-      uri: '/',
-      fn: handle
-    })
-    expect(o.match()).not.toBeTruthy()
-    expect(o.uri === undefined && o.params === undefined).toBeTruthy()
-    expect(o.match('/')).toBeTruthy()
-    expect(o.uri === '/' && o.params).toBeTruthy()
-    expect(!o.match('/abc')).toBeTruthy()
-
-    o = new Route({
-      end: false,
-      fn: handle
-    })
-    expect(o.match()).not.toBeTruthy()
-    expect(o.uri === undefined && o.params === undefined).toBeTruthy()
-    expect(o.match('')).toBeTruthy()
-    expect(o.uri === '' && o.params).toBeTruthy()
-    expect(o.match('/')).toBeTruthy()
-    expect(o.uri === '' && o.params).toBeTruthy()
-    expect(o.match('/abc')).toBeTruthy()
-    expect(o.uri === '' && o.params).toBeTruthy()
-
-    o = new Route({
-      uri: '/',
-      fn: handle,
-      type: 'get'
-    })
-    expect(o.match('/', 'get')).toBeTruthy()
-    expect(o.uri === '/' && o.params).toBeTruthy()
-    expect(o.match('/abc')).not.toBeTruthy()
-    expect(o.uri === undefined && o.params === undefined).toBeTruthy()
-  })
-
   test('handle', async () => {
     let o = new Route({
       fn: handle
     })
-    let doc = await o.handle({})
+    let doc = await o.execute({})
     expect(doc.sex).toBeTruthy()
   })
 
@@ -73,7 +38,7 @@ describe('route', () => {
     let o = new Route({
       fn: [handle1, handle]
     })
-    let doc = await o.handle({})
+    let doc = await o.execute({})
     expect(doc.sex).toBeTruthy()
   })
 
@@ -83,7 +48,7 @@ describe('route', () => {
     })
     let t0 = Date.now()
     o
-      .handle({})
+      .execute({})
       .catch(e => {
         expect(e).toBeTruthy()
       })

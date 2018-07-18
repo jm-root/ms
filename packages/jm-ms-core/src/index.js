@@ -13,7 +13,6 @@ class Root {
    * create a root
    */
   constructor () {
-    error.enableErr(this)
     mdl.enableModule(this)
     this.utils = utils
     this.clientModules = {}
@@ -38,8 +37,7 @@ class Root {
      * @param {String} target
      * @param {boolean} changeOrigin 是否改变原始uri
      */
-    app.proxy = async function (uri, target, changeOrigin) {
-      let opts = uri
+    app.proxy = async function (uri = {}, target, changeOrigin) {
       if (typeof uri === 'string') {
         opts = {
           uri,
@@ -47,7 +45,6 @@ class Root {
           changeOrigin
         }
       }
-      opts || (opts = {})
       if (!opts.target) {
         let doc = error.Err.FA_PARAMS
         let err = error.err(doc)

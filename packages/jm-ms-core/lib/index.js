@@ -46,7 +46,6 @@ var Root = function () {
   function Root() {
     _classCallCheck(this, Root);
 
-    _jmErr2.default.enableErr(this);
     _jmModule2.default.enableModule(this);
     this.utils = _utils2.default;
     this.clientModules = {};
@@ -77,63 +76,57 @@ var Root = function () {
        * @param {String} target
        * @param {boolean} changeOrigin 是否改变原始uri
        */
-      app.proxy = function () {
-        var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(uri, target, changeOrigin) {
-          var opts, doc, err, client;
-          return regeneratorRuntime.wrap(function _callee$(_context) {
-            while (1) {
-              switch (_context.prev = _context.next) {
-                case 0:
-                  opts = uri;
+      app.proxy = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+        var uri = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        var target = arguments[1];
+        var changeOrigin = arguments[2];
+        var doc, err, client;
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                if (typeof uri === 'string') {
+                  opts = {
+                    uri: uri,
+                    target: target,
+                    changeOrigin: changeOrigin
+                  };
+                }
 
-                  if (typeof uri === 'string') {
-                    opts = {
-                      uri: uri,
-                      target: target,
-                      changeOrigin: changeOrigin
-                    };
-                  }
-                  opts || (opts = {});
+                if (opts.target) {
+                  _context.next = 5;
+                  break;
+                }
 
-                  if (opts.target) {
-                    _context.next = 7;
-                    break;
-                  }
+                doc = _jmErr2.default.Err.FA_PARAMS;
+                err = _jmErr2.default.err(doc);
+                throw err;
 
-                  doc = _jmErr2.default.Err.FA_PARAMS;
-                  err = _jmErr2.default.err(doc);
-                  throw err;
+              case 5:
+                this.emit('proxy', opts);
+                if (typeof opts.target === 'string') {
+                  opts.target = { uri: opts.target };
+                }
+                _context.next = 9;
+                return self.client(opts.target);
 
-                case 7:
-                  this.emit('proxy', opts);
-                  if (typeof opts.target === 'string') {
-                    opts.target = { uri: opts.target };
-                  }
-                  _context.next = 11;
-                  return self.client(opts.target);
-
-                case 11:
-                  client = _context.sent;
+              case 9:
+                client = _context.sent;
 
 
-                  if (opts.changeOrigin) {
-                    app.use(opts.uri, client.request.bind(client));
-                  } else {
-                    app.use(opts.uri, client);
-                  }
+                if (opts.changeOrigin) {
+                  app.use(opts.uri, client.request.bind(client));
+                } else {
+                  app.use(opts.uri, client);
+                }
 
-                case 13:
-                case 'end':
-                  return _context.stop();
-              }
+              case 11:
+              case 'end':
+                return _context.stop();
             }
-          }, _callee, this);
-        }));
-
-        return function (_x2, _x3, _x4) {
-          return _ref.apply(this, arguments);
-        };
-      }();
+          }
+        }, _callee, this);
+      }));
       return app;
     }
 
