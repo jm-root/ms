@@ -1,0 +1,34 @@
+{
+  "name": "jm-ms-ws-server",
+  "version": "2.0.0",
+  "description": "ws server plugin for jm-ms-core",
+  "main": "./lib/index",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jm-root/ms.git"
+  },
+  "keywords": [
+    "javascript",
+    "jm-ms-ws-server"
+  ],
+  "author": {
+    "name": "Jeff YU"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jm-root/ms/issues"
+  },
+  "homepage": "https://github.com/jm-root/ms",
+  "dependencies": {
+    "jm-ms-core": "^2.0.1-3",
+    "lodash": "^4.17.4",
+    "proxy-addr": "^2.0.3",
+    "ws": "^2.3.1"
+  },
+  "devDependencies": {
+    "jest": "^23.1.0"
+  }
+}
