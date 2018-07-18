@@ -239,8 +239,8 @@ class Router {
     return doc
   }
 
-  notify (opts) {
-    this.request.apply(this, arguments)
+  async notify (opts) {
+    await this.request.apply(this, arguments)
   }
 
   async execute (opts) {

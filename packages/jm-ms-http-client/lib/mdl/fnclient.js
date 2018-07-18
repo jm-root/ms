@@ -39,6 +39,9 @@ let fnclient = function (_adapter) {
           throw e
         }
       },
+      async notify (opts) {
+        await this.request.apply(this, arguments)
+      },
       async onReady () {
         return true
       }

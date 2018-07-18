@@ -62,6 +62,14 @@ let fnclient = function (_Adapter) {
           }
         })
       },
+
+      async notify (opts) {
+        opts = utils.preRequest.apply(this, arguments)
+        if (!this.connected) throw errNetwork
+        opts.uri = this.prefix + (opts.uri || '')
+        ws.send(JSON.stringify(opts))
+      },
+
       send: function () {
         if (!this.connected) throw errNetwork
         ws.send.apply(ws, arguments)
