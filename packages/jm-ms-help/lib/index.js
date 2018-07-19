@@ -10,8 +10,9 @@ try {
 } catch (e) {
 }
 
-let help = function (opts = {}) {
-  let o = opts.help || {}
+function deal (opts, pkg) {
+  opts.help || (opts.help = {})
+  let o = opts.help
   if (pkg) {
     o.name || (o.name = pkg.name)
     o.version || (o.version = pkg.version)
@@ -22,13 +23,14 @@ let help = function (opts = {}) {
   return o
 }
 
+let help = function (opts = {}) {
+  return deal(opts, pkg)
+}
+
 let enableHelp = function (router, pkg) {
   if (pkg) {
     router.add('/', 'get', (opts = {}) => {
-      opts.help || (opts.help = {})
-      let o = opts.help
-      o.name || (o.name = pkg.name)
-      o.version || (o.version = pkg.version)
+      deal(opts, pkg)
     })
   }
   router.add('/', 'get', help)

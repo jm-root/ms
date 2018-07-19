@@ -15,16 +15,12 @@ helper.enableHelp(router)
 
 router.get('/', {abc: 123})
   .then(doc => {
-    console.info(doc)
+    console.info('1: ', doc)
   })
-
-helper.help = function (opts) {
-  return {ver: 1}
-}
 
 router.clear()
 helper.enableHelp(router)
 router.get('/')
   .then(doc => {
-    console.info(doc)
+    console.info('2: ', doc)
   })
