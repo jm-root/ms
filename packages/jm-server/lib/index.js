@@ -155,11 +155,10 @@ let server = function (opts = {}) {
         if (opts.proxy) {
           router = ms.router()
           module = router
-          router.proxy('/', opts.proxy, function (err, doc) {
-            if (err) {
-              return logger.warn('proxy failed. %j\nreturn: %j\n%s', opts, doc || '', err.stack)
-            }
-          })
+          router.proxy('/', opts.proxy)
+            .catch(err => {
+              return logger.warn('proxy failed. %j\n%s', opts, err.stack)
+            })
         } else {
           opts.module || (opts.module = name)
           if (!opts.module && !opts.require) {
@@ -174,7 +173,7 @@ let server = function (opts = {}) {
           }
 
           if (module) {
-            if (module.request || module.handle) {
+            if (module.request || module.execute) {
               router = module
             } else if (module.router && !opts.noRouter) {
               router = module.router()
