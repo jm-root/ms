@@ -92,7 +92,7 @@ let server = function (opts = {}) {
         .use(config.prefix || '', this.router)
         .use(opts => {
           let doc = Object.assign({}, error.Err.FA_NOTFOUND)
-          doc.msg = error.Err.t(doc.mag, opts.lng)
+          doc.msg = error.Err.t(doc.msg, opts.lng) || doc.msg
           throw error.err(doc)
         })
       return true
