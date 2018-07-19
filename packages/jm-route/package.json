@@ -1,6 +1,6 @@
 {
   "name": "jm-route",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "the route programming mode",
   "main": "./lib/index",
   "scripts": {

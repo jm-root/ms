@@ -1,6 +1,6 @@
 {
   "name": "jm-ms-help",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "help plugin for jm-ms-core project",
   "main": "./lib/index",
   "repository": {
