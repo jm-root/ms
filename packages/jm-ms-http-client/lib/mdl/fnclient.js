@@ -2,13 +2,14 @@ const event = require('jm-event')
 const error = require('jm-err')
 const utils = require('jm-ms-core/lib/utils')
 
-const defaultPort = 3000
-const defaultUri = 'http://localhost:' + defaultPort
-
 let fnclient = function (_adapter) {
   return async function (opts = {}) {
+    if (typeof opts === 'string') {
+      opts = {uri: opts}
+    }
+    if (!opts.uri) throw error.err(error.Err.FA_PARAMS)
     let adapter = opts.adapter || _adapter
-    let uri = opts.uri || defaultUri
+    let uri = opts.uri
     let timeout = opts.timeout || 0
 
     let doc = {

@@ -6,7 +6,7 @@ const ms = new MS()
 const uri = 'http://gateway.test.jamma.cn'
 describe('client', async () => {
   test('client', async () => {
-    let $ = await client({uri})
+    let $ = await client(uri)
     await $.onReady()
     let doc = await $.request('/config')
     console.log(doc)
