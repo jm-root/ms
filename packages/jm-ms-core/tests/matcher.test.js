@@ -30,6 +30,13 @@ describe('matcher', () => {
     expect(doc.uri === '' && doc.params).toBeTruthy()
 
     o = new Matcher({
+      uri: '/test',
+      end: false
+    })
+    expect(o.match({uri: '/test'})).toBeTruthy()
+    expect(o.match({uri: '/test', type: 'get'})).toBeTruthy()
+
+    o = new Matcher({
       type: 'get'
     })
     doc = o.match({uri: '/', type: 'get'})
@@ -46,7 +53,5 @@ describe('matcher', () => {
     expect(doc).toBeTruthy()
     console.log(doc)
     expect(doc.uri === '/abc' && doc.params.name).toBeTruthy()
-
   })
-
 })

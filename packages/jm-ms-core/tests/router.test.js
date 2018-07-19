@@ -14,7 +14,7 @@ let handle3 = (opts) => {
 }
 
 let handle = (opts) => {
-  console.log('handle: %j', opts)
+  console.log('execute: %j', opts)
   return opts
 }
 
@@ -30,7 +30,6 @@ o2.add('/:id', (opts) => {
 })
 
 describe('router', () => {
-
   test('add', () => {
     o
       .clear()
@@ -111,7 +110,6 @@ describe('router', () => {
       .then(doc => {
         expect(doc).toBeTruthy()
       })
-
   })
 
   test('notify', async () => {
@@ -190,7 +188,7 @@ describe('router', () => {
       .use({
         uri: uri,
         fn: {
-          handle: fn
+          execute: fn
         }
       })
       .get(uri)
@@ -279,7 +277,7 @@ describe('router', () => {
     o
       .clear()
       .use(uri, {
-        handle: fn
+        execute: fn
       })
       .get(uri)
       .then(doc => {
@@ -321,7 +319,6 @@ describe('router', () => {
       .catch(e => {
         console.log(e)
       })
-
   })
 
   test('request', async () => {
@@ -367,5 +364,4 @@ describe('router', () => {
         console.error(e)
       })
   })
-
 })

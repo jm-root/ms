@@ -4,12 +4,12 @@ let ms = new MS()
 
 module.exports = function (app) {
   let router = ms.router()
-  router.add('/', 'get', function (opts, cb, next) {
-    cb(null, app.moduleConfigs)
+  router.add('/', 'get', function (opts) {
+    return app.moduleConfigs
   })
-  router.add('/:name', 'delete', function (opts, cb, next) {
+  router.add('/:name', 'delete', function (opts) {
     app.unuse(opts.params.name)
-    cb(null, {ret: true})
+    return {ret: true}
   })
   app.router.use('/modules', router)
 }

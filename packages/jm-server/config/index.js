@@ -4,7 +4,9 @@ var config = {
     debug: true,
     lng: 'zh_CN',
     port: 3000,
-    modules: {}
+    modules: {
+      messages: 'jm-ms-message'
+    }
   },
   production: {
     lng: 'zh_CN',

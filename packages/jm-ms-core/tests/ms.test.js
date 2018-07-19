@@ -42,6 +42,24 @@ describe('ms', () => {
       })
   })
 
+  test('router use', () => {
+    let r1 = ms.router()
+    r1.add('/', 'get', () => { return {ret: 1} })
+    let r2 = ms.router()
+    r2.add('/', 'get', () => { return {ret: 2} })
+    app
+      .clear()
+      .use(r1)
+      .use('/r2', r2)
+      .get('/r2')
+      .then(function (doc) {
+        console.log(doc)
+      })
+      .catch(function (err) {
+        console.log(err)
+      })
+  })
+
   test('use', () => {
     ms
       .use(mdlTest)

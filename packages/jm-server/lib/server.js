@@ -22,9 +22,8 @@ module.exports = function (app) {
      *  msg: 错误信息
      * }
    */
-  app.open = function (opts, cb) {
+  app.open = async function (opts = {}) {
     this.emit('beforeOpen', opts)
-    opts = opts || {}
     let self = this
     let config = this.config
     let root = this.root
@@ -74,16 +73,11 @@ module.exports = function (app) {
       let opts = configMS[i]
       opts.server = server
       opts.app = appWeb
-      ms.server(root, opts, function (err, doc) {
-        if (err) {
-          logger.error(err.stack)
-          return
-        }
-        logger.info('ms server type:%s started', opts.type)
-        servers[opts.type] = doc
-        doc.on('connection', function (session) {
-          self.emit('connection', session)
-        })
+      let doc = await ms.server(root, opts)
+      logger.info('ms server type:%s started', opts.type)
+      servers[opts.type] = doc
+      doc.on('connection', function (session) {
+        self.emit('connection', session)
       })
     }
 
@@ -105,8 +99,7 @@ module.exports = function (app) {
     router.use(this.httpProxyRouter)
 
     this.emit('open', opts)
-    if (cb) cb(null, true)
-    return this
+    return true
   }
 
   /**
@@ -120,7 +113,7 @@ module.exports = function (app) {
      *  msg: 错误信息
      * }
    */
-  app.close = function (opts, cb) {
+  app.close = async function (opts) {
     this.emit('beforeClose', opts)
     if (server) {
       server.close()
@@ -128,7 +121,6 @@ module.exports = function (app) {
       appWeb = null
     }
     this.emit('close', opts)
-    if (cb) cb(null, true)
-    return this
+    return true
   }
 }

@@ -6,7 +6,7 @@ let ms = new MS()
 module.exports = function (app) {
   let router = ms.router()
   let modules = app.modules
-  router.add('/', 'get', function (opts, cb, next) {
+  router.add('/', 'get', function (opts) {
     opts.help || (opts.help = {})
     let _modules = {}
     let status = 1
@@ -21,7 +21,6 @@ module.exports = function (app) {
     }
     opts.help.status = status
     opts.help.modules = _modules
-    next()
   })
   helper.enableHelp(router, require('../package.json'))
   app.router.use(router)

@@ -235,7 +235,6 @@ class Router {
       opts = utils.preRequest.apply(this, arguments)
     }
     let doc = await this.execute(opts)
-    if (doc === undefined) { throw errNotfound }
     return doc
   }
 
@@ -269,12 +268,11 @@ class Router {
         opts.uri = opts.uri.replace(match.uri, '')
       }
       let doc = await route.execute(opts)
+      done()
       if (doc !== undefined) {
-        done()
         return doc
       }
     }
-    done()
 
     // restore obj props after function
     function restore (obj, baseUri, params) {

@@ -2,7 +2,6 @@ const proxy = require('http-proxy-middleware')
 const express = require('express')
 const event = require('jm-event')
 const log = require('jm-log4js')
-const util = require('jm-utils')
 const MS = require('jm-ms')
 const routerHelp = require('./help')
 const routerModule = require('./module')
@@ -64,27 +63,24 @@ let server = function (opts = {}) {
       this.servers = {}
     },
 
-    init: function (opts, cb) {
+    init: async function (opts = {}) {
       this.clear()
       this.emit('init', opts)
       if (config.lng) {
-        this.root.use(config.prefix || '', function (opts, cb, next) {
+        this.root.use(config.prefix || '', function (opts) {
           opts.lng = config.lng
-          next()
         })
       }
       if (!config.trust_proxy) {
-        this.root.use(function (opts, cb, next) {
+        this.root.use(function (opts) {
           if (opts.headers && opts.headers['x-forwarded-for']) {
             delete opts.headers['x-forwarded-for']
           }
-          next()
         })
       }
       if (config.debug) {
-        this.root.use(function (opts, cb, next) {
+        this.root.use(function (opts) {
           logger.debug('request: %j', opts)
-          next()
         })
       }
       routerHelp(this)
@@ -92,8 +88,7 @@ let server = function (opts = {}) {
       this.emit('uses', this)
       routerModule(this)
       this.root.use(config.prefix || '', this.router)
-      if (cb) cb(null, true)
-      return this
+      return true
     },
 
     /**
@@ -227,7 +222,7 @@ let server = function (opts = {}) {
   if (!opts.no_auto_init) app.init()
   if (!opts.no_auto_open) app.open()
   if (config.debug) {
-    logger.debug('config: %s', util.utils.formatJSON(config))
+    logger.debug('config: %s', JSON.stringify(config, null, 2))
   }
   return app
 }
