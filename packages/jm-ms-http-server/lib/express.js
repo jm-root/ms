@@ -66,7 +66,13 @@ let server = async function (router, opts = {}) {
         res.send(doc)
       })
       .catch(err => {
-        return res.status(err.status || error.Err.FA_INTERNALERROR.err).send(err.message)
+        let doc = err.data
+        if (doc) {
+          doc.msg = error.Err.t(doc.msg, opts.lng)
+        } else {
+          doc = err.message
+        }
+        return res.status(err.status || error.Err.FA_INTERNALERROR.err).send(doc)
       })
   })
 
