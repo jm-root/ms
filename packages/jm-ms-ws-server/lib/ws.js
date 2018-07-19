@@ -88,11 +88,15 @@ let server = async function (router, opts = {port: defaultPort}) {
             ws.send(JSON.stringify(doc))
           })
           .catch(e => {
-            doc = Object.assign({}, Err.FA_INTERNALERROR)
-            if (e.status !== undefined) {
-              doc.status = e.status
+            let doc = e.data
+            if (!doc) {
+              doc = Object.assign({}, Err.FA_INTERNALERROR)
+              if (e.status !== undefined) {
+                doc.status = e.status
+              }
+              doc.msg = e.message
             }
-            doc.msg = e.message
+            doc.msg = error.Err.t(doc.msg, json.lng)
             doc = {
               data: doc
             }
