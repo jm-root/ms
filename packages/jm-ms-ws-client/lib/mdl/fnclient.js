@@ -5,15 +5,17 @@ const error = require('jm-err')
 const Err = error.Err
 
 const MAXID = 999999
-const defaultPort = 3100
-const defaultUri = 'ws://localhost:' + defaultPort
 let errNetwork = error.err(Err.FA_NETWORK)
 
 let fnclient = function (_Adapter) {
   return async function (opts = {}) {
+    if (typeof opts === 'string') {
+      opts = {uri: opts}
+    }
+    if (!opts.uri) throw error.err(error.Err.FA_PARAMS)
     let Adapter = opts.Adapter || _Adapter
     let doc = null
-    let uri = opts.uri || defaultUri
+    let uri = opts.uri
     let timeout = opts.timeout || 0
     let id = 0
     let cbs = {}
