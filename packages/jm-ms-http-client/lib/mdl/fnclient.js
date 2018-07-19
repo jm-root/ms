@@ -1,4 +1,5 @@
 const event = require('jm-event')
+const error = require('jm-err')
 const utils = require('jm-ms-core/lib/utils')
 
 const defaultPort = 3000
@@ -33,9 +34,19 @@ let fnclient = function (_adapter) {
         let url = uri + opts.uri
         try {
           let doc = await adapter.request(url, opts.data, _opts)
-          return doc.data
+          let data = doc.data
+          if (data && data.err) {
+            let e = error.err(data)
+            throw e
+          }
+          return doc
         } catch (e) {
-          e.response && e.response.data && (e.data = e.response.data)
+          let data = null
+          e.response && e.response.data && (data = e.response.data)
+          if (data && data.err) {
+            let e = error.err(data)
+            throw e
+          }
           throw e
         }
       },

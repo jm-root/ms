@@ -1,6 +1,7 @@
 const proxy = require('http-proxy-middleware')
 const express = require('express')
 const event = require('jm-event')
+const error = require('jm-err')
 const log = require('jm-log4js')
 const MS = require('jm-ms')
 const routerHelp = require('./help')
@@ -87,7 +88,13 @@ let server = function (opts = {}) {
       if (config.modules) app.uses(config.modules)
       this.emit('uses', this)
       routerModule(this)
-      this.root.use(config.prefix || '', this.router)
+      this.root
+        .use(config.prefix || '', this.router)
+        .use(opts => {
+          let doc = Object.assign({}, error.Err.FA_NOTFOUND)
+          doc.msg = error.Err.t(doc.mag, opts.lng)
+          throw error.err(doc)
+        })
       return true
     },
 

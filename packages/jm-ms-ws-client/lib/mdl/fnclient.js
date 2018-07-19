@@ -102,7 +102,7 @@ let fnclient = function (_Adapter) {
           let err = null
           let doc = json.data
           if (doc.err) {
-            err = new Error(doc.msg)
+            err = error.err(doc)
             p.reject(err)
           } else {
             p.resolve(doc)

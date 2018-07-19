@@ -5,7 +5,7 @@ var config = {
     lng: 'zh_CN',
     port: 3000,
     modules: {
-      messages: 'jm-ms-message'
+      message: 'jm-ms-message'
     }
   },
   production: {

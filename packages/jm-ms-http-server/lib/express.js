@@ -3,6 +3,7 @@ const http = require('http')
 const https = require('https')
 const express = require('express')
 const bodyParser = require('body-parser')
+const error = require('jm-err')
 
 const defaultPort = 80
 
@@ -65,9 +66,7 @@ let server = async function (router, opts = {}) {
         res.send(doc)
       })
       .catch(err => {
-        if (err.status !== undefined) {
-          return res.status(err.status).send()
-        }
+        return res.status(err.status || error.Err.FA_INTERNALERROR.err).send(err.message)
       })
   })
 
