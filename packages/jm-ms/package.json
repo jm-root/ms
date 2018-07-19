@@ -23,10 +23,10 @@
   },
   "homepage": "https://github.com/jm-root/ms",
   "dependencies": {
-    "jm-ms-core": "^2.0.1-3",
-    "jm-ms-http-client": "^2.0.1-3",
+    "jm-ms-core": "^2.0.0",
+    "jm-ms-http-client": "^2.0.0",
     "jm-ms-http-server": "^2.0.0",
-    "jm-ms-ws-client": "^2.0.1-4",
+    "jm-ms-ws-client": "^2.0.0",
     "jm-ms-ws-server": "^2.0.0"
   },
   "devDependencies": {

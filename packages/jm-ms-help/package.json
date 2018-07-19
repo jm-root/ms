@@ -1,0 +1,30 @@
+{
+  "name": "jm-ms-help",
+  "version": "2.0.0",
+  "description": "help plugin for jm-ms-core project",
+  "main": "./lib/index",
+  "scripts": {
+    "test": "node test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jm-root/jm-ms-help.git"
+  },
+  "keywords": [
+    "javascript",
+    "jm-ms-help"
+  ],
+  "author": {
+    "name": "Jeff YU"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jm-root/jm-ms-help/issues"
+  },
+  "homepage": "https://github.com/jm-root/jm-ms-help",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "jm-ms-core": "^2.0.0"
+  }
+}
