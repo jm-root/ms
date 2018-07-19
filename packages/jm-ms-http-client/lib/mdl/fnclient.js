@@ -39,7 +39,7 @@ let fnclient = function (_adapter) {
             let e = error.err(data)
             throw e
           }
-          return doc
+          return data
         } catch (e) {
           let data = null
           e.response && e.response.data && (data = e.response.data)

@@ -1,6 +1,6 @@
 {
   "name": "jm-ms-http-client",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "http client plugin for jm-ms-core",
   "main": "./lib/index",
   "scripts": {
@@ -23,7 +23,9 @@
   },
   "homepage": "https://github.com/jm-root/ms",
   "dependencies": {
-    "flyio": "^0.5.9",
+    "flyio": "^0.6.0",
+    "jm-err": "^1.0.4",
+    "jm-event": "^1.0.2",
     "jm-ms-core": "^2.0.1",
     "lodash": "^4.17.4"
   },
