@@ -39,6 +39,7 @@ class Root {
      * @param {boolean} changeOrigin 是否改变原始uri
      */
     app.proxy = async function (uri = {}, target, changeOrigin) {
+      let opts = uri
       if (typeof uri === 'string') {
         opts = {
           uri,
@@ -78,6 +79,10 @@ class Root {
    * @return {Promise}
    */
   async client (opts = {}) {
+    if (typeof opts === 'string') {
+      opts = {uri: opts}
+    }
+    if (!opts.uri) throw error.err(error.Err.FA_PARAMS)
     let err = null
     let doc = null
     let type = 'http'
