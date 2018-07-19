@@ -96,7 +96,6 @@ let server = async function (router, opts = {port: defaultPort}) {
               }
               doc.msg = e.message
             }
-            doc.msg = error.Err.t(doc.msg, json.lng)
             doc = {
               data: doc
             }
