@@ -24,6 +24,5 @@
   ],
   "replaceConsole": true,
   "levels": {
-    "server": "info"
   }
 }

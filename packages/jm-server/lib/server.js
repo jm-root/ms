@@ -28,6 +28,7 @@ module.exports = function (app) {
     let config = this.config
     let root = this.root
     let servers = this.servers
+    root.config = config
 
     // 启动web模块
     appWeb = express()
