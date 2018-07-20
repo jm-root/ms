@@ -48,6 +48,7 @@ let fnclient = function (_adapter) {
             let e = error.err(data)
             throw e
           }
+          data && (e.data = data)
           throw e
         }
       },
