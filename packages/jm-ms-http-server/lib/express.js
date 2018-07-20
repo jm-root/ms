@@ -4,7 +4,9 @@ const https = require('https')
 const express = require('express')
 const bodyParser = require('body-parser')
 const error = require('jm-err')
+const log = require('jm-log4js')
 
+const logger = log.getLogger('ms-http-server')
 const defaultPort = 80
 
 let createApp = function (opts = {}) {
@@ -20,6 +22,7 @@ let createApp = function (opts = {}) {
 }
 
 let server = async function (router, opts = {}) {
+  let config = router.config
   let app = opts.app
   if (!app) {
     app = createApp(opts)
@@ -60,6 +63,9 @@ let server = async function (router, opts = {}) {
     if (req.headers.lng) opts.lng = req.headers.lng
     router.request(opts)
       .then(doc => {
+        if (config && config.debug) {
+          logger.debug(`ok. request:\n${JSON.stringify(opts, null, 2)}\nresponse:\n${JSON.stringify(doc, null, 2)}`)
+        }
         if (typeof doc === 'string') {
           res.type('html')
         }
@@ -69,6 +75,9 @@ let server = async function (router, opts = {}) {
         let doc = err.data
         if (!doc) {
           doc = err.message
+        }
+        if (config && config.debug) {
+          logger.debug(`fail. request:\n${JSON.stringify(opts, null, 2)}\nresponse:\n${JSON.stringify(err.data, null, 2)}\n${err.stack}`)
         }
         return res.status(err.status || error.Err.FA_INTERNALERROR.err).send(doc)
       })

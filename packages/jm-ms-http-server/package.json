@@ -25,6 +25,8 @@
   "dependencies": {
     "body-parser": "^1.17.1",
     "express": "^4.15.2",
+    "jm-err": "^1.0.4",
+    "jm-log4js": "^1.1.0",
     "jm-ms-core": "^2.0.1",
     "lodash": "^4.17.4"
   },
