@@ -106,7 +106,7 @@ let server = async function (router, opts = {port: defaultPort}) {
               data: doc
             }
             if (config && config.debug) {
-              logger.debug(`fail. request:\n${JSON.stringify(json, null, 2)}\nresponse:\n${JSON.stringify(e.data, null, 2)}\n${e.stack}`)
+              logger.debug(`fail. request:\n${JSON.stringify(json, null, 2)}\nresponse:\n${JSON.stringify(e.data, null, 2)}\n${e.stack || JSON.stringify(e, null, 2)}`)
             }
             doc.id = json.id
             ws.send(JSON.stringify(doc))

@@ -1,6 +1,6 @@
 {
   "name": "jm-ms-ws-server",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "ws server plugin for jm-ms-core",
   "main": "./lib/index",
   "scripts": {
