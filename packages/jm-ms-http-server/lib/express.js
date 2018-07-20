@@ -77,7 +77,7 @@ let server = async function (router, opts = {}) {
           doc = err.message
         }
         if (config && config.debug) {
-          logger.debug(`fail. request:\n${JSON.stringify(opts, null, 2)}\nresponse:\n${JSON.stringify(err.data, null, 2)}\n${err.stack}`)
+          logger.debug(`fail. request:\n${JSON.stringify(opts, null, 2)}\nresponse:\n${JSON.stringify(err.data, null, 2)}\n${err.stack || JSON.stringify(err, null, 2)}`)
         }
         return res.status(err.status || error.Err.FA_INTERNALERROR.err).send(doc)
       })
