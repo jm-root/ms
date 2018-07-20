@@ -2,11 +2,14 @@ const WebSocket = require('ws')
 const proxyaddr = require('proxy-addr')
 const event = require('jm-event')
 const error = require('jm-err')
+const log = require('jm-log4js')
 
+const logger = log.getLogger('ms-ws-server')
 const Err = error.Err
 const defaultPort = 80
 
 let server = async function (router, opts = {port: defaultPort}) {
+  let config = router.config
   let id = 0
   let sessions = {}
 
@@ -81,6 +84,9 @@ let server = async function (router, opts = {port: defaultPort}) {
       if (json.id) {
         p
           .then(doc => {
+            if (config && config.debug) {
+              logger.debug(`ok. request:\n${JSON.stringify(json, null, 2)}\nresponse:\n${JSON.stringify(doc, null, 2)}`)
+            }
             doc = {
               data: doc || {}
             }
@@ -98,6 +104,9 @@ let server = async function (router, opts = {port: defaultPort}) {
             }
             doc = {
               data: doc
+            }
+            if (config && config.debug) {
+              logger.debug(`fail. request:\n${JSON.stringify(json, null, 2)}\nresponse:\n${JSON.stringify(e.data, null, 2)}\n${e.stack}`)
             }
             doc.id = json.id
             ws.send(JSON.stringify(doc))
