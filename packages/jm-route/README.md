@@ -6,29 +6,31 @@ theme : "white"
 
 ### 路由式编程模式
 
+别名：流水线式编程模式
+
 <small>作者：[鱼哥](https://github.com/jammacn)</small>
 
 ---
 
 ## 两个概念
 
-- 函数 fn
+- 工序函数 fn
 
 - 路由 Route
 
 ---
 
-## 函数 fn
+## 工序函数 fn
 
-- 结果函数
+- 成品函数
 
-- 过滤器函数
+- 加工函数
 
 - 混合函数
 
 --
 
-### 结果函数
+### 成品函数
 
 执行完成时返回值
 
@@ -40,7 +42,7 @@ function fn1(){
 
 --
 
-### 过滤器函数
+### 加工函数
 
 执行完成时不返回值
 
@@ -55,7 +57,7 @@ function fn1(opts){
 
 ### 混合函数
 
-结果函数和过滤器函数的混合写法
+成品函数和加工函数的混合写法
 
 ```
 function fn1(opts){
@@ -79,7 +81,7 @@ function async fn1(opts){
 
 ## 路由 Route
 
-一个以上函数的组合
+一个以上工序函数的组合
 
 --
 
@@ -100,11 +102,17 @@ new Route(fn1, fn2, ..., fnn)
 
 ### 路由执行 execute
 
-- 返回 promise
-
 - 顺序执行 route 中的函数
 
-- 如果任一函数有返回值，则中断执行过程，并返回该值
+- 遇到结果返回 promise
+
+--
+
+### 日志
+
+- logging 是否打印日志，默认false
+
+- benchmark 是否计算耗时，默认false
 
 ---
 
@@ -115,13 +123,15 @@ new Route(fn1, fn2, ..., fnn)
 ### 最小例子
 
 ```
-// 结果函数
+// 成品函数
 let fn = () => {
     return {ret: 1}
 }
 
 // 创建路由
 let route = new Route(fn)
+route.logging = true // 打开日志
+route.benchmakr = true // 打开耗时计算
 
 // 路由执行
 let doc = await route.execute()
@@ -133,7 +143,7 @@ let doc = await route.execute()
 ### 最小例子 async
 
 ```
-// 结果函数
+// 成品函数
 let fn = async () => {
     return {ret: 1}
 }
@@ -148,7 +158,7 @@ let doc = await route.execute()
 
 --
 
-### 过滤器
+### 工序
 
 ```
 let filter1 = () => {
@@ -164,3 +174,9 @@ let route = new Route(filter1, filter2,fn)
 let doc = await route.execute()
 
 ```
+
+---
+
+## 已知问题
+
+- 异步函数比同步函数慢10倍
