@@ -24,5 +24,7 @@
   },
   "homepage": "https://github.com/jm-root/ms",
   "dependencies": {},
-  "devDependencies": {}
+  "devDependencies": {
+    "jest": "^23.1.0"
+  }
 }
