@@ -108,7 +108,7 @@ new Route(fn1, fn2, ..., fnn)
 
 --
 
-### 日志
+### 配置参数
 
 - logging 是否打印日志，默认false
 
@@ -158,14 +158,14 @@ let doc = await route.execute()
 
 --
 
-### 工序
+### 工序函数
 
 ```
 let filter1 = () => {
-    console.log('过滤函数')
+    console.log('加工函数')
 }
 let filter2 = async () => {
-    console.log('异步过滤函数')
+    console.log('异步加工函数')
 }
 let fn = async () => {
     return {ret: 1}
