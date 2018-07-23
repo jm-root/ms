@@ -7,7 +7,7 @@ let fn = (opts, age) => {
 }
 
 let fnFilter = (opts) => {
-  opts.sex = 1
+  opts.gender = 1
 }
 
 describe('multi args', async () => {
@@ -22,6 +22,6 @@ describe('multi args', async () => {
     let o = new Route([fnFilter, fn])
     let doc = await o.execute({}, 18)
     console.log(doc)
-    expect(doc.sex === 1 && doc.name === 'jeff' && doc.age === 18).toBeTruthy()
+    expect(doc.gender === 1 && doc.name === 'jeff' && doc.age === 18).toBeTruthy()
   })
 })

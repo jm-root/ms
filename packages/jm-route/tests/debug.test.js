@@ -6,7 +6,7 @@ let fn = opts => {
 }
 
 let fnFilter = async opts => {
-  opts.sex = 1
+  opts.gender = 1
   return new Promise(resolve => {
     setTimeout(() => {
       resolve()
@@ -21,6 +21,6 @@ describe('debug', async () => {
     o.logging = true
     o.benchmark = true
     let doc = await o.execute({abc: 1})
-    expect(doc.sex === 1 && doc.name === 'jeff').toBeTruthy()
+    expect(doc.gender === 1 && doc.name === 'jeff').toBeTruthy()
   })
 })

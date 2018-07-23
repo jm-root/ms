@@ -6,7 +6,7 @@ let fn = (opts) => {
 }
 
 let fnFilter = (opts) => {
-  opts.sex = 1
+  opts.gender = 1
 }
 
 let fnErr = () => {
@@ -25,7 +25,7 @@ describe('simple', async () => {
     let o = new Route([fnFilter, fn])
     let doc = await o.execute({})
     console.log(doc)
-    expect(doc.sex === 1 && doc.name === 'jeff').toBeTruthy()
+    expect(doc.gender === 1 && doc.name === 'jeff').toBeTruthy()
   })
 
   test('chain with error', async () => {
