@@ -1,0 +1,13 @@
+{
+  "private": true,
+  "scripts": {
+    "start": "node app",
+    "cluster": "jm-server --cluster",
+    "test": "jest"
+  },
+  "dependencies": {
+    "jm-ms": "^2.0.1",
+    "jm-server": "^2.0.5",
+    "jm-log4js": "^1.1.0"
+  }
+}
