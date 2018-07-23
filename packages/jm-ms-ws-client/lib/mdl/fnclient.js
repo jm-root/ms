@@ -50,6 +50,7 @@ let fnclient = function (_Adapter) {
       },
 
       async request (opts) {
+        await this.onReady()
         opts = utils.preRequest.apply(this, arguments)
         if (!this.connected) throw errNetwork
         opts.uri = this.prefix + (opts.uri || '')
@@ -66,6 +67,7 @@ let fnclient = function (_Adapter) {
       },
 
       async notify (opts) {
+        await this.onReady()
         opts = utils.preRequest.apply(this, arguments)
         if (!this.connected) throw errNetwork
         opts.uri = this.prefix + (opts.uri || '')
