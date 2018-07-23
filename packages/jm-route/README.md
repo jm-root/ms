@@ -12,6 +12,33 @@ theme : "white"
 
 ---
 
+## 流水线历史
+
+- 1769年，英国人乔赛亚·韦奇伍德开办埃特鲁利亚陶瓷工厂
+
+- 20世纪初美国工程师泰勒发明流水线理论
+
+- 1913年，福特汽车公司开发出了世界上第一条流水线
+
+---
+
+## install
+
+```
+npm i jm-route
+```
+
+---
+
+## use:
+
+```
+const Route = require('jm-route')
+const route = new Route(opts=>{}))
+```
+
+---
+
 ## 两个概念
 
 - 工序函数 fn

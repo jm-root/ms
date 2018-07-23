@@ -162,15 +162,15 @@ class Router {
    * use({uri:uri, fn:fn})
    * use({uri:uri, fn:[fn1, fn2, ..., fnn]})
    * use({uri:uri, fn:router})
-   * use({uri:uri, fn:obj})
-   * use(router)
-   * use(obj) obj必须实现了request或者handle函数之一，优先使用request
+   * use({uri:uri, fn:obj}) obj必须实现了request或者execute函数之一，优先使用request
    * use(uri, fn)
    * use(uri, fn1, fn2, ..., fnn)
    * use(uri, [fn1, fn2, ..,fnn])
    * use(uri, router)
    * use(uri, obj)
-   * use(uri, fn)
+   * use(fn)
+   * use(router)
+   * use(obj)
    * use(fn1, fn2, ..., fnn)
    * use([fn1, fn2, ..,fnn])
    * @function Router#use
@@ -178,7 +178,7 @@ class Router {
    * @example
    * opts参数:{
    *  uri: 接口路径(可选)
-   *  fn: 接口处理函数 router实例 或者 function(opts, cb){}(必填)
+   *  fn: 接口处理函数 router实例 或者 function(opts){}(必填)
    * }
    * @return {Router} for chaining
    */
