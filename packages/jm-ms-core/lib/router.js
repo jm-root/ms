@@ -26,9 +26,25 @@ class Router {
     this._routes = []
     this.sensitive = opts.sensitive
     this.strict = opts.strict
+    this._logging = opts.logging || false
+    this._benchmark = opts.benchmark || false
     // alias methods
     utils.enableType(this, ['get', 'post', 'put', 'delete'])
     event.enableEvent(this)
+  }
+
+  set logging (value) {
+    this._logging = value
+    this._routes.forEach(route => {
+      route.loggint = value
+    })
+  }
+
+  set benchmark (value) {
+    this._benchmark = value
+    this._routes.forEach(route => {
+      route.benchmark = value
+    })
   }
 
   get routes () {
@@ -69,7 +85,10 @@ class Router {
     let o = Object.assign({}, opts)
     if (o.sensitive === undefined) o.sensitive = this.sensitive
     if (o.strict === undefined) o.strict = this.strict
-    this._routes.push(new Route(o))
+    let route = new Route(o)
+    route.logging = this._logging
+    route.benchmark = this._benchmark
+    this._routes.push(route)
     return this
   }
 

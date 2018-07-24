@@ -15,6 +15,7 @@ class DefaultRoute extends Route {
    */
   constructor (opts = {}) {
     super(opts.fn)
+    this.name = `${opts.type || ''} ${opts.uri || ''}`
     this.matcher = new Matcher(opts)
     opts.router && (this.router = opts.router)
   }

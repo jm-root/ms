@@ -1,26 +1,24 @@
 const Router = require('../lib/router')
 
-let handle1 = (opts) => {
-  console.log('handle1: %j', opts)
-}
+let handle1 = (opts) => {}
 
 let handle2 = (opts) => {
   throw new Error('err handle')
 }
 
 let handle3 = (opts) => {
-  console.log('handle3: %j', opts)
   return opts
 }
 
 let handle = (opts) => {
-  console.log('execute: %j', opts)
   return opts
 }
 
 let o = new Router({
   sensitive: true,
-  strict: true
+  strict: true,
+  logging: true,
+  benchmark: true
 })
 
 let o2 = new Router()

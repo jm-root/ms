@@ -30,6 +30,7 @@ describe('route', () => {
     let o = new Route({
       fn: handle
     })
+    o.logging = true
     let doc = await o.execute({})
     expect(doc.sex).toBeTruthy()
   })
@@ -53,5 +54,4 @@ describe('route', () => {
         expect(e).toBeTruthy()
       })
   })
-
 })
