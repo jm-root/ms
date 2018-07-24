@@ -18,7 +18,7 @@ class Root {
    *  benchmark 是否计算耗时，默认false
    * }
    */
-  constructor (opts) {
+  constructor (opts = {}) {
     mdl.enableModule(this)
     event.enableEvent(this)
     this.utils = utils
