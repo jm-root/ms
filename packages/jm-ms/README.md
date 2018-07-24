@@ -174,17 +174,27 @@ let doc = await router.get('/')
 ```
 const MS = require('jm-ms')
 const ms = new MS()
-
 let router = ms.router()
-
 router.add('/', 'get', opts => { return opts})
-
 let doc = await router.get('/')
 ```
 
 ---
 
 ## 服务器 server
+
+```
+const MS = require('jm-ms')
+const ms = new MS()
+let router = ms.router()
+router.add('/', 'get', opts => { return opts})
+
+// http 服务器
+await ms.server(router, {type: 'http', port: 3000})
+
+// websocket 服务器
+await ms.server(router, {type: 'ws', port: 3001})
+```
 
 ---
 

@@ -9,7 +9,7 @@ router.use(opts => {
 const uri = 'http://gateway.test.jamma.cn'
 describe('ms', async () => {
   test('server', async () => {
-    let doc = await ms.server(router, {type: 'http'})
+    let doc = await ms.server(router, {type: 'http', port: 3000})
     console.log(doc)
     expect(doc).toBeTruthy()
   })
