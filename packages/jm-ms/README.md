@@ -45,6 +45,10 @@ const ms = new MS()
 
 参数 opts
 
+- logging [false] 是否打印日志
+
+- benchmark [false] 是否计算耗时
+
 - disable_client [false] 禁用client模块
 
 - disable_server [false] 禁用server模块
