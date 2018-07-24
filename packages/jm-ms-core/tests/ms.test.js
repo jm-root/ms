@@ -5,7 +5,10 @@ let handle = opts => {
   return opts
 }
 
-let ms = new MS()
+let ms = new MS({
+  logging: true,
+  benchmark: true
+})
 let app = ms.router()
 
 let mdlTest = function (opts) {
@@ -35,7 +38,6 @@ describe('ms', () => {
       .add('/', 'get', handle)
       .get('/')
       .then(function (doc) {
-        console.log(doc)
       })
       .catch(function (err) {
         console.log(err)
@@ -53,7 +55,6 @@ describe('ms', () => {
       .use('/r2', r2)
       .get('/r2')
       .then(function (doc) {
-        console.log(doc)
       })
       .catch(function (err) {
         console.log(err)
@@ -69,7 +70,6 @@ describe('ms', () => {
         return doc.get('/')
       })
       .then(function (doc) {
-        console.log(doc)
       })
       .catch(function (err) {
         console.log(err)

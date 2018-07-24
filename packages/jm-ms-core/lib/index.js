@@ -10,14 +10,22 @@ const Err = require('./err')
  */
 class Root {
   /**
-   * create a root
+   * create a root.
+   * @param {Object} opts 参数
+   * @example
+   * opts参数:{
+   *  logging 是否打印日志，默认false
+   *  benchmark 是否计算耗时，默认false
+   * }
    */
-  constructor () {
+  constructor (opts) {
     mdl.enableModule(this)
     event.enableEvent(this)
     this.utils = utils
     this.clientModules = {}
     this.serverModules = {}
+    this.logging = opts.logging || false
+    this.benchmark = opts.benchmark || false
   }
 
   /**
@@ -27,7 +35,8 @@ class Root {
    */
   router (opts = {}) {
     let self = this
-    let app = new Router(opts)
+    let _opts = Object.assign({}, {logging: this.logging, benchmark: this.benchmark}, opts)
+    let app = new Router(_opts)
 
     /**
      * 添加代理
