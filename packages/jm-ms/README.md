@@ -167,6 +167,21 @@ let doc = await router.request('/', 'get', {id: 1})
 let doc = await router.get('/')
 ```
 
+--
+
+### 完整例子
+
+```
+const MS = require('jm-ms')
+const ms = new MS()
+
+let router = ms.router()
+
+router.add('/', 'get', opts => { return opts})
+
+let doc = await router.get('/')
+```
+
 ---
 
 ## 服务器 server
@@ -178,11 +193,13 @@ let doc = await router.get('/')
 ```
 // http
 let client = ms.client('http://api.test.jamma.cn')
-let doc = await client.get('/)
+let doc = await client.get('/')
+doc = await client.post('/users', {name: '鱼哥'})
 ```
 
 ```
 // ws
 let client = ms.client('ws://api.test.jamma.cn')
-let doc = await client.get('/)
+let doc = await client.get('/')
+doc = await client.post('/users', {name: '鱼哥'})
 ```
