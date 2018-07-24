@@ -20,6 +20,8 @@ class Router {
    * opts参数:{
    *  sensitive: 是否大小写敏感(可选)
    *  strict: 是否检查末尾的分隔符(可选)
+   *  logging 是否打印日志，默认false
+   *  benchmark 是否计算耗时，默认false
    * }
    */
   constructor (opts = {}) {
@@ -33,11 +35,19 @@ class Router {
     event.enableEvent(this)
   }
 
+  get logging () {
+    return this._logging
+  }
+
   set logging (value) {
     this._logging = value
     this._routes.forEach(route => {
       route.loggint = value
     })
+  }
+
+  get benchmark () {
+    return this._benchmark
   }
 
   set benchmark (value) {
@@ -250,15 +260,26 @@ class Router {
    * @return {Object}
    */
   async request (opts) {
+    let t1 = 0
+    if (this.logging) {
+      if (this.benchmark) t1 = Date.now()
+      let msg = `Request`
+      this.name && (msg += ` ${this.name}`)
+      msg += ` args: ${JSON.stringify(opts)}`
+      console.info(msg)
+    }
     if (typeof opts !== 'object') {
       opts = utils.preRequest.apply(this, arguments)
     }
     let doc = await this.execute(opts)
+    if (this.logging) {
+      let msg = `Request`
+      this.name && (msg += ` ${this.name}`)
+      if (doc !== undefined) msg += ` result: ${JSON.stringify(doc)}`
+      if (this.benchmark) msg += ` Elapsed time: ${Date.now() - t1}ms`
+      console.info(msg)
+    }
     return doc
-  }
-
-  async notify (opts) {
-    await this.request.apply(this, arguments)
   }
 
   async execute (opts) {
