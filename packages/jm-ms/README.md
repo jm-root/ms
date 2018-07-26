@@ -249,14 +249,14 @@ const MS = require('jm-ms')
 const ms = new MS()
 
 // http
-let client = ms.client('http://api.test.jamma.cn')
+let client = await ms.client('http://api.test.jamma.cn')
 let doc = await client.get('/')
 doc = await client.post('/users', {name: '鱼哥'})
 ```
 
 ```
 // ws
-let client = ms.client('ws://api.test.jamma.cn')
+let client = await ms.client('ws://api.test.jamma.cn')
 let doc = await client.get('/')
 doc = await client.post('/users', {name: '鱼哥'})
 ```
