@@ -67,6 +67,46 @@ const ms = new MS()
 
 --
 
+### 异常抛出
+
+抛出异常需要按以下格式
+
+```
+const e = new Error('这里填错误信息')
+e.code = 1000 // 错误编码，可选
+e.status = 500 // 对应的标准 HTTP 错误状态码，可选
+e.data = {
+    err: 1000, // 错误编码
+    msg: '这里填错误信息',
+    status: 500, // 对应的标准 HTTP 错误状态码，可选
+    ... // 其他自定义错误内容
+}
+throw e
+```
+
+--
+
+### 异常抛出 jm-err
+
+采用 jm-err 简化异常生成
+
+```
+const error = require('jm-err')
+// jm-err 的 Err 中定义了常见错误
+const doc = error.Err.FA_NOAUTH
+throw error.err(doc)
+
+// 也可以自定义 doc 对象
+const doc1 = {
+    status: 401,
+    err: 401,
+    msg: 'Unauthorized'
+}
+throw error.err(doc)
+```
+
+--
+
 ### 创建 router
 
 ```
