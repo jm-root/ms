@@ -102,7 +102,7 @@ const doc1 = {
     err: 401,
     msg: 'Unauthorized'
 }
-throw error.err(doc)
+throw error.err(doc1)
 ```
 
 --
@@ -245,6 +245,9 @@ await ms.server(router, {type: 'ws', port: 3001})
 ## 客户端 client
 
 ```
+const MS = require('jm-ms')
+const ms = new MS()
+
 // http
 let client = ms.client('http://api.test.jamma.cn')
 let doc = await client.get('/')
