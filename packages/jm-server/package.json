@@ -37,6 +37,7 @@
     "yargs": "^7.0.2"
   },
   "devDependencies": {
+    "config": "^2.0.1",
     "jm-ms-message": "^2.0.0"
   },
   "bin": {
