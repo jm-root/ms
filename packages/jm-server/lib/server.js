@@ -52,10 +52,10 @@ module.exports = function (app) {
     appWeb.use(function (req, res, next) {
       res.header('Access-Control-Allow-Origin', '*')
       res.header('Access-Control-Allow-Headers', 'X-Forwarded-For, X-Requested-With, Content-Type, Content-Length, Authorization, Accept')
-      res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS')
+      res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS, HEAD')
       res.header('Content-Type', 'application/json;charset=utf-8')
-      if (req.method === 'OPTIONS') {
-        res.sendStatus(200)
+      if (req.method === 'OPTIONS' || req.method === 'HEAD') {
+        res.status(200).end()
       } else {
         next()
       }
