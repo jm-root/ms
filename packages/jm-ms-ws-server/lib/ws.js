@@ -88,27 +88,22 @@ let server = async function (router, opts = {port: defaultPort}) {
               logger.debug(`ok. request:\n${JSON.stringify(json, null, 2)}\nresponse:\n${JSON.stringify(doc, null, 2)}`)
             }
             doc = {
+              id: json.id,
               data: doc || {}
             }
-            doc.id = json.id
             ws.send(JSON.stringify(doc))
           })
           .catch(e => {
-            let doc = e.data
-            if (!doc) {
-              doc = Object.assign({}, Err.FA_INTERNALERROR)
-              if (e.status !== undefined) {
-                doc.status = e.status
-              }
-              doc.msg = e.message
+            if (config && config.debug) {
+              logger.debug(`fail. request:\n${JSON.stringify(json, null, 2)}\nresponse:\n${JSON.stringify(e.data, null, 2)}`)
             }
+            logger.error(e)
+            let doc = e.data
+            doc || (doc = Object.assign({status: e.status || error.Err.FA_INTERNALERROR.err}, Err.FA_INTERNALERROR, {msg: e.message}))
             doc = {
+              id: json.id,
               data: doc
             }
-            if (config && config.debug) {
-              logger.debug(`fail. request:\n${JSON.stringify(json, null, 2)}\nresponse:\n${JSON.stringify(e.data, null, 2)}\n${e.stack || JSON.stringify(e, null, 2)}`)
-            }
-            doc.id = json.id
             ws.send(JSON.stringify(doc))
           })
       }
