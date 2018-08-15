@@ -1,0 +1,27 @@
+{
+  "name": "jm-ms-wrapper",
+  "version": "1.0.0",
+  "description": "fn wrapper for jm-ms-core project",
+  "main": "./lib/index",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jm-root/ms.git"
+  },
+  "keywords": [
+    "javascript",
+    "jm-ms-wrapper"
+  ],
+  "author": {
+    "name": "Jeff YU"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jm-root/ms/issues"
+  },
+  "homepage": "https://github.com/jm-root/ms",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "jm-err": "^1.0.4"
+  }
+}
