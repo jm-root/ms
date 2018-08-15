@@ -6,6 +6,7 @@ const bodyParser = require('body-parser')
 const error = require('jm-err')
 const log = require('jm-log4js')
 
+const Err = error.Err
 const logger = log.getLogger('ms-http-server')
 const defaultPort = 80
 
@@ -72,14 +73,13 @@ let server = async function (router, opts = {}) {
         res.send(doc)
       })
       .catch(err => {
-        let doc = err.data
-        if (!doc) {
-          doc = err.message
-        }
         if (config && config.debug) {
-          logger.debug(`fail. request:\n${JSON.stringify(opts, null, 2)}\nresponse:\n${JSON.stringify(err.data, null, 2)}\n${err.stack || JSON.stringify(err, null, 2)}`)
+          logger.debug(`fail. request:\n${JSON.stringify(opts, null, 2)}\nresponse:\n${JSON.stringify(err.data, null, 2)}`)
         }
-        return res.status(err.status || error.Err.FA_INTERNALERROR.err).send(doc)
+        logger.error(err)
+        let doc = err.data
+        doc || (doc = Object.assign({status: err.status || error.Err.FA_INTERNALERROR.err}, Err.FA_INTERNALERROR, {msg: err.message}))
+        return res.status(doc.status || Err.FA_INTERNALERROR.err).send(doc)
       })
   })
 

@@ -204,6 +204,7 @@ let doc = await router.request('/', 'get', {id: 1})
 ### 简便写法
 
 - post(uri, data, opts)
+- put(uri, data, opts)
 - get(uri, data)
 - delete(uri)
 
