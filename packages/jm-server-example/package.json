@@ -7,7 +7,9 @@
   },
   "dependencies": {
     "config": "^2.0.1",
+    "jm-err": "^1.0.4",
     "jm-ms": "^2.0.1",
+    "jm-ms-wrapper": "^1.0.0",
     "jm-server": "^2.0.5",
     "jm-log4js": "^1.1.0"
   }
