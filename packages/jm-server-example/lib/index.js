@@ -5,8 +5,8 @@ const ms = new MS()
 
 let $ = {
   router () {
-    const wrap = wrapper()
     const router = ms.router()
+    wrapper()(router)
     router
       .use(opts => {
         opts.time = Date.now()
@@ -14,10 +14,7 @@ let $ = {
       .add('/', opts => {
         return opts
       })
-      .add('/err', wrap(opts => {
-        throw error.err(error.Err.FAIL)
-      }))
-      .add('/err2', opts => { // no wrap
+      .add('/err', opts => {
         throw error.err(error.Err.FAIL)
       })
     return router
