@@ -110,16 +110,24 @@ describe('router', () => {
       })
   })
 
-  test('notify', async () => {
+  test('error', async () => {
     o
       .clear()
       // * add({uri:uri, type:type, fn:fn})
       .add({
         uri: '/t1',
         type: 'get',
-        fn: handle
+        fn: () => { throw new Error('request err') }
       })
-      .notify('/t1', 'get')
+
+    o.on('error', (e, opts) => {
+      e.message = 'asdfsdfsd'
+    })
+    try {
+      await o.request('/t1', 'get')
+    } catch (e) {
+      expect(e).toBeTruthy()
+    }
   })
 
   test('use', () => {

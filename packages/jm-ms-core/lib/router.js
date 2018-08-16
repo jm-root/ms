@@ -4,9 +4,6 @@ const error = require('jm-err')
 const event = require('jm-event')
 
 let Err = error.Err
-
-let errNotfound = error.err(Err.FA_NOTFOUND)
-
 let slice = Array.prototype.slice
 
 /**
@@ -271,7 +268,13 @@ class Router {
     if (typeof opts !== 'object') {
       opts = utils.preRequest.apply(this, arguments)
     }
-    let doc = await this.execute(opts)
+    let doc = null
+    try {
+      doc = await this.execute(opts)
+    } catch (e) {
+      this.emit('error', e, opts)
+      throw e
+    }
     if (this.logging) {
       let msg = `Request`
       this.name && (msg += ` ${this.name}`)

@@ -1,5 +1,8 @@
 # History
 
+## 2.0.6 / 2018-08-16
+- emit error event when request error
+
 ## 2.0.0 / 2018-06-29
 - only promise, without callback
 

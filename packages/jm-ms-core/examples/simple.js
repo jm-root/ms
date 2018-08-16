@@ -13,7 +13,7 @@ function cb (err, doc) {
 var service = {
   hello: function (opts, cb) {
     cb(null, {ret: opts.data.msg})
-  },
+  }
 }
 
 var router = ms.router()
