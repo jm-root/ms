@@ -1,6 +1,6 @@
 {
   "name": "jm-ms-wrapper",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "fn wrapper for jm-ms-core project",
   "main": "./lib/index",
   "repository": {

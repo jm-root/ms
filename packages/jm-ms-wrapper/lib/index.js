@@ -17,6 +17,9 @@ module.exports = t => {
   }
 
   return fn => {
+    if (fn.request && fn.on) {
+      return fn.on('error', cbErr)
+    }
     return async function (opts) {
       try {
         let doc = await fn(opts)
