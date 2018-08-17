@@ -1,6 +1,6 @@
 {
   "name": "jm-ms-ws-client",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "websocket client plugin for jm-ms-core",
   "main": "./lib/index",
   "scripts": {
@@ -23,37 +23,13 @@
   },
   "homepage": "https://github.com/jm-root/ms",
   "dependencies": {
-    "jm-err": "^1.0.0",
-    "jm-event": "^1.0.1",
     "jm-ms-core": "^2.0.1",
     "ws": "^2.3.1"
   },
   "devDependencies": {
-    "babel-cli": "^6.24.1",
-    "babel-plugin-add-module-exports": "^0.2.1",
-    "babel-preset-env": "^1.5.1",
-    "benchmark": "^2.1.4",
-    "bluebird": "^3.5.0",
-    "eslint-config-standard": "^10.2.1",
-    "eslint-plugin-import": "^2.7.0",
-    "eslint-plugin-node": "^5.1.1",
-    "eslint-plugin-promise": "^3.5.0",
-    "eslint-plugin-standard": "^3.0.1",
-    "express": "^4.15.3",
-    "gulp": "^3.9.1",
-    "gulp-babel": "^6.1.2",
-    "gulp-browserify": "^0.5.1",
-    "gulp-clean": "^0.3.2",
-    "gulp-concat": "^2.6.1",
-    "gulp-eslint": "^3.0.1",
-    "gulp-jsdoc3": "^1.0.1",
-    "gulp-jshint": "^2.0.4",
-    "gulp-rename": "^1.2.2",
-    "gulp-sequence": "^0.4.6",
-    "gulp-uglify": "^3.0.0",
-    "gulp-util": "^3.0.8",
     "jest": "^23.1.0",
-    "jm-log4js": "^1.1.0",
-    "jshint": "^2.9.4"
+    "jm-err": "^1.0.5",
+    "jm-event": "^2.0.1",
+    "jm-log4js": "^1.1.0"
   }
 }

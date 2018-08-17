@@ -1,6 +1,6 @@
 {
   "name": "jm-ms-message",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "message plugin for jm-ms-core",
   "main": "./lib/index",
   "scripts": {
@@ -22,8 +22,10 @@
   },
   "homepage": "https://github.com/jm-root/ms",
   "dependencies": {
-    "jm-event": "^1.0.2",
     "jm-log4js": "^1.1.0",
     "jm-ms-core": "^2.0.1"
+  },
+  "devDependencies": {
+    "jm-event": "^2.0.1"
   }
 }

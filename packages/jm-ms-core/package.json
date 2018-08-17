@@ -1,6 +1,6 @@
 {
   "name": "jm-ms-core",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "description": "MicroService core lib",
   "main": "./lib/index",
   "scripts": {
@@ -26,7 +26,7 @@
   "homepage": "https://github.com/jm-root/jm-ms-core",
   "dependencies": {
     "jm-err": "^1.0.4",
-    "jm-event": "^1.0.2",
+    "jm-event": "^2.0.1",
     "jm-module": "^1.0.1",
     "jm-route": "^0.0.3",
     "path-to-regexp": "^1.7.0"

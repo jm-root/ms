@@ -1,6 +1,6 @@
 {
   "name": "jm-server",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "description": "a general server using jm-ms",
   "main": "./lib/index",
   "scripts": {
@@ -27,10 +27,7 @@
     "colors": "^1.1.2",
     "express": "^4.15.2",
     "http-proxy-middleware": "^0.17.4",
-    "jm-err": "^1.0.4",
-    "jm-event": "^1.0.2",
     "jm-log4js": "^1.1.0",
-    "jm-ms-core": "^2.0.2",
     "jm-ms": "^2.0.1",
     "jm-ms-help": "^2.0.1",
     "sprintf-js": "^1.0.3",
@@ -38,6 +35,9 @@
   },
   "devDependencies": {
     "config": "^2.0.1",
+    "jm-err": "^1.0.5",
+    "jm-event": "^2.0.1",
+    "jm-ms-core": "^2.0.7",
     "jm-ms-message": "^2.0.0"
   },
   "bin": {
