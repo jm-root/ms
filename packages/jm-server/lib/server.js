@@ -56,6 +56,8 @@ module.exports = function (app) {
       res.header('Content-Type', 'application/json;charset=utf-8')
       if (req.method === 'OPTIONS' || req.method === 'HEAD') {
         res.status(200).end()
+      } else if (req.url.indexOf('/favicon.ico') >= 0) {
+        res.status(404).end()
       } else {
         next()
       }
