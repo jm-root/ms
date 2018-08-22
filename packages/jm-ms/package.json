@@ -1,6 +1,6 @@
 {
   "name": "jm-ms",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "microService lib, light and fast",
   "main": "./lib/index",
   "scripts": {
