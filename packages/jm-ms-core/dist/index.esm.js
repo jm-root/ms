@@ -1257,6 +1257,7 @@ function () {
   return Root;
 }();
 
+Root.utils = utils_1;
 var lib = Root;
 
 export default lib;

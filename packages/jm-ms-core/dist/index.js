@@ -1263,6 +1263,7 @@ function () {
   return Root;
 }();
 
+Root.utils = utils_1;
 var lib = Root;
 
 exports.default = lib;

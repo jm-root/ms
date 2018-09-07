@@ -171,4 +171,5 @@ class Root {
   }
 }
 
+Root.utils = utils
 module.exports = Root
