@@ -6,7 +6,7 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 
 var jmEvent = _interopDefault(require('jm-event'));
 var jmErr = _interopDefault(require('jm-err'));
-var utils = _interopDefault(require('jm-ms-core/lib/utils'));
+var jmMsCore = _interopDefault(require('jm-ms-core'));
 var flyio = _interopDefault(require('flyio'));
 
 function _awaitIgnored(value, direct) {
@@ -72,6 +72,7 @@ var _async = function () {
     };
   };
 }();
+var utils = jmMsCore.utils;
 
 var fnclient = function fnclient(_adapter) {
   return _async(function () {
@@ -177,6 +178,7 @@ var mdl = function mdl(adapter) {
 };
 
 var $ = mdl(flyio);
+$.createModule = mdl;
 var lib = $;
 
 exports.default = lib;

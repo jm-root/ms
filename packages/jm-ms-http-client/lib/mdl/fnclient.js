@@ -1,6 +1,6 @@
 const event = require('jm-event')
 const error = require('jm-err')
-const utils = require('jm-ms-core/lib/utils')
+const utils = require('jm-ms-core').utils
 
 let fnclient = function (_adapter) {
   return async function (opts = {}) {

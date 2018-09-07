@@ -1,12 +1,12 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('jm-event'), require('jm-err'), require('jm-ms-core/lib/utils'), require('flyio')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'jm-event', 'jm-err', 'jm-ms-core/lib/utils', 'flyio'], factory) :
-  (factory((global['jm-ms-http-client'] = {}),global.jmEvent,global.jmErr,global.utils,global.flyio));
-}(this, (function (exports,jmEvent,jmErr,utils,flyio) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('jm-event'), require('jm-err'), require('jm-ms-core'), require('flyio')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'jm-event', 'jm-err', 'jm-ms-core', 'flyio'], factory) :
+  (factory((global['jm-ms-http-client'] = {}),global.jmEvent,global.jmErr,global.jmMsCore,global.flyio));
+}(this, (function (exports,jmEvent,jmErr,jmMsCore,flyio) { 'use strict';
 
   jmEvent = jmEvent && jmEvent.hasOwnProperty('default') ? jmEvent['default'] : jmEvent;
   jmErr = jmErr && jmErr.hasOwnProperty('default') ? jmErr['default'] : jmErr;
-  utils = utils && utils.hasOwnProperty('default') ? utils['default'] : utils;
+  jmMsCore = jmMsCore && jmMsCore.hasOwnProperty('default') ? jmMsCore['default'] : jmMsCore;
   flyio = flyio && flyio.hasOwnProperty('default') ? flyio['default'] : flyio;
 
   function _awaitIgnored(value, direct) {
@@ -72,6 +72,7 @@
       };
     };
   }();
+  var utils = jmMsCore.utils;
 
   var fnclient = function fnclient(_adapter) {
     return _async(function () {
@@ -177,6 +178,7 @@
   };
 
   var $ = mdl(flyio);
+  $.createModule = mdl;
   var lib = $;
 
   exports.default = lib;

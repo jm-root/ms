@@ -1,6 +1,6 @@
 import jmEvent from 'jm-event';
 import jmErr from 'jm-err';
-import utils from 'jm-ms-core/lib/utils';
+import jmMsCore from 'jm-ms-core';
 import flyio from 'flyio';
 
 function _awaitIgnored(value, direct) {
@@ -66,6 +66,7 @@ var _async = function () {
     };
   };
 }();
+var utils = jmMsCore.utils;
 
 var fnclient = function fnclient(_adapter) {
   return _async(function () {
@@ -171,6 +172,7 @@ var mdl = function mdl(adapter) {
 };
 
 var $ = mdl(flyio);
+$.createModule = mdl;
 var lib = $;
 
 export default lib;
