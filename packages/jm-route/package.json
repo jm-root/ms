@@ -1,9 +1,11 @@
 {
   "name": "jm-route",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "the route programming mode",
-  "main": "./lib/index",
+  "main": "./dist/index.js",
+  "module": "./lib/index",
   "scripts": {
+    "build": "rollup -c rollup.config.js",
     "test": "jest"
   },
   "repository": {

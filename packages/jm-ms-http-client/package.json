@@ -1,9 +1,11 @@
 {
   "name": "jm-ms-http-client",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "description": "http client plugin for jm-ms-core",
-  "main": "./lib/index",
+  "main": "index.js",
+  "module": "./lib/index",
   "scripts": {
+    "build": "rollup -c rollup.config.js",
     "test": "jest"
   },
   "repository": {

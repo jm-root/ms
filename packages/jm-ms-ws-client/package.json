@@ -1,9 +1,11 @@
 {
   "name": "jm-ms-ws-client",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "websocket client plugin for jm-ms-core",
-  "main": "./lib/index",
+  "main": "index.js",
+  "module": "./lib/index",
   "scripts": {
+    "build": "rollup -c rollup.config.js",
     "test": "jest"
   },
   "repository": {

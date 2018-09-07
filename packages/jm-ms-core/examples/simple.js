@@ -1,4 +1,4 @@
-var MS = require('../lib')
+var MS = require('../')
 var ms = new MS()
 
 function cb (err, doc) {
@@ -11,8 +11,8 @@ function cb (err, doc) {
 }
 
 var service = {
-  hello: function (opts, cb) {
-    cb(null, {ret: opts.data.msg})
+  hello: function (opts) {
+    return {ret: opts.data.msg}
   }
 }
 
