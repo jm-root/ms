@@ -1,6 +1,6 @@
 {
   "name": "jm-ms-core",
-  "version": "2.0.8",
+  "version": "2.0.9",
   "description": "MicroService core lib",
   "main": "index.js",
   "module": "./lib/index",
@@ -30,7 +30,7 @@
     "jm-err": "^1.0.4",
     "jm-event": "^2.0.1",
     "jm-module": "^1.0.1",
-    "jm-route": "^0.0.3",
+    "jm-route": "^0.0.4",
     "path-to-regexp": "^1.7.0"
   },
   "devDependencies": {
