@@ -1,7 +1,7 @@
 import jmEvent from 'jm-event';
 import jmErr from 'jm-err';
 import ws from 'ws';
-import utils from 'jm-ms-core/lib/utils';
+import jmMsCore from 'jm-ms-core';
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -113,6 +113,7 @@ var _async = function () {
     };
   };
 }();
+var utils = jmMsCore.utils;
 var Err$1 = jmErr.Err;
 var MAXID = 999999;
 var errNetwork$1 = jmErr.err(Err$1.FA_NETWORK);

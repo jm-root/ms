@@ -1,12 +1,12 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('jm-event'), require('jm-err'), require('jm-ms-core/lib/utils')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'jm-event', 'jm-err', 'jm-ms-core/lib/utils'], factory) :
-  (factory((global['jm-ms-ws-client'] = {}),global.jmEvent,global.jmErr,global.utils));
-}(this, (function (exports,jmEvent,jmErr,utils) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('jm-event'), require('jm-err'), require('jm-ms-core')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'jm-event', 'jm-err', 'jm-ms-core'], factory) :
+  (factory((global['jm-ms-ws-client'] = {}),global.jmEvent,global.jmErr,global.jmMsCore));
+}(this, (function (exports,jmEvent,jmErr,jmMsCore) { 'use strict';
 
   jmEvent = jmEvent && jmEvent.hasOwnProperty('default') ? jmEvent['default'] : jmEvent;
   jmErr = jmErr && jmErr.hasOwnProperty('default') ? jmErr['default'] : jmErr;
-  utils = utils && utils.hasOwnProperty('default') ? utils['default'] : utils;
+  jmMsCore = jmMsCore && jmMsCore.hasOwnProperty('default') ? jmMsCore['default'] : jmMsCore;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -118,6 +118,7 @@
       };
     };
   }();
+  var utils = jmMsCore.utils;
   var Err$1 = jmErr.Err;
   var MAXID = 999999;
   var errNetwork$1 = jmErr.err(Err$1.FA_NETWORK);

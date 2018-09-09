@@ -1,9 +1,8 @@
 {
   "name": "jm-ms-ws-client",
-  "version": "2.0.5",
+  "version": "2.1.1",
   "description": "websocket client plugin for jm-ms-core",
   "main": "index.js",
-  "module": "./lib/index",
   "scripts": {
     "build": "rollup -c rollup.config.js",
     "test": "jest"
@@ -25,7 +24,7 @@
   },
   "homepage": "https://github.com/jm-root/ms",
   "dependencies": {
-    "jm-ms-core": "^2.0.1",
+    "jm-ms-core": "^2.1.0",
     "ws": "^2.3.1"
   },
   "devDependencies": {

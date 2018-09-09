@@ -1,5 +1,5 @@
 const event = require('jm-event')
-const utils = require('jm-ms-core/lib/utils')
+const utils = require('jm-ms-core').utils
 const error = require('jm-err')
 
 const Err = error.Err

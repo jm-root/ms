@@ -5,8 +5,8 @@ Object.defineProperty(exports, '__esModule', { value: true });
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 var jmMsCore = _interopDefault(require('jm-ms-core'));
-var browser = _interopDefault(require('jm-ms-http-client/lib/browser'));
-var browser$1 = _interopDefault(require('jm-ms-ws-client/lib/browser'));
+var browser = _interopDefault(require('jm-ms-http-client/dist/browser'));
+var browser$1 = _interopDefault(require('jm-ms-ws-client/dist/browser'));
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {

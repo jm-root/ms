@@ -1,9 +1,8 @@
 {
   "name": "jm-ms",
-  "version": "2.0.3",
+  "version": "2.1.1",
   "description": "microService lib, light and fast",
   "main": "index.js",
-  "module": "./lib/index",
   "scripts": {
     "build": "rollup -c rollup.config.js",
     "test": "jest"
@@ -25,10 +24,10 @@
   },
   "homepage": "https://github.com/jm-root/ms",
   "dependencies": {
-    "jm-ms-core": "^2.0.8",
-    "jm-ms-http-client": "^2.0.7",
+    "jm-ms-core": "^2.1.0",
+    "jm-ms-http-client": "^2.1.0",
     "jm-ms-http-server": "^2.0.0",
-    "jm-ms-ws-client": "^2.0.5",
+    "jm-ms-ws-client": "^2.1.1",
     "jm-ms-ws-server": "^2.0.0"
   },
   "devDependencies": {

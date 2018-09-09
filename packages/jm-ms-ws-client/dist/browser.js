@@ -6,7 +6,7 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 
 var jmEvent = _interopDefault(require('jm-event'));
 var jmErr = _interopDefault(require('jm-err'));
-var utils = _interopDefault(require('jm-ms-core/lib/utils'));
+var jmMsCore = _interopDefault(require('jm-ms-core'));
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -118,6 +118,7 @@ var _async = function () {
     };
   };
 }();
+var utils = jmMsCore.utils;
 var Err$1 = jmErr.Err;
 var MAXID = 999999;
 var errNetwork$1 = jmErr.err(Err$1.FA_NETWORK);

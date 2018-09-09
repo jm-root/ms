@@ -1,6 +1,6 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('jm-ms-core'), require('jm-ms-http-client/lib/browser'), require('jm-ms-ws-client/lib/browser')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'jm-ms-core', 'jm-ms-http-client/lib/browser', 'jm-ms-ws-client/lib/browser'], factory) :
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('jm-ms-core'), require('jm-ms-http-client/dist/browser'), require('jm-ms-ws-client/dist/browser')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'jm-ms-core', 'jm-ms-http-client/dist/browser', 'jm-ms-ws-client/dist/browser'], factory) :
   (factory((global['jm-ms'] = {}),global.jmMsCore,global.browser,global.browser$1));
 }(this, (function (exports,jmMsCore,browser,browser$1) { 'use strict';
 

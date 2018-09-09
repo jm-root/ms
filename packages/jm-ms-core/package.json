@@ -1,9 +1,8 @@
 {
   "name": "jm-ms-core",
-  "version": "2.0.10",
+  "version": "2.1.0",
   "description": "MicroService core lib",
   "main": "index.js",
-  "module": "./lib/index",
   "scripts": {
     "build": "rollup -c rollup.config.js",
     "test": "jest"
@@ -30,7 +29,7 @@
     "jm-err": "^1.0.4",
     "jm-event": "^2.0.1",
     "jm-module": "^1.0.1",
-    "jm-route": "^0.0.4",
+    "jm-route": "^0.1.0",
     "path-to-regexp": "^1.7.0"
   },
   "devDependencies": {
