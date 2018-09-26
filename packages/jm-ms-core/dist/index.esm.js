@@ -867,9 +867,18 @@ function () {
           doc = _this$execute;
         });
       }, function (e) {
-        _this.emit('error', e, opts);
+        return _await$1(_this.emit('error', e, opts), function (ret) {
+          if (ret === undefined) {
+            throw e;
+          }
 
-        throw e;
+          doc = ret;
+
+          if (_this.logging) {
+            console.info('error catched, return', doc);
+            console.error(e);
+          }
+        });
       }), function (_result) {
 
         if (_this.logging) {

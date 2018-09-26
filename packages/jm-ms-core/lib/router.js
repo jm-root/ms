@@ -272,8 +272,15 @@ class Router {
     try {
       doc = await this.execute(opts)
     } catch (e) {
-      this.emit('error', e, opts)
-      throw e
+      const ret = await this.emit('error', e, opts)
+      if (ret === undefined) {
+        throw e
+      }
+      doc = ret
+      if (this.logging) {
+        console.info('error catched, return', doc)
+        console.error(e)
+      }
     }
     if (this.logging) {
       let msg = `Request`

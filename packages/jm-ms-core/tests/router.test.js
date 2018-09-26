@@ -364,10 +364,27 @@ describe('router', () => {
       .request('/abc/name', {}, {params: {id: 12663}, headers: {sso: '123'}})
       .then(doc => {
         console.log(doc)
-        expect(doc).toBeTruthy()
       })
       .catch(e => {
         console.error(e)
+      })
+  })
+
+  test('emit err', async () => {
+    o
+      .off()
+      .on('error', (e, opts) => {
+        console.log('not cached.')
+      })
+      .on('error', (e, opts) => {
+        console.log('cached.')
+        return e.data || null
+      })
+      .clear()
+      .use(handle2)
+      .request('/abc/name', {}, {params: {id: 12663}, headers: {sso: '123'}})
+      .then(doc => {
+        expect(doc === null).toBeTruthy()
       })
   })
 })
