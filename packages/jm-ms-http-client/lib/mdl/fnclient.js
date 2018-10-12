@@ -55,7 +55,7 @@ let fnclient = function (_adapter) {
       async notify (opts) {
         await this.request.apply(this, arguments)
       },
-      async onReady () {
+      onReady () {
         return true
       }
     }

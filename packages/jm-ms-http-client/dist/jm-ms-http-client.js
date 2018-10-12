@@ -1,13 +1,15 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('jm-event'), require('jm-err'), require('jm-ms-core'), require('flyio')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'jm-event', 'jm-err', 'jm-ms-core', 'flyio'], factory) :
-  (factory((global['jm-ms-http-client'] = {}),global.jmEvent,global.jmErr,global.jmMsCore,global.flyio));
-}(this, (function (exports,jmEvent,jmErr,jmMsCore,flyio) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('jm-event'), require('jm-err'), require('jm-ms-core'), require('axios'), require('http'), require('https')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'jm-event', 'jm-err', 'jm-ms-core', 'axios', 'http', 'https'], factory) :
+  (factory((global['jm-ms-http-client'] = {}),global.jmEvent,global.jmErr,global.jmMsCore,global.axios,global.http,global.https));
+}(this, (function (exports,jmEvent,jmErr,jmMsCore,axios,http,https) { 'use strict';
 
   jmEvent = jmEvent && jmEvent.hasOwnProperty('default') ? jmEvent['default'] : jmEvent;
   jmErr = jmErr && jmErr.hasOwnProperty('default') ? jmErr['default'] : jmErr;
   jmMsCore = jmMsCore && jmMsCore.hasOwnProperty('default') ? jmMsCore['default'] : jmMsCore;
-  flyio = flyio && flyio.hasOwnProperty('default') ? flyio['default'] : flyio;
+  axios = axios && axios.hasOwnProperty('default') ? axios['default'] : axios;
+  http = http && http.hasOwnProperty('default') ? http['default'] : http;
+  https = https && https.hasOwnProperty('default') ? https['default'] : https;
 
   function _awaitIgnored(value, direct) {
     if (!direct) {
@@ -145,8 +147,8 @@
 
           return _awaitIgnored(_this2.request.apply(_this2, _arguments2));
         }),
-        onReady: function () {
-          return _await(true);
+        onReady: function onReady() {
+          return true;
         }
       };
       jmEvent.enableEvent(doc);
@@ -177,7 +179,57 @@
     return $;
   };
 
-  var $ = mdl(flyio);
+  var _async$1 = function () {
+    try {
+      if (isNaN.apply(null, {})) {
+        return function (f) {
+          return function () {
+            try {
+              return Promise.resolve(f.apply(this, arguments));
+            } catch (e) {
+              return Promise.reject(e);
+            }
+          };
+        };
+      }
+    } catch (e) {}
+
+    return function (f) {
+      // Pre-ES5.1 JavaScript runtimes don't accept array-likes in Function.apply
+      return function () {
+        var args = [];
+
+        for (var i = 0; i < arguments.length; i++) {
+          args[i] = arguments[i];
+        }
+
+        try {
+          return Promise.resolve(f.apply(this, args));
+        } catch (e) {
+          return Promise.reject(e);
+        }
+      };
+    };
+  }();
+  var httpAgent = new http.Agent({
+    keepAlive: true
+  });
+  var httpsAgent = new https.Agent({
+    keepAlive: true
+  }); // axios 比 flyio 快3倍, 所以服务器端选用 axios
+
+  var adapter = {
+    request: _async$1(function (url, data, opts) {
+      var o = Object.assign({
+        url: url,
+        data: data,
+        httpAgent: httpAgent,
+        httpsAgent: httpsAgent
+      }, opts);
+      return axios(o);
+    })
+  };
+  var $ = mdl(adapter);
   $.createModule = mdl;
   var lib = $;
 

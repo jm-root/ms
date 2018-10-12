@@ -1,13 +1,13 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('jm-event'), require('jm-err'), require('jm-ms-core'), require('flyio/dist/npm/fly')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'jm-event', 'jm-err', 'jm-ms-core', 'flyio/dist/npm/fly'], factory) :
-  (factory((global['jm-ms-http-client'] = {}),global.jmEvent,global.jmErr,global.jmMsCore,global.fly));
-}(this, (function (exports,jmEvent,jmErr,jmMsCore,fly) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('jm-event'), require('jm-err'), require('jm-ms-core'), require('axios')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'jm-event', 'jm-err', 'jm-ms-core', 'axios'], factory) :
+  (factory((global['jm-ms-http-client'] = {}),global.jmEvent,global.jmErr,global.jmMsCore,global.axios));
+}(this, (function (exports,jmEvent,jmErr,jmMsCore,axios) { 'use strict';
 
   jmEvent = jmEvent && jmEvent.hasOwnProperty('default') ? jmEvent['default'] : jmEvent;
   jmErr = jmErr && jmErr.hasOwnProperty('default') ? jmErr['default'] : jmErr;
   jmMsCore = jmMsCore && jmMsCore.hasOwnProperty('default') ? jmMsCore['default'] : jmMsCore;
-  fly = fly && fly.hasOwnProperty('default') ? fly['default'] : fly;
+  axios = axios && axios.hasOwnProperty('default') ? axios['default'] : axios;
 
   function _awaitIgnored(value, direct) {
     if (!direct) {
@@ -145,8 +145,8 @@
 
           return _awaitIgnored(_this2.request.apply(_this2, _arguments2));
         }),
-        onReady: function () {
-          return _await(true);
+        onReady: function onReady() {
+          return true;
         }
       };
       jmEvent.enableEvent(doc);
@@ -177,8 +177,48 @@
     return $;
   };
 
-  var fly$1 = new fly();
-  var $ = mdl(fly$1);
+  var _async$1 = function () {
+    try {
+      if (isNaN.apply(null, {})) {
+        return function (f) {
+          return function () {
+            try {
+              return Promise.resolve(f.apply(this, arguments));
+            } catch (e) {
+              return Promise.reject(e);
+            }
+          };
+        };
+      }
+    } catch (e) {}
+
+    return function (f) {
+      // Pre-ES5.1 JavaScript runtimes don't accept array-likes in Function.apply
+      return function () {
+        var args = [];
+
+        for (var i = 0; i < arguments.length; i++) {
+          args[i] = arguments[i];
+        }
+
+        try {
+          return Promise.resolve(f.apply(this, args));
+        } catch (e) {
+          return Promise.reject(e);
+        }
+      };
+    };
+  }();
+  var adapter = {
+    request: _async$1(function (url, data, opts) {
+      var o = Object.assign({
+        url: url,
+        data: data
+      }, opts);
+      return axios(o);
+    })
+  };
+  var $ = mdl(adapter);
   $.createModule = mdl;
   var browser = $;
 

@@ -7,7 +7,7 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 var jmEvent = _interopDefault(require('jm-event'));
 var jmErr = _interopDefault(require('jm-err'));
 var jmMsCore = _interopDefault(require('jm-ms-core'));
-var fly = _interopDefault(require('flyio/dist/npm/fly'));
+var axios = _interopDefault(require('axios'));
 
 function _awaitIgnored(value, direct) {
   if (!direct) {
@@ -145,8 +145,8 @@ var fnclient = function fnclient(_adapter) {
 
         return _awaitIgnored(_this2.request.apply(_this2, _arguments2));
       }),
-      onReady: function () {
-        return _await(true);
+      onReady: function onReady() {
+        return true;
       }
     };
     jmEvent.enableEvent(doc);
@@ -177,8 +177,48 @@ var mdl = function mdl(adapter) {
   return $;
 };
 
-var fly$1 = new fly();
-var $ = mdl(fly$1);
+var _async$1 = function () {
+  try {
+    if (isNaN.apply(null, {})) {
+      return function (f) {
+        return function () {
+          try {
+            return Promise.resolve(f.apply(this, arguments));
+          } catch (e) {
+            return Promise.reject(e);
+          }
+        };
+      };
+    }
+  } catch (e) {}
+
+  return function (f) {
+    // Pre-ES5.1 JavaScript runtimes don't accept array-likes in Function.apply
+    return function () {
+      var args = [];
+
+      for (var i = 0; i < arguments.length; i++) {
+        args[i] = arguments[i];
+      }
+
+      try {
+        return Promise.resolve(f.apply(this, args));
+      } catch (e) {
+        return Promise.reject(e);
+      }
+    };
+  };
+}();
+var adapter = {
+  request: _async$1(function (url, data, opts) {
+    var o = Object.assign({
+      url: url,
+      data: data
+    }, opts);
+    return axios(o);
+  })
+};
+var $ = mdl(adapter);
 $.createModule = mdl;
 var browser = $;
 

@@ -1,6 +1,19 @@
-const fly = require('flyio')
+const axios = require('axios')
+const http = require('http')
+const https = require('https')
 const mdl = require('./mdl')
 
-let $ = mdl(fly)
+const httpAgent = new http.Agent({keepAlive: true})
+const httpsAgent = new https.Agent({keepAlive: true})
+
+// axios 比 flyio 快3倍, 所以服务器端选用 axios
+const adapter = {
+  async request (url, data, opts) {
+    const o = Object.assign({url, data, httpAgent, httpsAgent}, opts)
+    return axios(o)
+  }
+}
+
+let $ = mdl(adapter)
 $.createModule = mdl
 module.exports = $

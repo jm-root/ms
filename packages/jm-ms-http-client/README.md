@@ -4,7 +4,7 @@ http client plugin for jm-ms-core
 
 ## adapter
 
-参考 fly.js 实现 request 接口函数
+实现 request 接口函数
 
 例如
 

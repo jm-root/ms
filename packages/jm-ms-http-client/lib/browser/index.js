@@ -1,7 +1,13 @@
-const Fly = require('flyio/dist/npm/fly')
+const axios = require('axios')
 const mdl = require('../mdl')
 
-let fly = new Fly()
-let $ = mdl(fly)
+const adapter = {
+  async request (url, data, opts) {
+    const o = Object.assign({url, data}, opts)
+    return axios(o)
+  }
+}
+
+let $ = mdl(adapter)
 $.createModule = mdl
 module.exports = $
