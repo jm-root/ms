@@ -212,9 +212,19 @@ var _async$1 = function () {
 var adapter = {
   request: _async$1(function (url, data, opts) {
     var o = Object.assign({
-      url: url,
-      data: data
+      url: url
     }, opts);
+
+    if (data) {
+      var method = o.method;
+
+      if (method === 'post' || method === 'put' || method === 'patch') {
+        o.data = data;
+      } else {
+        o.params = data;
+      }
+    }
+
     return axios(o);
   })
 };
