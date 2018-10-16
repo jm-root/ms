@@ -240,7 +240,8 @@ var adapter = {
   })
 };
 var $ = mdl(adapter);
-$.createModule = mdl;
+$.createModule = mdl; // deprecated
+
 var lib = $;
 
 exports.default = lib;

@@ -82,6 +82,45 @@ const browserConfig = {
   ]
 }
 
+const mdlConfig = {
+  input: join(cwd, 'lib/mdl/index.js'),
+  output: [
+    {
+      file: join(cwd, 'dist/module.js'),
+      format: 'cjs',
+      sourcemap: true,
+      exports: 'named'
+    },
+    {
+      file: join(cwd, 'dist/module.browser.js'),
+      format: 'umd',
+      name: 'module',
+      sourcemap: true,
+      exports: 'named'
+    }
+  ],
+  plugins: [
+    commonjs(),
+    resolve({
+      preferBuiltins: false,
+      modulesOnly: true
+    }),
+    babel({
+      babelrc: false,
+      presets: [
+        ['@babel/preset-env', {
+          modules: false
+        }]
+      ],
+      plugins: [
+        '@babel/plugin-proposal-class-properties',
+        '@babel/plugin-proposal-object-rest-spread',
+        'babel-plugin-transform-async-to-promises'
+      ]
+    })
+  ]
+}
+
 const esmConfig = Object.assign({}, baseConfig, {
   output: Object.assign({}, baseConfig.output, {
     sourcemap: true,
@@ -98,15 +137,23 @@ const esmBrowserConfig = Object.assign({}, baseConfig, {
   })
 })
 
+const esmMdlConfig = Object.assign({}, baseConfig, {
+  output: Object.assign({}, baseConfig.output, {
+    sourcemap: true,
+    format: 'es',
+    file: join(cwd, 'dist/module.esm.js')
+  })
+})
+
 function rollup () {
   const target = process.env.TARGET
 
   if (target === 'umd') {
-    return [baseConfig, browserConfig]
+    return [baseConfig, browserConfig, mdlConfig]
   } else if (target === 'esm') {
-    return [esmConfig, esmBrowserConfig]
+    return [esmConfig, esmBrowserConfig, esmMdlConfig]
   } else {
-    return [baseConfig, browserConfig, esmConfig, esmBrowserConfig]
+    return [baseConfig, browserConfig, esmConfig, esmBrowserConfig, mdlConfig, esmMdlConfig]
   }
 }
 

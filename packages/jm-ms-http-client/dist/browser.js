@@ -229,7 +229,8 @@ var adapter = {
   })
 };
 var $ = mdl(adapter);
-$.createModule = mdl;
+$.createModule = mdl; // deprecated
+
 var browser = $;
 
 exports.default = browser;

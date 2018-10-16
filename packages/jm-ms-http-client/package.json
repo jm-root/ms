@@ -1,6 +1,6 @@
 {
   "name": "jm-ms-http-client",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "http client plugin for jm-ms-core",
   "main": "index.js",
   "scripts": {

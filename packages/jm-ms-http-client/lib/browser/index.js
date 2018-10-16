@@ -17,5 +17,5 @@ const adapter = {
 }
 
 let $ = mdl(adapter)
-$.createModule = mdl
+$.createModule = mdl // deprecated
 module.exports = $

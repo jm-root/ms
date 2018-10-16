@@ -239,4 +239,4 @@ $.createModule = mdl; // deprecated
 var lib = $;
 
 export default lib;
-//# sourceMappingURL=index.esm.js.map
+//# sourceMappingURL=module.esm.js.map

@@ -1,9 +1,12 @@
-import jmEvent from 'jm-event';
-import jmErr from 'jm-err';
-import jmMsCore from 'jm-ms-core';
-import axios from 'axios';
-import http from 'http';
-import https from 'https';
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+
+var jmEvent = _interopDefault(require('jm-event'));
+var jmErr = _interopDefault(require('jm-err'));
+var jmMsCore = _interopDefault(require('jm-ms-core'));
 
 function _awaitIgnored(value, direct) {
   if (!direct) {
@@ -173,70 +176,5 @@ var mdl = function mdl(adapter) {
   return $;
 };
 
-var _async$1 = function () {
-  try {
-    if (isNaN.apply(null, {})) {
-      return function (f) {
-        return function () {
-          try {
-            return Promise.resolve(f.apply(this, arguments));
-          } catch (e) {
-            return Promise.reject(e);
-          }
-        };
-      };
-    }
-  } catch (e) {}
-
-  return function (f) {
-    // Pre-ES5.1 JavaScript runtimes don't accept array-likes in Function.apply
-    return function () {
-      var args = [];
-
-      for (var i = 0; i < arguments.length; i++) {
-        args[i] = arguments[i];
-      }
-
-      try {
-        return Promise.resolve(f.apply(this, args));
-      } catch (e) {
-        return Promise.reject(e);
-      }
-    };
-  };
-}();
-var httpAgent = new http.Agent({
-  keepAlive: true
-});
-var httpsAgent = new https.Agent({
-  keepAlive: true
-}); // axios 比 flyio 快3倍, 所以服务器端选用 axios
-
-var adapter = {
-  request: _async$1(function (url, data, opts) {
-    var o = Object.assign({
-      url: url,
-      httpAgent: httpAgent,
-      httpsAgent: httpsAgent
-    }, opts);
-
-    if (data) {
-      var method = o.method;
-
-      if (method === 'post' || method === 'put' || method === 'patch') {
-        o.data = data;
-      } else {
-        o.params = data;
-      }
-    }
-
-    return axios(o);
-  })
-};
-var $ = mdl(adapter);
-$.createModule = mdl; // deprecated
-
-var lib = $;
-
-export default lib;
-//# sourceMappingURL=index.esm.js.map
+exports.default = mdl;
+//# sourceMappingURL=module.js.map
