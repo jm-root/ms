@@ -25,6 +25,7 @@
   "homepage": "https://github.com/jm-root/ms",
   "dependencies": {
     "jm-ms-core": "^2.1.0",
+    "jm-logger": "^2.1.0",
     "ws": "^2.3.1"
   },
   "devDependencies": {

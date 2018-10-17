@@ -1,6 +1,8 @@
 const event = require('jm-event')
+const log = require('jm-logger')
 const utils = require('jm-ms-core').utils
 const error = require('jm-err')
+const WS = require('./ws')
 
 const Err = error.Err
 
@@ -12,52 +14,37 @@ let fnclient = function (_Adapter) {
     if (typeof opts === 'string') {
       opts = {uri: opts}
     }
-    if (!opts.uri) throw error.err(error.Err.FA_PARAMS)
-    let Adapter = opts.Adapter || _Adapter
-    let doc = null
-    let uri = opts.uri
-    let timeout = opts.timeout || 0
+
+    const {uri, logger = log.logger} = opts
+    let {prefix = '',} = opts
+
+    if (!uri) throw error.err(error.Err.FA_PARAMS)
+
+    let path = utils.getUriPath(uri)
+    prefix = path + prefix
+
     let id = 0
     let cbs = {}
-    let path = utils.getUriPath(uri)
-    let prefix = opts.prefix || ''
-    prefix = path + prefix
-    let ws = null
-    let autoReconnect = true
-    if (opts.reconnect === false) autoReconnect = false
-    let reconnectTimer = null
-    let reconnectionDelay = opts.reconnectionDelay || 5000
-    let DEFAULT_MAX_RECONNECT_ATTEMPTS = 0 // 默认重试次数0 表示无限制
-    let maxReconnectAttempts = opts.reconnectAttempts || DEFAULT_MAX_RECONNECT_ATTEMPTS
 
-    doc = {
-      uri: uri,
-      prefix: prefix,
-      connected: false,
-      autoReconnect: autoReconnect,
-      reconnectAttempts: 0,
-      reconnectionDelay: reconnectionDelay,
-      maxReconnectAttempts: maxReconnectAttempts,
+    const ws = new WS(Object.assign({Adapter: _Adapter}, opts))
+    ws.connect(uri)
+
+    const doc = {
+      uri,
+      prefix,
 
       onReady: function () {
-        let self = this
-        return new Promise(function (resolve, reject) {
-          if (self.connected) return resolve(self.connected)
-          self.on('open', function () {
-            resolve(self.connected)
-          })
-        })
+        return ws.onReady()
       },
 
       async request (opts) {
         await this.onReady()
         opts = utils.preRequest.apply(this, arguments)
-        if (!this.connected) throw errNetwork
         opts.uri = this.prefix + (opts.uri || '')
         if (id >= MAXID) id = 0
         id++
         opts.id = id
-        ws.send(JSON.stringify(opts))
+        this.send(JSON.stringify(opts))
         return new Promise((resolve, reject) => {
           cbs[id] = {
             resolve,
@@ -71,23 +58,16 @@ let fnclient = function (_Adapter) {
         opts = utils.preRequest.apply(this, arguments)
         if (!this.connected) throw errNetwork
         opts.uri = this.prefix + (opts.uri || '')
-        ws.send(JSON.stringify(opts))
+        this.send(JSON.stringify(opts))
       },
 
       send: function () {
-        if (!this.connected) throw errNetwork
-        ws.send.apply(ws, arguments)
+        logger.debug('ws.send', ...arguments)
+        ws.send(...arguments)
       },
+
       close: function () {
-        if (reconnectTimer) {
-          clearTimeout(reconnectTimer)
-          reconnectTimer = null
-        }
-        this.autoReconnect = false
-        this.reconnectAttempts = 0
-        if (!this.connected) return
         ws.close()
-        ws = null
       }
     }
     event.enableEvent(doc)
@@ -116,44 +96,31 @@ let fnclient = function (_Adapter) {
       }
     }
 
-    doc.connect = function () {
-      if (this.connected) return
-      if (ws) return
-      this.autoReconnect = autoReconnect
-      doc.emit('connect')
-      let self = doc
-      ws = new Adapter(this.uri)
-      ws.on('message', message => {
+    ws
+      .on('heartBeat', () => {
+        doc.emit('heartBeat')
+        doc.request('/')
+        return true
+      })
+      .on('connect', () => {
+        doc.emit('connect')
+      })
+      .on('message', message => {
+        logger.debug('ws.received', message)
         onmessage(message)
       })
-      ws.on('open', () => {
+      .on('open', () => {
         id = 0
         cbs = {}
-        self.connected = true
-        self.emit('open')
+        doc.emit('open')
       })
-      ws.on('error', event => {
-        doc.emit('error', event)
+      .on('error', e => {
+        doc.emit('error', e)
       })
-      ws.on('close', event => {
-        self.connected = false
-        ws = null
-        self.emit('close', event)
-        if (self.autoReconnect) {
-          if (self.maxReconnectAttempts && self.reconnectAttempts >= self.maxReconnectAttempts) {
-            self.emit('connectFail')
-            return
-          }
-          self.reconnectAttempts++
-          self.emit('reconnect')
-          reconnectTimer = setTimeout(function () {
-            reconnectTimer = null
-            self.connect()
-          }, self.reconnectionDelay)
-        }
+      .on('close', event => {
+        doc.emit('close', event)
       })
-    }
-    doc.connect()
+
     return doc
   }
 }
