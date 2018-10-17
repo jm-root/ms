@@ -9,6 +9,7 @@ class WS {
 
     const {Adapter, timeout = 0, reconnect = true, reconnectionDelay = 5000, reconnectAttempts = DEFAULT_MAX_RECONNECT_ATTEMPTS} = opts
 
+    this.reconnect = reconnect
     this.autoReconnect = true
     this.reconnectionDelay = reconnectionDelay
     if (reconnect === false) this.autoReconnect = false
@@ -28,6 +29,7 @@ class WS {
       })
       .on('heartDead', () => {
         this.close()
+        this.autoReconnect = this.reconnect
       })
   }
 
@@ -41,7 +43,7 @@ class WS {
 
     if (!uri) throw new Error('invalid uri')
 
-    this.close()
+    if (this.ws) return
 
     this.emit('connect')
 
@@ -64,6 +66,8 @@ class WS {
           this.ws = ws
           this.connecting = null
           this.heart.reset()
+          this.resetReconnect()
+          this.autoReconnect = this.reconnect
           resolve()
         })
         .on('error', e => {
@@ -84,7 +88,7 @@ class WS {
             }
             this.reconnectAttempts++
             this.emit('reconnect')
-            this.reconnectTimer = setTimeout(function () {
+            this.reconnectTimer = setTimeout(() => {
               this.reconnectTimer = null
               this.connect()
             }, this.reconnectionDelay)
@@ -113,7 +117,7 @@ class WS {
     }
   }
 
-  close () {
+  resetReconnect () {
     if (this.reconnectTimer) {
       clearTimeout(this.reconnectTimer)
       this.reconnectTimer = null
@@ -121,7 +125,10 @@ class WS {
 
     this.autoReconnect = false
     this.reconnectAttempts = 0
+  }
 
+  close () {
+    this.resetReconnect()
     if (!this.ws) return
     this.ws.close(...arguments)
   }

@@ -104,6 +104,15 @@ let fnclient = function (_Adapter) {
       })
       .on('connect', () => {
         doc.emit('connect')
+        logger.info('ws.connect')
+      })
+      .on('reconnect', () => {
+        doc.emit('reconnect')
+        logger.info('ws.reconnect')
+      })
+      .on('connectFail', () => {
+        doc.emit('connectFail')
+        logger.info('ws.connectFail')
       })
       .on('message', message => {
         logger.debug('ws.received', message)
@@ -113,12 +122,15 @@ let fnclient = function (_Adapter) {
         id = 0
         cbs = {}
         doc.emit('open')
+        logger.info('ws.opened')
       })
       .on('error', e => {
         doc.emit('error', e)
+        logger.error('ws.error', e)
       })
       .on('close', event => {
         doc.emit('close', event)
+        logger.info('ws.closed')
       })
 
     return doc
