@@ -1,12 +1,15 @@
-const {client} = require('../lib')
+const mdl = require('../lib')
+const MS = require('jm-ms-core')
+
+const ms = new MS()
+ms.use(mdl)
 
 const uri = 'ws://gateway.test.jamma.cn'
-
 let $ = null
 
 async function prepare () {
   if (!$) {
-    $ = await client({uri})
+    $ = await ms.client({uri})
   }
 }
 
@@ -26,5 +29,4 @@ describe('ms-client', async () => {
       expect(e).toBeTruthy()
     }
   })
-
 })

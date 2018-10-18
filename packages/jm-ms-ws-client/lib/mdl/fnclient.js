@@ -2,10 +2,11 @@ const event = require('jm-event')
 const log = require('jm-logger')
 const utils = require('jm-ms-core').utils
 const error = require('jm-err')
-const WS = require('./ws')
+const WS = require('jm-net').WebSocket
 
 const Err = error.Err
 
+const Timeout = 60000 // 请求超时时间 60 秒
 const MAXID = 999999
 let errNetwork = error.err(Err.FA_NETWORK)
 
@@ -15,7 +16,7 @@ let fnclient = function (_Adapter) {
       opts = {uri: opts}
     }
 
-    const {uri, logger = log.logger} = opts
+    const {uri, timeout = Timeout, logger = log.logger} = opts
     let {prefix = '',} = opts
 
     if (!uri) throw error.err(error.Err.FA_PARAMS)
@@ -50,6 +51,16 @@ let fnclient = function (_Adapter) {
             resolve,
             reject
           }
+
+          const t = opts.timeout || timeout
+          setTimeout(() => {
+            if (cbs[id]) {
+              delete cbs[id]
+              const e = error.err(Err.FA_TIMEOUT)
+              reject(e)
+            }
+          }, t)
+
         })
       },
 
@@ -97,23 +108,6 @@ let fnclient = function (_Adapter) {
     }
 
     ws
-      .on('heartBeat', () => {
-        doc.emit('heartBeat')
-        doc.request('/')
-        return true
-      })
-      .on('connect', () => {
-        doc.emit('connect')
-        logger.info('ws.connect')
-      })
-      .on('reconnect', () => {
-        doc.emit('reconnect')
-        logger.info('ws.reconnect')
-      })
-      .on('connectFail', () => {
-        doc.emit('connectFail')
-        logger.info('ws.connectFail')
-      })
       .on('message', message => {
         logger.debug('ws.received', message)
         onmessage(message)
@@ -131,6 +125,27 @@ let fnclient = function (_Adapter) {
       .on('close', event => {
         doc.emit('close', event)
         logger.info('ws.closed')
+      })
+      .on('heartBeat', () => {
+        doc.emit('heartBeat')
+        doc.request('/')
+        return true
+      })
+      .on('heartDead', () => {
+        logger.info('ws.heartDead')
+        return doc.emit('heartDead')
+      })
+      .on('connect', () => {
+        doc.emit('connect')
+        logger.info('ws.connect')
+      })
+      .on('reconnect', () => {
+        doc.emit('reconnect')
+        logger.info('ws.reconnect')
+      })
+      .on('connectFail', () => {
+        doc.emit('connectFail')
+        logger.info('ws.connectFail')
       })
 
     return doc
