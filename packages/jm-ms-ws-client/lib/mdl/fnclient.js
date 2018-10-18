@@ -127,8 +127,8 @@ let fnclient = function (_Adapter) {
         logger.info('ws.closed')
       })
       .on('heartBeat', () => {
-        doc.emit('heartBeat')
-        doc.request('/')
+        if (doc.emit('heartBeat')) return true
+        doc.request('/', 'get').catch(e => {})
         return true
       })
       .on('heartDead', () => {
