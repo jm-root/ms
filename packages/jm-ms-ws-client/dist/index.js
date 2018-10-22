@@ -262,8 +262,8 @@ var fnclient = function fnclient(_Adapter) {
       doc.emit('close', event);
       logger.info('ws.closed');
     }).on('heartBeat', function () {
-      doc.emit('heartBeat');
-      doc.request('/');
+      if (doc.emit('heartBeat')) return true;
+      doc.request('/', 'get').catch(function (e) {});
       return true;
     }).on('heartDead', function () {
       logger.info('ws.heartDead');
