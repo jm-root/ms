@@ -73,7 +73,6 @@ let fnclient = function (_Adapter) {
       },
 
       send: function () {
-        logger.debug('ws.send', ...arguments)
         ws.send(...arguments)
       },
 
@@ -109,22 +108,22 @@ let fnclient = function (_Adapter) {
 
     ws
       .on('message', message => {
-        logger.debug('ws.received', message)
         onmessage(message)
       })
       .on('open', () => {
         id = 0
         cbs = {}
         doc.emit('open')
-        logger.info('ws.opened')
+        logger.info('ws.opened', uri)
       })
       .on('error', e => {
         doc.emit('error', e)
-        logger.error('ws.error', e)
+        logger.error('ws.error', uri)
+        logger.error(e)
       })
       .on('close', event => {
         doc.emit('close', event)
-        logger.info('ws.closed')
+        logger.info('ws.closed', uri)
       })
       .on('heartBeat', () => {
         if (doc.emit('heartBeat')) return true
@@ -132,20 +131,20 @@ let fnclient = function (_Adapter) {
         return true
       })
       .on('heartDead', () => {
-        logger.info('ws.heartDead')
+        logger.info('ws.heartDead', uri)
         return doc.emit('heartDead')
       })
       .on('connect', () => {
         doc.emit('connect')
-        logger.info('ws.connect')
+        logger.info('ws.connect', uri)
       })
       .on('reconnect', () => {
         doc.emit('reconnect')
-        logger.info('ws.reconnect')
+        logger.info('ws.reconnect', uri)
       })
       .on('connectFail', () => {
         doc.emit('connectFail')
-        logger.info('ws.connectFail')
+        logger.info('ws.connectFail', uri)
       })
 
     return doc

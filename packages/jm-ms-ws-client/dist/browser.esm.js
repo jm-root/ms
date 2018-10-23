@@ -204,7 +204,6 @@ var fnclient = function fnclient(_Adapter) {
         });
       }),
       send: function send() {
-        logger.debug.apply(logger, ['ws.send'].concat(Array.prototype.slice.call(arguments)));
         ws$$1.send.apply(ws$$1, arguments);
       },
       close: function close() {
@@ -242,35 +241,35 @@ var fnclient = function fnclient(_Adapter) {
     };
 
     ws$$1.on('message', function (message) {
-      logger.debug('ws.received', message);
       onmessage(message);
     }).on('open', function () {
       id = 0;
       cbs = {};
       doc.emit('open');
-      logger.info('ws.opened');
+      logger.info('ws.opened', uri);
     }).on('error', function (e) {
       doc.emit('error', e);
-      logger.error('ws.error', e);
+      logger.error('ws.error', uri);
+      logger.error(e);
     }).on('close', function (event) {
       doc.emit('close', event);
-      logger.info('ws.closed');
+      logger.info('ws.closed', uri);
     }).on('heartBeat', function () {
       if (doc.emit('heartBeat')) return true;
       doc.request('/', 'get').catch(function (e) {});
       return true;
     }).on('heartDead', function () {
-      logger.info('ws.heartDead');
+      logger.info('ws.heartDead', uri);
       return doc.emit('heartDead');
     }).on('connect', function () {
       doc.emit('connect');
-      logger.info('ws.connect');
+      logger.info('ws.connect', uri);
     }).on('reconnect', function () {
       doc.emit('reconnect');
-      logger.info('ws.reconnect');
+      logger.info('ws.reconnect', uri);
     }).on('connectFail', function () {
       doc.emit('connectFail');
-      logger.info('ws.connectFail');
+      logger.info('ws.connectFail', uri);
     });
     return doc;
   });
