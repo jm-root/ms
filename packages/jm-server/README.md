@@ -12,7 +12,7 @@ micro server using jm-ms
 
 ## why
 
-- 微服务架构把传统的单体应用拆分为多个小应用，每个小应用麻雀虽小，五脏俱全。
+- 微服务架构把传统单体应用拆分为多个小应用
 
 - 应用一般会包含配置、通讯、日志和一些公共服务，每个小应用都重复去实现这些部分没有必要，也不利于以后的维护和扩展。
 
@@ -77,7 +77,7 @@ require('jm-server/bin/app')
 ## 标准模块
 
 - 标准模块包含两个基本部分，服务和路由，路由是可选的
-- 服务器加载模块时，检查模块中包含 router 函数，自动启用路由，即约定式路由
+- 服务器加载模块时，如果模块中包含 router 函数，自动启用路由，即约定式路由
 
 --
 
@@ -143,7 +143,7 @@ module.exports = function(opts) {
 ```javascript
 {
     key: {
-        prefix: '前缀',
+        prefix: '前缀', // 可选，如果不配置，默认用 '/key'
         module: 'jm-ms-message', // 模块名或者模块路径
         config: {}
     }
@@ -154,6 +154,7 @@ module.exports = function(opts) {
 
 ## 代理模块
 
+- 把来自客户端的请求转发给其他服务器处理，再把结果返回客户端
 - proxy 路由转发，只支持 application/json
 - httpProxy 直接转发，没有限制
 
@@ -161,7 +162,7 @@ module.exports = function(opts) {
 
 ### proxy 配置
 
-- 优点：
+- 优点：基于 jm-ms, 支持路由过滤
 - 缺点：只支持 application/json
 
 ```javascript
