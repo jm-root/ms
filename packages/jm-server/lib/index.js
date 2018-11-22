@@ -162,7 +162,7 @@ let server = function (opts = {}) {
           }
           let Module = require(opts.module)
           if (typeof Module === 'function') {
-            module = Module.call(app, opts.config || config, app)
+            module = Module.call(app, Object.assign({}, config, opts.config), app)
           } else {
             module = Module
           }
