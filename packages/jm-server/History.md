@@ -1,5 +1,8 @@
 # History
 
+## 2.0.8 / 2018-12-04
+- merge module config to config before load module
+
 ## 2.0.6 / 2018-08-07
 - HEAD 请求
 
