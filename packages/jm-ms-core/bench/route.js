@@ -1,37 +1,35 @@
 const benchmark = require('benchmark')
 const suite = new benchmark.Suite()
 
-var Route = require('../lib/route')
+const Route = require('../lib/route')
 
-var handle1 = (opts, cb, next) => {
-  next()
+const handle1 = opts => {}
+
+const handle2 = opts => {
+  throw new Error('err')
 }
 
-var handle2 = (opts, cb, next) => {
-  next(new Error('err'), {ret: 0})
+const handle = opts => {
+  return { ret: 1 }
 }
 
-var handle = (opts, cb, next) => {
-  cb(null, {ret: 1})
-}
-
-var cb = (err, doc) => {
-  //if (err) console.log(err.stack);
-  //console.log('%j', doc);
-}
-
-var o = new Route({
-  fn: [handle1, handle2, handle]
-})
-var o2 = new Route({
+const o = new Route({
   fn: [handle1, handle1, handle]
+})
+const o2 = new Route({
+  fn: [handle1, handle2, handle]
 })
 suite
   .add('handle', () => {
-    o.handle({}, cb, cb)
+    o
+      .execute({})
+      .then(() => {})
   })
-  .add('handle, without error', () => {
-    o2.handle({}, cb, cb)
+  .add('handle, with error', () => {
+    o2
+      .execute({})
+      .then(() => {})
+      .catch(e => {})
   })
   .on('cycle', function (event) {
     console.log(String(event.target))
@@ -40,9 +38,8 @@ suite
     console.log('Fastest is ' + this.filter('fastest').map('name'))
   })
 
-
 if (require.main === module) {
-  suite.run({async: true})
+  suite.run({ async: true })
 } else {
   module.exports = suite
 }

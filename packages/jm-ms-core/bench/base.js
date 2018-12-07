@@ -19,20 +19,21 @@ let a = ['a', 'b']
 
 suite
   .add('for', () => {
-    var vals = new Array(a.length)
-    for (var i = 0; i < a.length; i++) {
+    let vals = new Array(a.length)
+    for (let i = 0; i < a.length; i++) {
       vals[i] = v[a[i]]
     }
   })
   .add('forEach', () => {
-    var o = {}
+    let o = {}
     a.forEach(function (key) {
       o[key] = v[key]
     })
   })
   .add('for in', () => {
+    let o = {}
     for (let key in v) {
-      let a = v[key]
+      o[key] = v[key]
     }
   })
   .add('bind', () => {
@@ -56,7 +57,7 @@ suite
     test.call(o, 'jeff', 123)
   })
   .add('apply, no params', () => {
-    test.apply(o, arguments)
+    test.apply(o)
   })
   .add('apply, with params', () => {
     test.apply(o, ['jeff', 123])
@@ -69,7 +70,7 @@ suite
   })
 
 if (require.main === module) {
-  suite.run({async: true})
+  suite.run({ async: true })
 } else {
   module.exports = suite
 }
