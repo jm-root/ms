@@ -16,19 +16,19 @@ describe('client', async () => {
   test('client with adapter', async () => {
     let adapter = {
       async request (url, data, opts) {
-        return {data: data}
+        return { data: data }
       }
     }
-    let $ = await client({uri, adapter})
+    let $ = await client({ uri, adapter })
     await $.onReady()
-    let doc = await $.request('/config', {name: 'jeff'})
+    let doc = await $.request('/config', { name: 'jeff' })
     console.log(doc)
     expect(doc).toBeTruthy()
   })
 
   test('module', async () => {
     ms.use(mdl)
-    let $ = await ms.client({uri})
+    let $ = await ms.client({ uri })
     await $.onReady()
     let doc = await $.request('/config')
     console.log(doc)

@@ -38,11 +38,11 @@ module.exports = function (app) {
       logger.info('ms server listening on %s:%s ', host, server.address().port)
     })
     if (config.max_body_size) {
-      appWeb.use(bodyParser.json({limit: config.max_body_size}))
-      appWeb.use(bodyParser.urlencoded({limit: config.max_body_size, extended: true}))
+      appWeb.use(bodyParser.json({ limit: config.max_body_size }))
+      appWeb.use(bodyParser.urlencoded({ limit: config.max_body_size, extended: true }))
     } else {
       appWeb.use(bodyParser.json())
-      appWeb.use(bodyParser.urlencoded({extended: true}))
+      appWeb.use(bodyParser.urlencoded({ extended: true }))
     }
     let trustProxy = false
     config.trust_proxy && (trustProxy = true)

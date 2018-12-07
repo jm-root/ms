@@ -10,22 +10,22 @@ describe('matcher', () => {
     let o = new Matcher()
     let doc = o.match()
     expect(doc).not.toBeTruthy()
-    doc = o.match({uri: '/'})
+    doc = o.match({ uri: '/' })
     expect(doc).toBeTruthy()
     expect(doc.uri === '/' && doc.params).toBeTruthy()
-    expect(!o.match({uri: '/abc'})).toBeTruthy()
+    expect(!o.match({ uri: '/abc' })).toBeTruthy()
 
     o = new Matcher({
       end: false
     })
     expect(o.match()).not.toBeTruthy()
-    doc = o.match({uri: ''})
+    doc = o.match({ uri: '' })
     expect(doc).toBeTruthy()
     expect(doc.uri === '' && doc.params).toBeTruthy()
-    doc = o.match({uri: '/'})
+    doc = o.match({ uri: '/' })
     expect(doc).toBeTruthy()
     expect(doc.uri === '' && doc.params).toBeTruthy()
-    doc = o.match({uri: '/abc'})
+    doc = o.match({ uri: '/abc' })
     expect(doc).toBeTruthy()
     expect(doc.uri === '' && doc.params).toBeTruthy()
 
@@ -33,23 +33,23 @@ describe('matcher', () => {
       uri: '/test',
       end: false
     })
-    expect(o.match({uri: '/test'})).toBeTruthy()
-    expect(o.match({uri: '/test', type: 'get'})).toBeTruthy()
+    expect(o.match({ uri: '/test' })).toBeTruthy()
+    expect(o.match({ uri: '/test', type: 'get' })).toBeTruthy()
 
     o = new Matcher({
       type: 'get'
     })
-    doc = o.match({uri: '/', type: 'get'})
+    doc = o.match({ uri: '/', type: 'get' })
     expect(doc).toBeTruthy()
     expect(doc.uri === '/' && doc.params).toBeTruthy()
-    doc = o.match({uri: '/abc', type: 'get'})
+    doc = o.match({ uri: '/abc', type: 'get' })
     expect(doc).not.toBeTruthy()
 
     o = new Matcher({
       uri: '/:name',
       type: 'get'
     })
-    doc = o.match({uri: '/abc', type: 'get'})
+    doc = o.match({ uri: '/abc', type: 'get' })
     expect(doc).toBeTruthy()
     console.log(doc)
     expect(doc.uri === '/abc' && doc.params.name).toBeTruthy()

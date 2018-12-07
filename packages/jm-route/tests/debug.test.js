@@ -20,7 +20,7 @@ describe('debug', async () => {
     o.name = 'test'
     o.logging = true
     o.benchmark = true
-    let doc = await o.execute({abc: 1})
+    let doc = await o.execute({ abc: 1 })
     expect(doc.gender === 1 && doc.name === 'jeff').toBeTruthy()
   })
 })

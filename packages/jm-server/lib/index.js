@@ -116,7 +116,7 @@ let server = function (opts = {}) {
      */
     use: function (name = '', opts = {}) {
       if (typeof opts === 'string') {
-        opts = {module: opts}
+        opts = { module: opts }
       }
 
       if (opts.require) {

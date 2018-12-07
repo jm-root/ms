@@ -1,9 +1,5 @@
 const event = require('jm-event')
-const error = require('jm-err')
 const WebSocket = require('ws')
-
-const Err = error.Err
-let errNetwork = error.err(Err.FA_NETWORK)
 
 module.exports = class Adapter {
   constructor (uri) {

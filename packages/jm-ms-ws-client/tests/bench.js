@@ -1,5 +1,5 @@
-const {logger} = require('jm-logger')
-const {client} = require('../lib')
+const { logger } = require('jm-logger')
+const { client } = require('../lib')
 
 logger.level = 'info'
 
@@ -9,7 +9,7 @@ let $ = null
 
 async function prepare () {
   if (!$) {
-    $ = await client({uri})
+    $ = await client({ uri })
   }
 }
 

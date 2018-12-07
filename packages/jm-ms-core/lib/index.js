@@ -35,7 +35,7 @@ class Root {
    */
   router (opts = {}) {
     let self = this
-    let _opts = Object.assign({}, {logging: this.logging, benchmark: this.benchmark}, opts)
+    let _opts = Object.assign({}, { logging: this.logging, benchmark: this.benchmark }, opts)
     let app = new Router(_opts)
 
     /**
@@ -63,7 +63,7 @@ class Root {
       }
       this.emit('proxy', opts)
       if (typeof opts.target === 'string') {
-        opts.target = {uri: opts.target}
+        opts.target = { uri: opts.target }
       }
       let client = await self.client(opts.target)
 
@@ -89,7 +89,7 @@ class Root {
    */
   async client (opts = {}) {
     if (typeof opts === 'string') {
-      opts = {uri: opts}
+      opts = { uri: opts }
     }
     if (!opts.uri) throw error.err(error.Err.FA_PARAMS)
     let err = null
@@ -156,7 +156,7 @@ class Root {
     let err = null
     let doc = null
     if (typeof opts === 'string') {
-      opts = {uri: opts}
+      opts = { uri: opts }
     }
     if (!opts.uri) {
       doc = error.Err.FA_PARAMS

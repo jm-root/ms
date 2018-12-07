@@ -9,7 +9,7 @@ let $ = null
 
 async function prepare () {
   if (!$) {
-    $ = await ms.client({uri})
+    $ = await ms.client({ uri })
   }
 }
 
@@ -23,7 +23,7 @@ describe('ms-client', async () => {
   test('request timeout', async () => {
     await prepare()
     try {
-      await $.request('/config', {}, {timeout: 1})
+      await $.request('/config', {}, { timeout: 1 })
     } catch (e) {
       console.error(e)
       expect(e).toBeTruthy()

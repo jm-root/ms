@@ -9,7 +9,7 @@ module.exports = function (app) {
   })
   router.add('/:name', 'delete', function (opts) {
     app.unuse(opts.params.name)
-    return {ret: true}
+    return { ret: true }
   })
   app.router.use('/modules', router)
 }

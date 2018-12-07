@@ -13,11 +13,11 @@ let errNetwork = error.err(Err.FA_NETWORK)
 let fnclient = function (_Adapter) {
   return async function (opts = {}) {
     if (typeof opts === 'string') {
-      opts = {uri: opts}
+      opts = { uri: opts }
     }
 
-    const {uri, timeout = Timeout, logger = log.logger} = opts
-    let {prefix = '',} = opts
+    const { uri, timeout = Timeout, logger = log.logger } = opts
+    let { prefix = '' } = opts
 
     if (!uri) throw error.err(error.Err.FA_PARAMS)
 
@@ -27,7 +27,7 @@ let fnclient = function (_Adapter) {
     let id = 0
     let cbs = {}
 
-    const ws = new WS(Object.assign({Adapter: _Adapter}, opts))
+    const ws = new WS(Object.assign({ Adapter: _Adapter }, opts))
     ws.connect(uri)
 
     const doc = {
@@ -60,7 +60,6 @@ let fnclient = function (_Adapter) {
               reject(e)
             }
           }, t)
-
         })
       },
 

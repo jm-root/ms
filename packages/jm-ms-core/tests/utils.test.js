@@ -19,16 +19,15 @@ describe('utils', () => {
     let request = opts => {
       return 1
     }
-    o = {request}
+    o = { request }
     $.enableType(o, 'get')
     doc = await o.get()
     expect(doc === 1).toBeTruthy()
 
-    o = {request}
+    o = { request }
     $.enableType(o, ['get', 'post'])
     doc = await o.post()
     expect(doc === 1).toBeTruthy()
-
   })
   test('preRequest', () => {
     let v = ['uri', 'type', 'data', 'params', 'timeout']
@@ -64,7 +63,7 @@ describe('utils', () => {
     expect(check(pre(opts), opts)).toBeTruthy()
 
     // request(uri, type, data, {params, timeout})
-    expect(check(pre(uri, type, data, {params, timeout}), opts)).toBeTruthy()
+    expect(check(pre(uri, type, data, { params, timeout }), opts)).toBeTruthy()
 
     // request(uri, type, data)
     expect(check(pre(uri, type, data), {
@@ -91,12 +90,11 @@ describe('utils', () => {
     })).toBeTruthy()
 
     // request(uri, data)
-    expect(check(pre(uri, data, {params, timeout}), {
+    expect(check(pre(uri, data, { params, timeout }), {
       uri,
       data,
       params,
       timeout
     })).toBeTruthy()
-
   })
 })

@@ -13,11 +13,6 @@ let handle = (opts = {}) => {
   return opts
 }
 
-let cb = (err, doc) => {
-  if (err) console.log(err.stack)
-  console.log('%j', doc)
-}
-
 describe('route', () => {
   test('Route', () => {
     let o = new Route({
@@ -47,7 +42,6 @@ describe('route', () => {
     let o = new Route({
       fn: [handle1, handle2, handle]
     })
-    let t0 = Date.now()
     o
       .execute({})
       .catch(e => {

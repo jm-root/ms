@@ -28,7 +28,7 @@ let server = async function (router, opts = {}) {
   if (!app) {
     app = createApp(opts)
     app.use(bodyParser.json())
-    app.use(bodyParser.urlencoded({extended: true}))
+    app.use(bodyParser.urlencoded({ extended: true }))
     app.set('trust proxy', true) // 支持代理后面获取用户真实ip
 
     // 设置跨域访问
@@ -78,7 +78,7 @@ let server = async function (router, opts = {}) {
         }
         logger.error(err)
         let doc = err.data
-        doc || (doc = Object.assign({status: err.status || error.Err.FA_INTERNALERROR.err}, Err.FA_INTERNALERROR, {msg: err.message}))
+        doc || (doc = Object.assign({ status: err.status || error.Err.FA_INTERNALERROR.err }, Err.FA_INTERNALERROR, { msg: err.message }))
         return res.status(doc.status || Err.FA_INTERNALERROR.err).send(doc)
       })
   })

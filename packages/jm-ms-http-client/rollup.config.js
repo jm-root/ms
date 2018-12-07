@@ -1,4 +1,4 @@
-const {join} = require('path')
+const { join } = require('path')
 const babel = require('rollup-plugin-babel')
 const commonjs = require('rollup-plugin-commonjs')
 const resolve = require('rollup-plugin-node-resolve')

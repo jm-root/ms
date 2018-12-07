@@ -19,7 +19,7 @@ var message = function (opts = {}) {
           session.send(msg)
         })
       }
-      return {ret: true}
+      return { ret: true }
     },
 
     unsubscribe: async function (opts) {
@@ -30,14 +30,14 @@ var message = function (opts = {}) {
       if (channel) {
         session.off(channel)
       }
-      return {ret: true}
+      return { ret: true }
     },
 
     broadcast: async function (opts) {
       if (cluster.isWorker) {
         opts.type = 'message'
         process.send(opts)
-        return {ret: true}
+        return { ret: true }
       } else {
         let doc = await this.publish(opts)
         return doc
@@ -46,7 +46,7 @@ var message = function (opts = {}) {
 
     publish: async function (opts) {
       var channel = opts.data.channel
-      var msg = JSON.stringify({type: 'message', data: opts.data})
+      var msg = JSON.stringify({ type: 'message', data: opts.data })
       var userId = opts.data.msg.userId
       var wss = app.servers['ws']
       if (wss) {
@@ -59,7 +59,7 @@ var message = function (opts = {}) {
           }
         }
       }
-      return {ret: true}
+      return { ret: true }
     },
 
     router: function (opts) {

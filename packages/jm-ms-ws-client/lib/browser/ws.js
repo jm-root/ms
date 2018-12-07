@@ -8,7 +8,7 @@ module.exports = class Adapter {
   constructor (uri) {
     let self = this
     event.enableEvent(this)
-    let ws = new WebSocket(uri)
+    let ws = new WebSocket(uri) // eslint-disable-line
     this.ws = ws
     ws.on('message', function (event) {
       self.emit('message', event.data)

@@ -8,7 +8,7 @@ const logger = log.getLogger('ms-ws-server')
 const Err = error.Err
 const defaultPort = 80
 
-let server = async function (router, opts = {port: defaultPort}) {
+let server = async function (router, opts = { port: defaultPort }) {
   let config = router.config
   let id = 0
   let sessions = {}
@@ -18,7 +18,7 @@ let server = async function (router, opts = {port: defaultPort}) {
     broadcast: function (data) {
       let sessions = this.sessions
       for (let i in sessions) {
-        sessions[i].send(data, err => {})
+        sessions[i].send(data, err => {}) // eslint-disable-line
       }
     }
   }
@@ -99,7 +99,7 @@ let server = async function (router, opts = {port: defaultPort}) {
             }
             logger.error(e)
             let doc = e.data
-            doc || (doc = Object.assign({status: e.status || error.Err.FA_INTERNALERROR.err}, Err.FA_INTERNALERROR, {msg: e.message}))
+            doc || (doc = Object.assign({ status: e.status || error.Err.FA_INTERNALERROR.err }, Err.FA_INTERNALERROR, { msg: e.message }))
             doc = {
               id: json.id,
               data: doc

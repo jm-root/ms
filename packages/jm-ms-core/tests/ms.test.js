@@ -46,9 +46,9 @@ describe('ms', () => {
 
   test('router use', () => {
     let r1 = ms.router()
-    r1.add('/', 'get', () => { return {ret: 1} })
+    r1.add('/', 'get', () => { return { ret: 1 } })
     let r2 = ms.router()
-    r2.add('/', 'get', () => { return {ret: 2} })
+    r2.add('/', 'get', () => { return { ret: 2 } })
     app
       .clear()
       .use(r1)
@@ -64,7 +64,7 @@ describe('ms', () => {
   test('use', () => {
     ms
       .use(mdlTest)
-      .client({uri: 'http://api.jamma.cn'})
+      .client({ uri: 'http://api.jamma.cn' })
       .then(doc => {
         expect(doc).toBeTruthy()
         return doc.get('/')

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 'use strict'
-var colors = require('colors')
+var colors = require('colors')  // eslint-disable-line
 var fs = require('fs')
 var path = require('path')
 var argv = require('yargs')

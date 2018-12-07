@@ -5,7 +5,7 @@ const utils = require('jm-ms-core').utils
 let fnclient = function (_adapter) {
   return async function (opts = {}) {
     if (typeof opts === 'string') {
-      opts = {uri: opts}
+      opts = { uri: opts }
     }
     if (!opts.uri) throw error.err(error.Err.FA_PARAMS)
     let adapter = opts.adapter || _adapter

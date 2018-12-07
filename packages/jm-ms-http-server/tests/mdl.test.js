@@ -17,7 +17,7 @@ describe('server', async () => {
 
   test('module', async () => {
     ms.use(mdl)
-    let doc = await ms.server(router, {type: 'http', port: 81})
+    let doc = await ms.server(router, { type: 'http', port: 81 })
     console.log(doc)
     expect(doc).toBeTruthy()
   })

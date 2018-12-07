@@ -139,7 +139,7 @@ describe('router', () => {
     o
     // * use({uri:uri, fn:fn})
       .clear()
-      .use({uri: uri, fn: fn})
+      .use({ uri: uri, fn: fn })
       .get(uri)
       .then(doc => {
         expect(doc).toBeTruthy()
@@ -151,7 +151,7 @@ describe('router', () => {
     o
     // * use({uri:uri, fn:[fn1, fn2, ..., fnn]})
       .clear()
-      .use({uri: uri, fn: fns})
+      .use({ uri: uri, fn: fns })
       .get(uri)
       .then(doc => {
         expect(doc).toBeTruthy()
@@ -163,7 +163,7 @@ describe('router', () => {
     o
     // * use({uri:uri, fn:router})
       .clear()
-      .use({uri: uri, fn: router})
+      .use({ uri: uri, fn: router })
       .get(uri)
       .then(doc => {
         expect(doc).toBeTruthy()
@@ -332,7 +332,7 @@ describe('router', () => {
       .clear()
       .use(handle1)
       .use('/abc', o2)
-      .request('/abc/name', {}, {params: {id: 12663}, headers: {sso: '123'}})
+      .request('/abc/name', {}, { params: { id: 12663 }, headers: { sso: '123' } })
       .then(doc => {
         console.log(doc)
         expect(doc).toBeTruthy()
@@ -361,7 +361,7 @@ describe('router', () => {
     o
       .clear()
       .use(handle1)
-      .request('/abc/name', {}, {params: {id: 12663}, headers: {sso: '123'}})
+      .request('/abc/name', {}, { params: { id: 12663 }, headers: { sso: '123' } })
       .then(doc => {
         console.log(doc)
       })
@@ -382,7 +382,7 @@ describe('router', () => {
       })
       .clear()
       .use(handle2)
-      .request('/abc/name', {}, {params: {id: 12663}, headers: {sso: '123'}})
+      .request('/abc/name', {}, { params: { id: 12663 }, headers: { sso: '123' } })
       .then(doc => {
         expect(doc === null).toBeTruthy()
       })

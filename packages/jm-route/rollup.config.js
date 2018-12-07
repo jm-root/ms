@@ -1,4 +1,4 @@
-const {join} = require('path')
+const { join } = require('path')
 const babel = require('rollup-plugin-babel')
 const cwd = __dirname
 

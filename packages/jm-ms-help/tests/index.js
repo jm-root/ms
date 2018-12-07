@@ -13,7 +13,7 @@ router.add('/', 'get', (opts = {}) => {
 
 helper.enableHelp(router)
 
-router.get('/', {abc: 123})
+router.get('/', { abc: 123 })
   .then(doc => {
     console.info('1: ', doc)
   })

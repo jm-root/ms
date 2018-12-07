@@ -1,5 +1,4 @@
 const mdl = require('../lib')
-const MS = require('jm-ms-core')
 
 const client = mdl.client
 
@@ -9,17 +8,17 @@ const axios = require('axios')
 
 const uri = 'http://localhost:3000/sso'
 
-async function ajax_ms () {
+async function ajaxMS () {
   let $ = await client(uri)
   let doc = await $.request('/')
   return doc
 }
 
-function ajax_http () {
+function ajaxHttp () {
   return new Promise((resolve, reject) => {
     http
       .get(uri, (res) => {
-        const {statusCode} = res
+        const { statusCode } = res
         const contentType = res.headers['content-type']
 
         let error
@@ -53,14 +52,13 @@ function ajax_http () {
         console.error(`Got error: ${e.message}`)
       })
   })
-
 }
 
-function ajax_fly () {
+function ajaxFly () {
   return fly.get(uri)
 }
 
-function ajax_axios () {
+function ajaxAxios () {
   return axios.get(uri)
 }
 
@@ -78,11 +76,10 @@ async function test (fn, name) {
 }
 
 async function testAll () {
-  await test(ajax_http, 'http')
-  await test(ajax_ms, 'ms')
-  await test(ajax_fly, 'fly')
-  await test(ajax_axios, 'axios')
+  await test(ajaxHttp, 'http')
+  await test(ajaxMS, 'ms')
+  await test(ajaxFly, 'fly')
+  await test(ajaxAxios, 'axios')
 }
 
 testAll()
-

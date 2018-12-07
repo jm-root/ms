@@ -1,22 +1,17 @@
 const benchmark = require('benchmark')
 const suite = new benchmark.Suite()
 
-var Route = require('../lib')
+let Route = require('../lib')
 
-var handle1 = (opts) => {
+let handle1 = (opts) => {
 }
 
-var handle2 = (opts) => {
-  throw new Error('err')
+let handle = (opts) => {
+  return { ret: 1 }
 }
 
-var handle = (opts) => {
-  return {ret: 1}
-}
-
-var o = new Route(handle1, handle2, handle)
-var o1 = new Route(handle)
-var o2 = new Route(handle1, handle)
+let o1 = new Route(handle)
+let o2 = new Route(handle1, handle)
 suite
   .add('handle function', async () => {
     let opts = {}
@@ -27,7 +22,7 @@ suite
   .add('handle', async () => {
     await o1.execute({})
   })
-  .add('handle, without error', async () => {
+  .add('handle, with filter', async () => {
     await o2.execute({})
   })
   .on('cycle', function (event) {
@@ -38,7 +33,7 @@ suite
   })
 
 if (require.main === module) {
-  suite.run({async: true})
+  suite.run({ async: true })
 } else {
   module.exports = suite
 }
