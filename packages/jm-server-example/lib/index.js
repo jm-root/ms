@@ -1,10 +1,8 @@
 const error = require('jm-err')
 const event = require('jm-event')
-const log = require('jm-log4js')
 const wrapper = require('jm-ms-wrapper')
 const MS = require('jm-ms')
 const ms = new MS()
-const logger = log.getLogger('example')
 
 let $ = {
   router () {
@@ -32,13 +30,19 @@ module.exports = function (opts) {
   if (app) {
     app
       .on('connection', function (session) {
-        logger.debug(`ws client connected: ${session.id}`)
-        session.on('close', () => { logger.debug(`ws client disconnected: ${session.id}`) })
-        $.emit('connection', session)
-        $.message.publish({
-          channel: 'test',
-          msg: { abc: 123, userId: '1222' }
+        session.on('close', () => {
+          // do something on disconnected.
         })
+        $.emit('connection', session)
+        setTimeout(() => {
+          // delay 1000 ms
+          $.message.publish({
+            data: {
+              channel: 'test',
+              msg: { abc: 123 }
+            }
+          })
+        }, 1000)
       })
       .on('open', function () {
         $.message = app.modules.message
