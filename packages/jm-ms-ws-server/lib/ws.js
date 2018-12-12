@@ -9,11 +9,13 @@ const Err = error.Err
 const defaultPort = 80
 
 let server = async function (router, opts = { port: defaultPort }) {
-  let config = router.config
+  const config = router.config || {}
+  const debug = config.debug || false
+
   let id = 0
   let sessions = {}
 
-  let doc = {
+  const doc = {
     sessions,
     broadcast: function (data) {
       let sessions = this.sessions
@@ -24,7 +26,7 @@ let server = async function (router, opts = { port: defaultPort }) {
   }
   event.enableEvent(doc)
 
-  let defineGetter = function (obj, name, getter) {
+  const defineGetter = function (obj, name, getter) {
     Object.defineProperty(obj, name, {
       configurable: true,
       enumerable: true,
@@ -32,11 +34,11 @@ let server = async function (router, opts = { port: defaultPort }) {
     })
   }
 
-  let trust = function () {
+  const trust = function () {
     return true
   }
 
-  let wss = new WebSocket.Server(opts)
+  const wss = new WebSocket.Server(opts)
   wss.on('connection', function (ws) {
     let session = {
       id: id++,
@@ -46,6 +48,10 @@ let server = async function (router, opts = { port: defaultPort }) {
       close: function () {
         ws.close.apply(ws, arguments)
       }
+    }
+
+    if (debug) {
+      logger.debug(`session ${session.id} connected.`)
     }
 
     if (ws.upgradeReq) {
@@ -84,7 +90,7 @@ let server = async function (router, opts = { port: defaultPort }) {
       if (json.id) {
         p
           .then(doc => {
-            if (config && config.debug) {
+            if (debug) {
               logger.debug(`ok. request:\n${JSON.stringify(json, null, 2)}\nresponse:\n${JSON.stringify(doc, null, 2)}`)
             }
             doc = {
@@ -94,7 +100,7 @@ let server = async function (router, opts = { port: defaultPort }) {
             ws.send(JSON.stringify(doc))
           })
           .catch(e => {
-            if (config && config.debug) {
+            if (debug) {
               logger.debug(`fail. request:\n${JSON.stringify(json, null, 2)}\nresponse:\n${JSON.stringify(e.data, null, 2)}`)
             }
             logger.error(e)
@@ -109,6 +115,9 @@ let server = async function (router, opts = { port: defaultPort }) {
       }
     })
     ws.onclose = function (event) {
+      if (debug) {
+        logger.debug(`session ${session.id} disconnected.`)
+      }
       delete sessions[session.id]
       doc.emit('close', session)
       session.emit('close')
