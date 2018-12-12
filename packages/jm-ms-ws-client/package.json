@@ -1,6 +1,6 @@
 {
   "name": "jm-ms-ws-client",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "description": "websocket client plugin for jm-ms-core",
   "main": "index.js",
   "scripts": {

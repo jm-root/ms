@@ -6,21 +6,20 @@ let errNetwork = error.err(Err.FA_NETWORK)
 
 module.exports = class Adapter {
   constructor (uri) {
-    let self = this
     event.enableEvent(this)
     let ws = new WebSocket(uri) // eslint-disable-line
     this.ws = ws
-    ws.on('message', function (event) {
-      self.emit('message', event.data)
-    })
+    ws.onmessage = event => {
+      this.emit('message', event.data)
+    }
     ws.onopen = () => {
-      self.emit('open')
+      this.emit('open')
     }
     ws.onerror = event => {
-      self.emit('error', event)
+      this.emit('error', event)
     }
     ws.onclose = event => {
-      self.emit('close', event)
+      this.emit('close', event)
     }
   }
 

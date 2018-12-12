@@ -1,8 +1,8 @@
 import jmEvent from 'jm-event';
-import jmErr from 'jm-err';
 import ws from 'ws';
 import jmLogger from 'jm-logger';
 import jmMsCore from 'jm-ms-core';
+import jmErr from 'jm-err';
 import jmNet from 'jm-net';
 
 function _classCallCheck(instance, Constructor) {
@@ -26,9 +26,6 @@ function _createClass(Constructor, protoProps, staticProps) {
   if (staticProps) _defineProperties(Constructor, staticProps);
   return Constructor;
 }
-
-var Err = jmErr.Err;
-var errNetwork = jmErr.err(Err.FA_NETWORK);
 
 var ws$1 =
 /*#__PURE__*/
@@ -122,11 +119,11 @@ var _async = function () {
 }();
 var utils = jmMsCore.utils;
 var WS = jmNet.WebSocket;
-var Err$1 = jmErr.Err;
+var Err = jmErr.Err;
 var Timeout = 60000; // 请求超时时间 60 秒
 
 var MAXID = 999999;
-var errNetwork$1 = jmErr.err(Err$1.FA_NETWORK);
+var errNetwork = jmErr.err(Err.FA_NETWORK);
 
 var fnclient = function fnclient(_Adapter) {
   return _async(function () {
@@ -184,7 +181,7 @@ var fnclient = function fnclient(_Adapter) {
             setTimeout(function () {
               if (cbs[id]) {
                 delete cbs[id];
-                var e = jmErr.err(Err$1.FA_TIMEOUT);
+                var e = jmErr.err(Err.FA_TIMEOUT);
                 reject(e);
               }
             }, t);
@@ -197,7 +194,7 @@ var fnclient = function fnclient(_Adapter) {
 
         return _await(_this2.onReady(), function () {
           opts = utils.preRequest.apply(_this2, _arguments2);
-          if (!_this2.connected) throw errNetwork$1;
+          if (!_this2.connected) throw errNetwork;
           opts.uri = _this2.prefix + (opts.uri || '');
 
           _this2.send(JSON.stringify(opts));

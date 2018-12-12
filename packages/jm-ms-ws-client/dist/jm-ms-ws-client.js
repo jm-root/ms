@@ -1,14 +1,14 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('jm-event'), require('jm-err'), require('ws'), require('jm-logger'), require('jm-ms-core'), require('jm-net')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'jm-event', 'jm-err', 'ws', 'jm-logger', 'jm-ms-core', 'jm-net'], factory) :
-  (factory((global['jm-ms-ws-client'] = {}),global.jmEvent,global.jmErr,global.ws,global.jmLogger,global.jmMsCore,global.jmNet));
-}(this, (function (exports,jmEvent,jmErr,ws,jmLogger,jmMsCore,jmNet) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('jm-event'), require('ws'), require('jm-logger'), require('jm-ms-core'), require('jm-err'), require('jm-net')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'jm-event', 'ws', 'jm-logger', 'jm-ms-core', 'jm-err', 'jm-net'], factory) :
+  (factory((global['jm-ms-ws-client'] = {}),global.jmEvent,global.ws,global.jmLogger,global.jmMsCore,global.jmErr,global.jmNet));
+}(this, (function (exports,jmEvent,ws,jmLogger,jmMsCore,jmErr,jmNet) { 'use strict';
 
   jmEvent = jmEvent && jmEvent.hasOwnProperty('default') ? jmEvent['default'] : jmEvent;
-  jmErr = jmErr && jmErr.hasOwnProperty('default') ? jmErr['default'] : jmErr;
   ws = ws && ws.hasOwnProperty('default') ? ws['default'] : ws;
   jmLogger = jmLogger && jmLogger.hasOwnProperty('default') ? jmLogger['default'] : jmLogger;
   jmMsCore = jmMsCore && jmMsCore.hasOwnProperty('default') ? jmMsCore['default'] : jmMsCore;
+  jmErr = jmErr && jmErr.hasOwnProperty('default') ? jmErr['default'] : jmErr;
   jmNet = jmNet && jmNet.hasOwnProperty('default') ? jmNet['default'] : jmNet;
 
   function _classCallCheck(instance, Constructor) {
@@ -32,9 +32,6 @@
     if (staticProps) _defineProperties(Constructor, staticProps);
     return Constructor;
   }
-
-  var Err = jmErr.Err;
-  var errNetwork = jmErr.err(Err.FA_NETWORK);
 
   var ws$1 =
   /*#__PURE__*/
@@ -128,11 +125,11 @@
   }();
   var utils = jmMsCore.utils;
   var WS = jmNet.WebSocket;
-  var Err$1 = jmErr.Err;
+  var Err = jmErr.Err;
   var Timeout = 60000; // 请求超时时间 60 秒
 
   var MAXID = 999999;
-  var errNetwork$1 = jmErr.err(Err$1.FA_NETWORK);
+  var errNetwork = jmErr.err(Err.FA_NETWORK);
 
   var fnclient = function fnclient(_Adapter) {
     return _async(function () {
@@ -190,7 +187,7 @@
               setTimeout(function () {
                 if (cbs[id]) {
                   delete cbs[id];
-                  var e = jmErr.err(Err$1.FA_TIMEOUT);
+                  var e = jmErr.err(Err.FA_TIMEOUT);
                   reject(e);
                 }
               }, t);
@@ -203,7 +200,7 @@
 
           return _await(_this2.onReady(), function () {
             opts = utils.preRequest.apply(_this2, _arguments2);
-            if (!_this2.connected) throw errNetwork$1;
+            if (!_this2.connected) throw errNetwork;
             opts.uri = _this2.prefix + (opts.uri || '');
 
             _this2.send(JSON.stringify(opts));

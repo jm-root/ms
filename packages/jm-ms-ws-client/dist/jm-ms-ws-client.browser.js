@@ -39,26 +39,29 @@
   /*#__PURE__*/
   function () {
     function Adapter(uri) {
+      var _this = this;
+
       _classCallCheck(this, Adapter);
 
-      var self = this;
       jmEvent.enableEvent(this);
-      var ws = new WebSocket(uri);
+      var ws = new WebSocket(uri); // eslint-disable-line
+
       this.ws = ws;
-      ws.on('message', function (event) {
-        self.emit('message', event.data);
-      });
+
+      ws.onmessage = function (event) {
+        _this.emit('message', event.data);
+      };
 
       ws.onopen = function () {
-        self.emit('open');
+        _this.emit('open');
       };
 
       ws.onerror = function (event) {
-        self.emit('error', event);
+        _this.emit('error', event);
       };
 
       ws.onclose = function (event) {
-        self.emit('close', event);
+        _this.emit('close', event);
       };
     }
 
