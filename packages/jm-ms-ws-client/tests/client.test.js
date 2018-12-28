@@ -5,23 +5,28 @@ const ms = new MS()
 ms.use(mdl)
 
 const uri = 'ws://gateway.test.jamma.cn'
-let $ = null
+const pingTimeout = 1000
+const pongTimeout = 1000
 
-async function prepare () {
-  if (!$) {
-    $ = await ms.client({ uri })
-  }
-}
+let $ = null
+beforeAll(async () => {
+  $ = await ms.client({ uri, pingTimeout, pongTimeout })
+})
+
+afterAll(async () => {
+  $.close()
+})
 
 describe('ms-client', async () => {
-  test('request', async () => {
-    await prepare()
+  test('request', async (done) => {
     let doc = await $.request('/config')
     expect(doc).toBeTruthy()
+    setTimeout(() => {
+      done()
+    }, 3000)
   })
 
   test('request timeout', async () => {
-    await prepare()
     try {
       await $.request('/config', {}, { timeout: 1 })
     } catch (e) {
