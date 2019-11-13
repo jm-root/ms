@@ -227,6 +227,6 @@ let server = function (opts = {}) {
   }
   return app
 }
-event.enableEvent(server)
+event.enableEvent(server, { async: true })
 
 module.exports = server

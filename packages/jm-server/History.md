@@ -1,4 +1,6 @@
 # History
+## 2.0.9 / 2019-11-13
+- event.enableEvent(server, {async: true})
 
 ## 2.0.8 / 2018-12-04
 - merge module config to config before load module
