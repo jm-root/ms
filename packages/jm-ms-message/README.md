@@ -1,3 +1,3 @@
 # jm-ms-message
 
-message plugin for jm-ms-core
+message plugin for jm-server
