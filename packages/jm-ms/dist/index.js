@@ -11,6 +11,8 @@ var jmMsHttpServer = _interopDefault(require('jm-ms-http-server'));
 var jmMsWsServer = _interopDefault(require('jm-ms-ws-server'));
 
 function _typeof(obj) {
+  "@babel/helpers - typeof";
+
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
     _typeof = function (obj) {
       return typeof obj;
@@ -77,9 +79,7 @@ function _possibleConstructorReturn(self, call) {
   return _assertThisInitialized(self);
 }
 
-var $ =
-/*#__PURE__*/
-function (_MS) {
+var $ = /*#__PURE__*/function (_MS) {
   _inherits($, _MS);
 
   function $() {

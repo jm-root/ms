@@ -1,8 +1,8 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('jm-ms-core'), require('jm-ms-http-client'), require('jm-ms-ws-client'), require('jm-ms-http-server'), require('jm-ms-ws-server')) :
   typeof define === 'function' && define.amd ? define(['exports', 'jm-ms-core', 'jm-ms-http-client', 'jm-ms-ws-client', 'jm-ms-http-server', 'jm-ms-ws-server'], factory) :
-  (factory((global['jm-ms'] = {}),global.jmMsCore,global.jmMsHttpClient,global.jmMsWsClient,global.jmMsHttpServer,global.jmMsWsServer));
-}(this, (function (exports,jmMsCore,jmMsHttpClient,jmMsWsClient,jmMsHttpServer,jmMsWsServer) { 'use strict';
+  (global = global || self, factory(global['jm-ms'] = {}, global.jmMsCore, global.jmMsHttpClient, global.jmMsWsClient, global.jmMsHttpServer, global.jmMsWsServer));
+}(this, (function (exports, jmMsCore, jmMsHttpClient, jmMsWsClient, jmMsHttpServer, jmMsWsServer) { 'use strict';
 
   jmMsCore = jmMsCore && jmMsCore.hasOwnProperty('default') ? jmMsCore['default'] : jmMsCore;
   jmMsHttpClient = jmMsHttpClient && jmMsHttpClient.hasOwnProperty('default') ? jmMsHttpClient['default'] : jmMsHttpClient;
@@ -11,6 +11,8 @@
   jmMsWsServer = jmMsWsServer && jmMsWsServer.hasOwnProperty('default') ? jmMsWsServer['default'] : jmMsWsServer;
 
   function _typeof(obj) {
+    "@babel/helpers - typeof";
+
     if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
       _typeof = function (obj) {
         return typeof obj;
@@ -77,9 +79,7 @@
     return _assertThisInitialized(self);
   }
 
-  var $ =
-  /*#__PURE__*/
-  function (_MS) {
+  var $ = /*#__PURE__*/function (_MS) {
     _inherits($, _MS);
 
     function $() {

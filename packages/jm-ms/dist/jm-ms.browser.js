@@ -1,12 +1,12 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('jm-ms-core'), require('jm-ms-http-client/dist/browser'), require('jm-ms-ws-client/dist/browser')) :
   typeof define === 'function' && define.amd ? define(['exports', 'jm-ms-core', 'jm-ms-http-client/dist/browser', 'jm-ms-ws-client/dist/browser'], factory) :
-  (factory((global['jm-ms'] = {}),global.jmMsCore,global.browser,global.browser$1));
-}(this, (function (exports,jmMsCore,browser,browser$1) { 'use strict';
+  (global = global || self, factory(global['jm-ms'] = {}, global.jmMsCore, global.browser$1, global.browser$2));
+}(this, (function (exports, jmMsCore, browser$1, browser$2) { 'use strict';
 
   jmMsCore = jmMsCore && jmMsCore.hasOwnProperty('default') ? jmMsCore['default'] : jmMsCore;
-  browser = browser && browser.hasOwnProperty('default') ? browser['default'] : browser;
   browser$1 = browser$1 && browser$1.hasOwnProperty('default') ? browser$1['default'] : browser$1;
+  browser$2 = browser$2 && browser$2.hasOwnProperty('default') ? browser$2['default'] : browser$2;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -61,9 +61,7 @@
     return _assertThisInitialized(self);
   }
 
-  var $ =
-  /*#__PURE__*/
-  function (_MS) {
+  var $ = /*#__PURE__*/function (_MS) {
     _inherits($, _MS);
 
     function $(opts) {
@@ -73,7 +71,7 @@
 
       _this = _possibleConstructorReturn(this, _getPrototypeOf($).call(this, opts));
 
-      _this.use(browser).use(browser$1);
+      _this.use(browser$1).use(browser$2);
 
       return _this;
     }
@@ -81,9 +79,9 @@
     return $;
   }(jmMsCore);
 
-  var browser$2 = $;
+  var browser = $;
 
-  exports.default = browser$2;
+  exports.default = browser;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 

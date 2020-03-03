@@ -5,8 +5,8 @@ Object.defineProperty(exports, '__esModule', { value: true });
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 var jmMsCore = _interopDefault(require('jm-ms-core'));
-var browser = _interopDefault(require('jm-ms-http-client/dist/browser'));
-var browser$1 = _interopDefault(require('jm-ms-ws-client/dist/browser'));
+var browser$1 = _interopDefault(require('jm-ms-http-client/dist/browser'));
+var browser$2 = _interopDefault(require('jm-ms-ws-client/dist/browser'));
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -61,9 +61,7 @@ function _possibleConstructorReturn(self, call) {
   return _assertThisInitialized(self);
 }
 
-var $ =
-/*#__PURE__*/
-function (_MS) {
+var $ = /*#__PURE__*/function (_MS) {
   _inherits($, _MS);
 
   function $(opts) {
@@ -73,7 +71,7 @@ function (_MS) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf($).call(this, opts));
 
-    _this.use(browser).use(browser$1);
+    _this.use(browser$1).use(browser$2);
 
     return _this;
   }
@@ -81,7 +79,7 @@ function (_MS) {
   return $;
 }(jmMsCore);
 
-var browser$2 = $;
+var browser = $;
 
-exports.default = browser$2;
+exports.default = browser;
 //# sourceMappingURL=browser.js.map
