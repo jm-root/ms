@@ -22,6 +22,4 @@ const adapter = {
   }
 }
 
-let $ = mdl(adapter)
-$.createModule = mdl // deprecated
-module.exports = $
+module.exports = mdl(adapter)

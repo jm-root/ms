@@ -4,7 +4,7 @@ const MS = require('jm-ms-core')
 const ms = new MS()
 ms.use(mdl)
 
-const uri = 'ws://gateway.test.jamma.cn'
+const uri = 'ws://localhost:3000'
 const pingTimeout = 1000
 const pongTimeout = 1000
 

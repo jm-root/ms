@@ -1,13 +1,13 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('jm-event'), require('jm-err'), require('jm-ms-core'), require('axios')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'jm-event', 'jm-err', 'jm-ms-core', 'axios'], factory) :
-  (factory((global['jm-ms-http-client'] = {}),global.jmEvent,global.jmErr,global.jmMsCore,global.axios));
-}(this, (function (exports,jmEvent,jmErr,jmMsCore,axios) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('axios'), require('jm-event'), require('jm-err'), require('jm-ms-core')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'axios', 'jm-event', 'jm-err', 'jm-ms-core'], factory) :
+  (global = global || self, factory(global['jm-ms-http-client'] = {}, global.axios, global.jmEvent, global.jmErr, global.jmMsCore));
+}(this, (function (exports, axios, jmEvent, jmErr, jmMsCore) { 'use strict';
 
+  axios = axios && axios.hasOwnProperty('default') ? axios['default'] : axios;
   jmEvent = jmEvent && jmEvent.hasOwnProperty('default') ? jmEvent['default'] : jmEvent;
   jmErr = jmErr && jmErr.hasOwnProperty('default') ? jmErr['default'] : jmErr;
   jmMsCore = jmMsCore && jmMsCore.hasOwnProperty('default') ? jmMsCore['default'] : jmMsCore;
-  axios = axios && axios.hasOwnProperty('default') ? axios['default'] : axios;
 
   function _awaitIgnored(value, direct) {
     if (!direct) {
@@ -16,29 +16,6 @@
   }
 
   function _empty() {}
-
-  function _catch(body, recover) {
-    try {
-      var result = body();
-    } catch (e) {
-      return recover(e);
-    }
-
-    if (result && result.then) {
-      return result.then(void 0, recover);
-    }
-
-    return result;
-  }
-
-  function _await(value, then, direct) {
-    if (direct) {
-      return then ? then(value) : value;
-    }
-
-    value = Promise.resolve(value);
-    return then ? value.then(then) : value;
-  }
 
   var _async = function () {
     try {
@@ -72,10 +49,33 @@
       };
     };
   }();
+
+  function _catch(body, recover) {
+    try {
+      var result = body();
+    } catch (e) {
+      return recover(e);
+    }
+
+    if (result && result.then) {
+      return result.then(void 0, recover);
+    }
+
+    return result;
+  }
+
+  function _await(value, then, direct) {
+    if (direct) {
+      return then ? then(value) : value;
+    }
+
+    value = Promise.resolve(value);
+    return then ? value.then(then) : value;
+  }
   var utils = jmMsCore.utils;
 
   var fnclient = function fnclient(_adapter) {
-    return _async(function () {
+    return function () {
       var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
       if (typeof opts === 'string') {
@@ -151,7 +151,7 @@
       };
       jmEvent.enableEvent(doc);
       return doc;
-    });
+    };
   };
 
   var fnclient_1 = fnclient;
@@ -228,10 +228,7 @@
       return axios(o);
     })
   };
-  var $ = mdl(adapter);
-  $.createModule = mdl; // deprecated
-
-  var browser = $;
+  var browser = mdl(adapter);
 
   exports.default = browser;
 

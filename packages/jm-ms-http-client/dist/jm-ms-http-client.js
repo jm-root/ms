@@ -1,15 +1,15 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('jm-event'), require('jm-err'), require('jm-ms-core'), require('axios'), require('http'), require('https')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'jm-event', 'jm-err', 'jm-ms-core', 'axios', 'http', 'https'], factory) :
-  (factory((global['jm-ms-http-client'] = {}),global.jmEvent,global.jmErr,global.jmMsCore,global.axios,global.http,global.https));
-}(this, (function (exports,jmEvent,jmErr,jmMsCore,axios,http,https) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('axios'), require('http'), require('https'), require('jm-event'), require('jm-err'), require('jm-ms-core')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'axios', 'http', 'https', 'jm-event', 'jm-err', 'jm-ms-core'], factory) :
+  (global = global || self, factory(global['jm-ms-http-client'] = {}, global.axios, global.http, global.https, global.jmEvent, global.jmErr, global.jmMsCore));
+}(this, (function (exports, axios, http, https, jmEvent, jmErr, jmMsCore) { 'use strict';
 
-  jmEvent = jmEvent && jmEvent.hasOwnProperty('default') ? jmEvent['default'] : jmEvent;
-  jmErr = jmErr && jmErr.hasOwnProperty('default') ? jmErr['default'] : jmErr;
-  jmMsCore = jmMsCore && jmMsCore.hasOwnProperty('default') ? jmMsCore['default'] : jmMsCore;
   axios = axios && axios.hasOwnProperty('default') ? axios['default'] : axios;
   http = http && http.hasOwnProperty('default') ? http['default'] : http;
   https = https && https.hasOwnProperty('default') ? https['default'] : https;
+  jmEvent = jmEvent && jmEvent.hasOwnProperty('default') ? jmEvent['default'] : jmEvent;
+  jmErr = jmErr && jmErr.hasOwnProperty('default') ? jmErr['default'] : jmErr;
+  jmMsCore = jmMsCore && jmMsCore.hasOwnProperty('default') ? jmMsCore['default'] : jmMsCore;
 
   function _awaitIgnored(value, direct) {
     if (!direct) {
@@ -18,29 +18,6 @@
   }
 
   function _empty() {}
-
-  function _catch(body, recover) {
-    try {
-      var result = body();
-    } catch (e) {
-      return recover(e);
-    }
-
-    if (result && result.then) {
-      return result.then(void 0, recover);
-    }
-
-    return result;
-  }
-
-  function _await(value, then, direct) {
-    if (direct) {
-      return then ? then(value) : value;
-    }
-
-    value = Promise.resolve(value);
-    return then ? value.then(then) : value;
-  }
 
   var _async = function () {
     try {
@@ -74,10 +51,33 @@
       };
     };
   }();
+
+  function _catch(body, recover) {
+    try {
+      var result = body();
+    } catch (e) {
+      return recover(e);
+    }
+
+    if (result && result.then) {
+      return result.then(void 0, recover);
+    }
+
+    return result;
+  }
+
+  function _await(value, then, direct) {
+    if (direct) {
+      return then ? then(value) : value;
+    }
+
+    value = Promise.resolve(value);
+    return then ? value.then(then) : value;
+  }
   var utils = jmMsCore.utils;
 
   var fnclient = function fnclient(_adapter) {
-    return _async(function () {
+    return function () {
       var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
       if (typeof opts === 'string') {
@@ -153,7 +153,7 @@
       };
       jmEvent.enableEvent(doc);
       return doc;
-    });
+    };
   };
 
   var fnclient_1 = fnclient;
@@ -239,10 +239,7 @@
       return axios(o);
     })
   };
-  var $ = mdl(adapter);
-  $.createModule = mdl; // deprecated
-
-  var lib = $;
+  var lib = mdl(adapter);
 
   exports.default = lib;
 

@@ -1,10 +1,10 @@
-const event = require('jm-event')
+const { EventEmitter } = require('jm-event')
 const WebSocket = require('ws')
 
-module.exports = class Adapter {
+module.exports = class Adapter extends EventEmitter {
   constructor (uri) {
-    event.enableEvent(this)
-    let ws = new WebSocket(uri)
+    super({ async: true })
+    const ws = new WebSocket(uri)
     this.ws = ws
     ws.on('message', (data, flags) => {
       this.emit('message', data)

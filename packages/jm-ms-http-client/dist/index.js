@@ -4,12 +4,12 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
-var jmEvent = _interopDefault(require('jm-event'));
-var jmErr = _interopDefault(require('jm-err'));
-var jmMsCore = _interopDefault(require('jm-ms-core'));
 var axios = _interopDefault(require('axios'));
 var http = _interopDefault(require('http'));
 var https = _interopDefault(require('https'));
+var jmEvent = _interopDefault(require('jm-event'));
+var jmErr = _interopDefault(require('jm-err'));
+var jmMsCore = _interopDefault(require('jm-ms-core'));
 
 function _awaitIgnored(value, direct) {
   if (!direct) {
@@ -18,29 +18,6 @@ function _awaitIgnored(value, direct) {
 }
 
 function _empty() {}
-
-function _catch(body, recover) {
-  try {
-    var result = body();
-  } catch (e) {
-    return recover(e);
-  }
-
-  if (result && result.then) {
-    return result.then(void 0, recover);
-  }
-
-  return result;
-}
-
-function _await(value, then, direct) {
-  if (direct) {
-    return then ? then(value) : value;
-  }
-
-  value = Promise.resolve(value);
-  return then ? value.then(then) : value;
-}
 
 var _async = function () {
   try {
@@ -74,10 +51,33 @@ var _async = function () {
     };
   };
 }();
+
+function _catch(body, recover) {
+  try {
+    var result = body();
+  } catch (e) {
+    return recover(e);
+  }
+
+  if (result && result.then) {
+    return result.then(void 0, recover);
+  }
+
+  return result;
+}
+
+function _await(value, then, direct) {
+  if (direct) {
+    return then ? then(value) : value;
+  }
+
+  value = Promise.resolve(value);
+  return then ? value.then(then) : value;
+}
 var utils = jmMsCore.utils;
 
 var fnclient = function fnclient(_adapter) {
-  return _async(function () {
+  return function () {
     var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
     if (typeof opts === 'string') {
@@ -153,7 +153,7 @@ var fnclient = function fnclient(_adapter) {
     };
     jmEvent.enableEvent(doc);
     return doc;
-  });
+  };
 };
 
 var fnclient_1 = fnclient;
@@ -239,10 +239,7 @@ var adapter = {
     return axios(o);
   })
 };
-var $ = mdl(adapter);
-$.createModule = mdl; // deprecated
-
-var lib = $;
+var lib = mdl(adapter);
 
 exports.default = lib;
 //# sourceMappingURL=index.js.map

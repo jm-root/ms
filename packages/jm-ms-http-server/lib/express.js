@@ -1,8 +1,6 @@
-const _ = require('lodash')
 const http = require('http')
 const https = require('https')
 const express = require('express')
-const bodyParser = require('body-parser')
 const error = require('jm-err')
 const log = require('jm-log4js')
 
@@ -10,11 +8,10 @@ const Err = error.Err
 const logger = log.getLogger('ms-http-server')
 const defaultPort = 80
 
-let createApp = function (opts = {}) {
-  let host = opts.host || null
-  let port = opts.port || defaultPort
-  let app = express()
-  if (opts.type === 'https') {
+function createApp (opts = {}) {
+  const { type, host = null, port = defaultPort } = opts
+  const app = express()
+  if (type === 'https') {
     https.createServer(opts, app).listen(port, host)
   } else {
     http.createServer(app).listen(port, host)
@@ -22,23 +19,29 @@ let createApp = function (opts = {}) {
   return app
 }
 
-let server = async function (router, opts = {}) {
-  let config = router.config
-  let app = opts.app
+module.exports = function (router, opts = {}) {
+  const { config = {} } = router
+  let { app } = opts
   if (!app) {
     app = createApp(opts)
-    app.use(bodyParser.json())
-    app.use(bodyParser.urlencoded({ extended: true }))
+    app.use(express.json())
+    app.use(express.urlencoded({ extended: true }))
     app.set('trust proxy', true) // 支持代理后面获取用户真实ip
 
     // 设置跨域访问
     app.use(function (req, res, next) {
-      let headers = opts.headers || {}
+      const { headers = {} } = opts
       res.header('Access-Control-Allow-Origin', headers['Access-Control-Allow-Origin'] || '*')
       res.header('Access-Control-Allow-Headers', headers['Access-Control-Allow-Headers'] || 'X-Forwarded-For, X-Requested-With, Content-Type, Content-Length, Authorization, Accept')
-      res.header('Access-Control-Allow-Methods', headers['Access-Control-Allow-Methods'] || 'PUT, POST, GET, DELETE, OPTIONS')
+      res.header('Access-Control-Allow-Methods', headers['Access-Control-Allow-Methods'] || 'PUT, POST, GET, DELETE, OPTIONS, HEAD')
       res.header('Content-Type', headers['Content-Type'] || 'application/json;charset=utf-8')
-      if (req.method === 'OPTIONS') { res.sendStatus(200) } else { next() }
+      if (req.method === 'OPTIONS' || req.method === 'HEAD') {
+        res.status(200).end()
+      } else if (req.url.indexOf('/favicon.ico') >= 0) {
+        res.status(404).end()
+      } else {
+        next()
+      }
     })
   }
 
@@ -50,11 +53,11 @@ let server = async function (router, opts = {}) {
   })
 
   app.use(function (req, res) {
-    _.defaults(req.query, req.body)
-    let opts = {
+    const data = Object.assign({}, req.query, req.body)
+    const opts = {
       uri: req.path,
       type: req.method.toLowerCase(),
-      data: req.query,
+      data,
       protocol: req.protocol,
       hostname: req.hostname,
       headers: req.headers,
@@ -64,7 +67,7 @@ let server = async function (router, opts = {}) {
     if (req.headers.lng) opts.lng = req.headers.lng
     router.request(opts)
       .then(doc => {
-        if (config && config.debug) {
+        if (config.debug) {
           logger.debug(`ok. request:\n${JSON.stringify(opts, null, 2)}\nresponse:\n${JSON.stringify(doc, null, 2)}`)
         }
         if (typeof doc === 'string') {
@@ -73,7 +76,7 @@ let server = async function (router, opts = {}) {
         res.send(doc)
       })
       .catch(err => {
-        if (config && config.debug) {
+        if (config.debug) {
           logger.debug(`fail. request:\n${JSON.stringify(opts, null, 2)}\nresponse:\n${JSON.stringify(err.data, null, 2)}`)
         }
         logger.error(err)
@@ -85,5 +88,3 @@ let server = async function (router, opts = {}) {
 
   return app
 }
-
-module.exports = server

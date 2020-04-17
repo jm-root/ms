@@ -1,6 +1,7 @@
 const WebSocket = require('ws')
 const proxyaddr = require('proxy-addr')
 const event = require('jm-event')
+const { EventEmitter } = require('jm-event')
 const error = require('jm-err')
 const log = require('jm-log4js')
 
@@ -8,10 +9,25 @@ const logger = log.getLogger('ms-ws-server')
 const Err = error.Err
 const defaultPort = 80
 
-let server = async function (router, opts = { port: defaultPort }) {
-  const config = router.config || {}
-  const debug = config.debug || false
+const defineGetter = function (obj, name, getter) {
+  Object.defineProperty(obj, name, {
+    configurable: true,
+    enumerable: true,
+    get: getter
+  })
+}
 
+const trust = function () {
+  return true
+}
+
+class Session extends EventEmitter {
+  constructor () {
+    super({ async: true })
+  }
+}
+
+module.exports = function (router, opts = { port: defaultPort }) {
   let id = 0
   let sessions = {}
 
@@ -24,52 +40,41 @@ let server = async function (router, opts = { port: defaultPort }) {
       }
     }
   }
-  event.enableEvent(doc)
-
-  const defineGetter = function (obj, name, getter) {
-    Object.defineProperty(obj, name, {
-      configurable: true,
-      enumerable: true,
-      get: getter
-    })
-  }
-
-  const trust = function () {
-    return true
-  }
+  event.enableEvent(doc, { async: true })
 
   const wss = new WebSocket.Server(opts)
-  wss.on('connection', function (ws) {
-    let session = {
+  wss.on('connection', function (ws, req) {
+    const { headers, url: uri } = req
+    const { config = {} } = router
+    const { debug = false } = config
+
+    const session = new Session()
+    Object.assign(session, {
       id: id++,
+      headers,
+      uri,
       send: function () {
         ws.send.apply(ws, arguments)
       },
       close: function () {
         ws.close.apply(ws, arguments)
       }
-    }
+    })
 
-    if (debug) {
-      logger.debug(`session ${session.id} connected.`)
-    }
+    logger.info(`session ${session.id} connected.`, { uri, headers })
 
-    if (ws.upgradeReq) {
-      let req = ws.upgradeReq
+    defineGetter(req, 'ip', function () {
+      return proxyaddr(this, trust)
+    })
 
-      defineGetter(req, 'ip', function () {
-        return proxyaddr(this, trust)
-      })
+    defineGetter(req, 'ips', function () {
+      let addrs = proxyaddr.all(this, trust)
+      return addrs.slice(1).reverse()
+    })
 
-      defineGetter(req, 'ips', function () {
-        let addrs = proxyaddr.all(this, trust)
-        return addrs.slice(1).reverse()
-      })
-      session.ip = ws.upgradeReq.ip
-      session.ips = ws.upgradeReq.ips
-    }
+    session.ip = req.ip
+    session.ips = req.ips
 
-    event.enableEvent(session)
     sessions[session.id] = session
     doc.emit('connection', session)
     ws.on('message', function (message) {
@@ -82,8 +87,8 @@ let server = async function (router, opts = { port: defaultPort }) {
         return
       }
       json.session = session
-      !json.ip && (json.ip = session.ip)
-      !json.ips && (json.ips = session.ips)
+      json.ip || (json.ip = session.ip)
+      json.ips || (json.ips = session.ips)
       json.ips && json.ips.length && (json.ip = json.ips[0])
       json.protocol = 'ws'
       let p = router.request(json)
@@ -115,9 +120,7 @@ let server = async function (router, opts = { port: defaultPort }) {
       }
     })
     ws.onclose = function (event) {
-      if (debug) {
-        logger.debug(`session ${session.id} disconnected.`)
-      }
+      logger.info(`session ${session.id} disconnected.`)
       delete sessions[session.id]
       doc.emit('close', session)
       session.emit('close')
@@ -126,5 +129,3 @@ let server = async function (router, opts = { port: defaultPort }) {
 
   return doc
 }
-
-module.exports = server

@@ -1,6 +1,6 @@
 {
   "name": "jm-ms-http-server",
-  "version": "2.0.6",
+  "version": "2.1.0",
   "description": "http server plugin for jm-ms-core",
   "main": "./lib/index",
   "scripts": {
@@ -23,14 +23,10 @@
   },
   "homepage": "https://github.com/jm-root/ms",
   "dependencies": {
-    "body-parser": "^1.17.1",
-    "express": "^4.15.2",
-    "jm-err": "^1.0.4",
-    "jm-log4js": "^1.1.0",
-    "jm-ms-core": "^2.0.1",
-    "lodash": "^4.17.4"
+    "express": "^4.17.1"
   },
   "devDependencies": {
-    "jest": "^23.1.0"
+    "jm-log4js": "^2.0.5",
+    "log4js": "^6.1.0"
   }
 }

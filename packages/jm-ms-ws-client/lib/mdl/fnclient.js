@@ -1,8 +1,8 @@
 const event = require('jm-event')
 const log = require('jm-logger')
-const utils = require('jm-ms-core').utils
+const { utils } = require('jm-ms-core')
 const error = require('jm-err')
-const WS = require('jm-net').WebSocket
+const { WebSocket: WS } = require('jm-net')
 
 const Err = error.Err
 
@@ -10,8 +10,8 @@ const Timeout = 60000 // 请求超时时间 60 秒
 const MAXID = 999999
 let errNetwork = error.err(Err.FA_NETWORK)
 
-let fnclient = function (_Adapter) {
-  return async function (opts = {}) {
+module.exports = function (_Adapter) {
+  return function (opts = {}) {
     if (typeof opts === 'string') {
       opts = { uri: opts }
     }
@@ -79,9 +79,9 @@ let fnclient = function (_Adapter) {
         ws.close()
       }
     }
-    event.enableEvent(doc)
+    event.enableEvent(doc, { async: true })
 
-    let onmessage = function (message) {
+    const onmessage = function (message) {
       doc.emit('message', message)
       let json = null
       try {
@@ -149,5 +149,3 @@ let fnclient = function (_Adapter) {
     return doc
   }
 }
-
-module.exports = fnclient

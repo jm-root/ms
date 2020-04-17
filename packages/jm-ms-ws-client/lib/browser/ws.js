@@ -1,13 +1,13 @@
-const event = require('jm-event')
+const { EventEmitter } = require('jm-event')
 const error = require('jm-err')
 
 const Err = error.Err
 let errNetwork = error.err(Err.FA_NETWORK)
 
-module.exports = class Adapter {
+module.exports = class Adapter extends EventEmitter {
   constructor (uri) {
-    event.enableEvent(this)
-    let ws = new WebSocket(uri) // eslint-disable-line
+    super({ async: true })
+    const ws = new WebSocket(uri) // eslint-disable-line
     this.ws = ws
     ws.onmessage = event => {
       this.emit('message', event.data)

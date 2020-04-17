@@ -1,5 +1,9 @@
 # History
 
+## 2.1.0 / 2020-02-27
+- upgrade dependencies
+- export function without async
+
 ## 2.0.6 / 2018-08-15
 - 错误处理
 

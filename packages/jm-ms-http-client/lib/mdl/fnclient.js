@@ -3,7 +3,7 @@ const error = require('jm-err')
 const utils = require('jm-ms-core').utils
 
 let fnclient = function (_adapter) {
-  return async function (opts = {}) {
+  return function (opts = {}) {
     if (typeof opts === 'string') {
       opts = { uri: opts }
     }

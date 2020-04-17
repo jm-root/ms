@@ -1,10 +1,10 @@
 {
   "name": "jm-ms-http-client",
-  "version": "2.1.3",
+  "version": "2.2.0",
   "description": "http client plugin for jm-ms-core",
   "main": "index.js",
   "scripts": {
-    "build": "rollup -c rollup.config.js",
+    "build": "npx rollup -c rollup.config.js",
     "test": "jest"
   },
   "repository": {
@@ -24,13 +24,6 @@
   },
   "homepage": "https://github.com/jm-root/ms",
   "dependencies": {
-    "axios": "^0.18.0",
-    "jm-ms-core": "^2.1.0",
-    "lodash": "^4.17.4"
-  },
-  "devDependencies": {
-    "jest": "^23.1.0",
-    "jm-err": "^1.0.5",
-    "jm-event": "^2.0.1"
+    "axios": "^0.19.2"
   }
 }

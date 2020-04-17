@@ -4,10 +4,10 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
+var axios = _interopDefault(require('axios'));
 var jmEvent = _interopDefault(require('jm-event'));
 var jmErr = _interopDefault(require('jm-err'));
 var jmMsCore = _interopDefault(require('jm-ms-core'));
-var axios = _interopDefault(require('axios'));
 
 function _awaitIgnored(value, direct) {
   if (!direct) {
@@ -16,29 +16,6 @@ function _awaitIgnored(value, direct) {
 }
 
 function _empty() {}
-
-function _catch(body, recover) {
-  try {
-    var result = body();
-  } catch (e) {
-    return recover(e);
-  }
-
-  if (result && result.then) {
-    return result.then(void 0, recover);
-  }
-
-  return result;
-}
-
-function _await(value, then, direct) {
-  if (direct) {
-    return then ? then(value) : value;
-  }
-
-  value = Promise.resolve(value);
-  return then ? value.then(then) : value;
-}
 
 var _async = function () {
   try {
@@ -72,10 +49,33 @@ var _async = function () {
     };
   };
 }();
+
+function _catch(body, recover) {
+  try {
+    var result = body();
+  } catch (e) {
+    return recover(e);
+  }
+
+  if (result && result.then) {
+    return result.then(void 0, recover);
+  }
+
+  return result;
+}
+
+function _await(value, then, direct) {
+  if (direct) {
+    return then ? then(value) : value;
+  }
+
+  value = Promise.resolve(value);
+  return then ? value.then(then) : value;
+}
 var utils = jmMsCore.utils;
 
 var fnclient = function fnclient(_adapter) {
-  return _async(function () {
+  return function () {
     var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
     if (typeof opts === 'string') {
@@ -151,7 +151,7 @@ var fnclient = function fnclient(_adapter) {
     };
     jmEvent.enableEvent(doc);
     return doc;
-  });
+  };
 };
 
 var fnclient_1 = fnclient;
@@ -228,10 +228,7 @@ var adapter = {
     return axios(o);
   })
 };
-var $ = mdl(adapter);
-$.createModule = mdl; // deprecated
-
-var browser = $;
+var browser = mdl(adapter);
 
 exports.default = browser;
 //# sourceMappingURL=browser.js.map
