@@ -20,7 +20,8 @@ function createApp (opts = {}) {
 }
 
 module.exports = function (router, opts = {}) {
-  const { config = {} } = router
+  const { config: { debug } = {} } = router
+  debug && (logger.setLevel('debug'))
   let { app } = opts
   if (!app) {
     app = createApp(opts)
@@ -67,7 +68,7 @@ module.exports = function (router, opts = {}) {
     if (req.headers.lng) opts.lng = req.headers.lng
     router.request(opts)
       .then(doc => {
-        if (config.debug) {
+        if (debug) {
           logger.debug(`ok. request:\n${JSON.stringify(opts, null, 2)}\nresponse:\n${JSON.stringify(doc, null, 2)}`)
         }
         if (typeof doc === 'string') {
@@ -76,13 +77,12 @@ module.exports = function (router, opts = {}) {
         res.send(doc)
       })
       .catch(err => {
-        if (config.debug) {
+        if (debug) {
           logger.debug(`fail. request:\n${JSON.stringify(opts, null, 2)}\nresponse:\n${JSON.stringify(err.data, null, 2)}`)
         }
         logger.error(err)
-        let doc = err.data
-        doc || (doc = Object.assign({ status: err.status || error.Err.FA_INTERNALERROR.err }, Err.FA_INTERNALERROR, { msg: err.message }))
-        return res.status(doc.status || Err.FA_INTERNALERROR.err).send(doc)
+        const doc = err.data || Object.assign({}, Err.FA_INTERNALERROR, { status: err.status, msg: err.message })
+        return res.status(err.status || doc.status || Err.FA_INTERNALERROR.err).send(doc)
       })
   })
 
