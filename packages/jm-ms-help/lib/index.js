@@ -1,6 +1,8 @@
 const cluster = require('cluster')
 const fs = require('fs')
 const path = require('path')
+const error = require('jm-err')
+const { Err } = error
 
 let pkg = null
 let pkgFile = path.join(process.cwd(), '/package.json')
@@ -20,14 +22,23 @@ function deal (opts, pkg) {
   if (cluster.isWorker) {
     o.clusterId = cluster.worker.id
   }
+
+  // health
+  const { status } = o
+  if (status !== undefined && !status) {
+    const e = error.err(Err.FA_UNAVAILABLE)
+    e.data = o
+    throw e
+  }
+
   return o
 }
 
-let help = function (opts = {}) {
+function help (opts = {}) {
   return deal(opts, pkg)
 }
 
-let enableHelp = function (router, pkg) {
+function enableHelp (router, pkg) {
   if (pkg) {
     router.add('/', 'get', (opts = {}) => {
       deal(opts, pkg)
@@ -37,6 +48,6 @@ let enableHelp = function (router, pkg) {
 }
 
 module.exports = {
-  help: help,
-  enableHelp: enableHelp
+  help,
+  enableHelp
 }
