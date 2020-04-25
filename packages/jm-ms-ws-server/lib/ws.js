@@ -28,6 +28,9 @@ class Session extends EventEmitter {
 }
 
 module.exports = function (router, opts = { port: defaultPort }) {
+  const { config: { debug } = {} } = router
+  debug && (logger.setLevel('debug'))
+
   let id = 0
   let sessions = {}
 
