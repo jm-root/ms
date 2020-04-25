@@ -79,7 +79,7 @@ module.exports = function (_Adapter) {
         ws.close()
       }
     }
-    event.enableEvent(doc, { async: true })
+    event.enableEvent(doc)
 
     const onmessage = function (message) {
       doc.emit('message', message)
