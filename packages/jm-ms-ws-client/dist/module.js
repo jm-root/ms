@@ -7,7 +7,235 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 var jmEvent = _interopDefault(require('jm-event'));
 var jmLogger = _interopDefault(require('jm-logger'));
 var jmMsCore = _interopDefault(require('jm-ms-core'));
-var jmErr = _interopDefault(require('jm-err'));
+
+var zh_CN = {
+  'Success': '成功',
+  'Fail': '失败',
+  'System Error': '系统错误',
+  'Network Error': '网络错误',
+  'Parameter Error': '参数错误',
+  'Busy': '忙',
+  'Time Out': '超时',
+  'Abort': '中止',
+  'Not Ready': '未准备好',
+  'Not Exists': '不存在',
+  'Already Exists': '已存在',
+  'Validation Error': '校验错误',
+  'OK': 'OK',
+  'Bad Request': '错误请求',
+  'Unauthorized': '未验证',
+  'Forbidden': '无权限',
+  'Not Found': '未找到',
+  'Internal Server Error': '服务器内部错误',
+  'Service Unavailable': '无效服务'
+};
+var lngs = {
+  zh_CN: zh_CN
+  /**
+   * translate
+   * @param {string} msg - msg to be translate
+   * @param {string} lng - language
+   * @return {String | null}
+   */
+
+};
+
+var locale = function locale(msg, lng) {
+  if (!lng || !lngs[lng]) return null;
+  return lngs[lng][msg];
+};
+/**
+ * err module.
+ * @module err
+ */
+
+
+function isNumber(obj) {
+  return typeof obj === 'number' && isFinite(obj);
+}
+/**
+ * common error defines
+ *
+ */
+
+
+var Err = {
+  SUCCESS: {
+    err: 0,
+    msg: 'Success'
+  },
+  FAIL: {
+    err: 1,
+    msg: 'Fail'
+  },
+  FA_SYS: {
+    err: 2,
+    msg: 'System Error'
+  },
+  FA_NETWORK: {
+    err: 3,
+    msg: 'Network Error'
+  },
+  FA_PARAMS: {
+    err: 4,
+    msg: 'Parameter Error'
+  },
+  FA_BUSY: {
+    err: 5,
+    msg: 'Busy'
+  },
+  FA_TIMEOUT: {
+    err: 6,
+    msg: 'Time Out'
+  },
+  FA_ABORT: {
+    err: 7,
+    msg: 'Abort'
+  },
+  FA_NOTREADY: {
+    err: 8,
+    msg: 'Not Ready'
+  },
+  FA_NOTEXISTS: {
+    err: 9,
+    msg: 'Not Exists'
+  },
+  FA_EXISTS: {
+    err: 10,
+    msg: 'Already Exists'
+  },
+  FA_VALIDATION: {
+    err: 11,
+    msg: 'Validation Error'
+  },
+  OK: {
+    err: 200,
+    msg: 'OK'
+  },
+  FA_BADREQUEST: {
+    err: 400,
+    msg: 'Bad Request'
+  },
+  FA_NOAUTH: {
+    err: 401,
+    msg: 'Unauthorized'
+  },
+  FA_NOPERMISSION: {
+    err: 403,
+    msg: 'Forbidden'
+  },
+  FA_NOTFOUND: {
+    err: 404,
+    msg: 'Not Found'
+  },
+  FA_INTERNALERROR: {
+    err: 500,
+    msg: 'Internal Server Error'
+  },
+  FA_UNAVAILABLE: {
+    err: 503,
+    msg: 'Service Unavailable'
+  }
+};
+Err.t = locale;
+/**
+ * return message from template
+ *
+ * ```javascript
+ * errMsg('sampe ${name} ${value}', {name: 'jeff', value: 123});
+ * // return 'sample jeff 123'
+ * ```
+ *
+ * @param {String} msg message template
+ * @param {Object} opts params
+ * @return {String} final message
+ */
+
+function errMsg(msg, opts) {
+  if (opts) {
+    for (var key in opts) {
+      msg = msg.split('${' + key + '}').join(opts[key]);
+    }
+  }
+
+  return msg;
+}
+/**
+ * return an Error Object
+ * @param {Object|String} E Err object or a message template
+ * @param {Object} [opts] params
+ * @return {Error}
+ */
+
+
+function err(E, opts) {
+  if (typeof E === 'string') {
+    E = {
+      msg: E
+    };
+  }
+
+  var msg = errMsg(E.msg || E.message, opts);
+  var code = E.err;
+  code === undefined && (code = Err.FAIL.err);
+  var status = Err.FA_INTERNALERROR.err;
+  if (code === Err.SUCCESS.err) status = 200;
+  if (isNumber(code) && code >= 200 && code <= 600) status = code;
+  E.status !== undefined && (status = E.status);
+  var e = new Error(msg);
+  e.code = code;
+  e.status = status;
+  e.data = Object.assign(E, {
+    err: code,
+    msg: msg,
+    status: status
+  });
+  return e;
+}
+/**
+ * enable Err Object, errMsg and err function for obj
+ * @param {Object} obj target object
+ * @param {String} [name] name to bind
+ * @return {boolean}
+ */
+
+
+function enableErr(obj) {
+  var name = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'Err';
+  if (obj[name]) return false;
+  obj[name] = Err;
+  obj.err = err;
+  obj.errMsg = errMsg;
+  return true;
+}
+/**
+ * disable Err Object, errMsg and err function for obj
+ * @param {Object} obj target object
+ * @param {String} [name] name to bind
+ */
+
+
+function disableErr(obj) {
+  var name = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'Err';
+  if (!obj[name]) return;
+  delete obj[name];
+  delete obj.err;
+  delete obj.errMsg;
+}
+
+var $ = {
+  Err: Err,
+  errMsg: errMsg,
+  err: err,
+  enableErr: enableErr,
+  disableErr: disableErr
+};
+var lib = $;
+
+var index_esm = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  'default': lib
+});
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -57,9 +285,7 @@ var PingTimeout = 60000; // 默认心跳时间 60 秒
 
 var PongTimeout = 10000; // 默认响应超时时间 10 秒
 
-var HeartBeat =
-/*#__PURE__*/
-function () {
+var HeartBeat = /*#__PURE__*/function () {
   function HeartBeat() {
     var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
@@ -161,9 +387,7 @@ var MaxReconnectAttempts = 0; // 默认重试次数0 表示无限制
 
 var ReconnectTimeout = 3000; // 默认自动重连延时 3 秒
 
-var WebSocket =
-/*#__PURE__*/
-function () {
+var WebSocket = /*#__PURE__*/function () {
   function WebSocket() {
     var _this = this;
 
@@ -356,22 +580,24 @@ WebSocket.MaxReconnectAttempts = MaxReconnectAttempts;
 WebSocket.ReconnectTimeout = ReconnectTimeout;
 WebSocket.PingFailedCode = PingFailedCode;
 var ws = WebSocket;
-var $ = {
+var $$1 = {
   HeartBeat: heartbeat,
   WebSocket: ws
 };
-var lib = $;
+var lib$1 = $$1;
 
-var index_esm = /*#__PURE__*/Object.freeze({
+var index_esm$1 = /*#__PURE__*/Object.freeze({
   __proto__: null,
-  'default': lib
+  'default': lib$1
 });
 
 function getCjsExportFromNamespace (n) {
 	return n && n['default'] || n;
 }
 
-var require$$1 = getCjsExportFromNamespace(index_esm);
+var error = getCjsExportFromNamespace(index_esm);
+
+var require$$1 = getCjsExportFromNamespace(index_esm$1);
 
 var _async$1 = function () {
   try {
@@ -416,11 +642,11 @@ function _await$1(value, then, direct) {
 }
 var utils = jmMsCore.utils;
 var WS = require$$1.WebSocket;
-var Err = jmErr.Err;
+var Err$1 = error.Err;
 var Timeout = 60000; // 请求超时时间 60 秒
 
 var MAXID = 999999;
-var errNetwork = jmErr.err(Err.FA_NETWORK);
+var errNetwork = error.err(Err$1.FA_NETWORK);
 
 var fnclient = function fnclient(_Adapter) {
   return function () {
@@ -441,7 +667,7 @@ var fnclient = function fnclient(_Adapter) {
     var _opts2 = opts,
         _opts2$prefix = _opts2.prefix,
         prefix = _opts2$prefix === void 0 ? '' : _opts2$prefix;
-    if (!uri) throw jmErr.err(jmErr.Err.FA_PARAMS);
+    if (!uri) throw error.err(error.Err.FA_PARAMS);
     var path = utils.getUriPath(uri);
     prefix = path + prefix;
     var id = 0;
@@ -478,8 +704,10 @@ var fnclient = function fnclient(_Adapter) {
             setTimeout(function () {
               if (cbs[id]) {
                 delete cbs[id];
-                var e = jmErr.err(Err.FA_TIMEOUT);
-                reject(e);
+
+                var _e = error.err(Err$1.FA_TIMEOUT);
+
+                reject(_e);
               }
             }, t);
           });
@@ -504,9 +732,7 @@ var fnclient = function fnclient(_Adapter) {
         ws.close();
       }
     };
-    jmEvent.enableEvent(doc, {
-      async: true
-    });
+    jmEvent.enableEvent(doc);
 
     var onmessage = function onmessage(message) {
       doc.emit('message', message);
@@ -525,7 +751,7 @@ var fnclient = function fnclient(_Adapter) {
           var _doc = json.data;
 
           if (_doc.err) {
-            err = jmErr.err(_doc);
+            err = error.err(_doc);
             p.reject(err);
           } else {
             p.resolve(_doc);
