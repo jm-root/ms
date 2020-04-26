@@ -3,9 +3,11 @@
   "version": "2.2.1",
   "description": "websocket client plugin for jm-ms-core",
   "main": "index.js",
+  "module": "./dist/index.esm.js",
+  "browser": "./dist/browser.esm.js",
   "scripts": {
     "build": "npx rollup -c rollup.config.js",
-    "test": "jest"
+    "test": "npx jest"
   },
   "repository": {
     "type": "git",

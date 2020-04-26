@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "description": "the route programming mode",
   "main": "./dist/index.js",
+  "module": "./dist/index.esm.js",
   "scripts": {
-    "build": "rollup -c rollup.config.js",
-    "test": "jest"
+    "build": "npx rollup -c rollup.config.js",
+    "test": "npx jest"
   },
   "repository": {
     "type": "git",
@@ -24,8 +25,5 @@
     "url": "https://github.com/jm-root/ms/issues"
   },
   "homepage": "https://github.com/jm-root/ms",
-  "dependencies": {},
-  "devDependencies": {
-    "jest": "^23.1.0"
-  }
+  "dependencies": {}
 }

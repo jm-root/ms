@@ -4,7 +4,7 @@
   "description": "ws server plugin for jm-ms-core",
   "main": "./lib/index",
   "scripts": {
-    "test": "jest"
+    "test": "npx jest"
   },
   "repository": {
     "type": "git",
