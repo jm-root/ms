@@ -130,7 +130,7 @@ const esmConfig = Object.assign({}, baseConfig, {
 })
 
 const esmBrowserConfig = Object.assign({}, baseConfig, {
-  output: Object.assign({}, baseConfig.output, {
+  output: Object.assign({}, browserConfig.output, {
     sourcemap: true,
     format: 'es',
     file: join(cwd, 'dist/browser.esm.js')
@@ -138,7 +138,7 @@ const esmBrowserConfig = Object.assign({}, baseConfig, {
 })
 
 const esmMdlConfig = Object.assign({}, baseConfig, {
-  output: Object.assign({}, baseConfig.output, {
+  output: Object.assign({}, mdlConfig.output, {
     sourcemap: true,
     format: 'es',
     file: join(cwd, 'dist/module.esm.js')
