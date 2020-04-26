@@ -1,24 +1,6 @@
 import jmMsCore from 'jm-ms-core';
-import jmMsHttpClient from 'jm-ms-http-client';
-import jmMsWsClient from 'jm-ms-ws-client';
-import jmMsHttpServer from 'jm-ms-http-server';
-import jmMsWsServer from 'jm-ms-ws-server';
-
-function _typeof(obj) {
-  "@babel/helpers - typeof";
-
-  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-    _typeof = function (obj) {
-      return typeof obj;
-    };
-  } else {
-    _typeof = function (obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-    };
-  }
-
-  return _typeof(obj);
-}
+import browser$1 from 'jm-ms-http-client/dist/browser';
+import browser$2 from 'jm-ms-ws-client/dist/browser';
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -57,6 +39,19 @@ function _setPrototypeOf(o, p) {
   return _setPrototypeOf(o, p);
 }
 
+function _isNativeReflectConstruct() {
+  if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+  if (Reflect.construct.sham) return false;
+  if (typeof Proxy === "function") return true;
+
+  try {
+    Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 function _assertThisInitialized(self) {
   if (self === void 0) {
     throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
@@ -73,25 +68,36 @@ function _possibleConstructorReturn(self, call) {
   return _assertThisInitialized(self);
 }
 
+function _createSuper(Derived) {
+  return function () {
+    var Super = _getPrototypeOf(Derived),
+        result;
+
+    if (_isNativeReflectConstruct()) {
+      var NewTarget = _getPrototypeOf(this).constructor;
+
+      result = Reflect.construct(Super, arguments, NewTarget);
+    } else {
+      result = Super.apply(this, arguments);
+    }
+
+    return _possibleConstructorReturn(this, result);
+  };
+}
+
 var $ = /*#__PURE__*/function (_MS) {
   _inherits($, _MS);
 
-  function $() {
-    var _this;
+  var _super = _createSuper($);
 
-    var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  function $(opts) {
+    var _this;
 
     _classCallCheck(this, $);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf($).call(this, opts));
+    _this = _super.call(this, opts);
 
-    if (!opts.disable_client) {
-      _this.use(jmMsHttpClient).use(jmMsWsClient);
-    }
-
-    if (!opts.disable_server && (typeof process === "undefined" ? "undefined" : _typeof(process)) === 'object') {
-      _this.use(jmMsHttpServer).use(jmMsWsServer);
-    }
+    _this.use(browser$1).use(browser$2);
 
     return _this;
   }
@@ -99,7 +105,7 @@ var $ = /*#__PURE__*/function (_MS) {
   return $;
 }(jmMsCore);
 
-var lib = $;
+var browser = $;
 
-export default lib;
+export default browser;
 //# sourceMappingURL=browser.esm.js.map

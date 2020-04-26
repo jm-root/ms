@@ -5,7 +5,7 @@ function fn (opts) {
 module.exports = [
   fn(),
   fn({
-    inputFilename: 'lib/browser/index',
+    inputFilename: 'lib/browser',
     outputFilename: 'dist/browser'
   })
 ]

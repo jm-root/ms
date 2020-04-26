@@ -1,16 +1,16 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', { value: true });
-
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
-var pathToRegexp = _interopDefault(require('path-to-regexp'));
-var jmRoute = _interopDefault(require('jm-route'));
 var jmErr = _interopDefault(require('jm-err'));
 var jmEvent = _interopDefault(require('jm-event'));
 var jmModule = _interopDefault(require('jm-module'));
+var jmRoute = _interopDefault(require('jm-route'));
+var pathToRegexp = _interopDefault(require('path-to-regexp'));
 
 function _typeof(obj) {
+  "@babel/helpers - typeof";
+
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
     _typeof = function (obj) {
       return typeof obj;
@@ -77,6 +77,19 @@ function _setPrototypeOf(o, p) {
   return _setPrototypeOf(o, p);
 }
 
+function _isNativeReflectConstruct() {
+  if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+  if (Reflect.construct.sham) return false;
+  if (typeof Proxy === "function") return true;
+
+  try {
+    Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 function _assertThisInitialized(self) {
   if (self === void 0) {
     throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
@@ -93,38 +106,22 @@ function _possibleConstructorReturn(self, call) {
   return _assertThisInitialized(self);
 }
 
-var _async = function () {
-  try {
-    if (isNaN.apply(null, {})) {
-      return function (f) {
-        return function () {
-          try {
-            return Promise.resolve(f.apply(this, arguments));
-          } catch (e) {
-            return Promise.reject(e);
-          }
-        };
-      };
+function _createSuper(Derived) {
+  return function () {
+    var Super = _getPrototypeOf(Derived),
+        result;
+
+    if (_isNativeReflectConstruct()) {
+      var NewTarget = _getPrototypeOf(this).constructor;
+
+      result = Reflect.construct(Super, arguments, NewTarget);
+    } else {
+      result = Super.apply(this, arguments);
     }
-  } catch (e) {}
 
-  return function (f) {
-    // Pre-ES5.1 JavaScript runtimes don't accept array-likes in Function.apply
-    return function () {
-      var args = [];
-
-      for (var i = 0; i < arguments.length; i++) {
-        args[i] = arguments[i];
-      }
-
-      try {
-        return Promise.resolve(f.apply(this, args));
-      } catch (e) {
-        return Promise.reject(e);
-      }
-    };
+    return _possibleConstructorReturn(this, result);
   };
-}();
+}
 
 var preRequest = function preRequest(uri, type, data, opts) {
   // uri为对象时直接返回
@@ -133,9 +130,8 @@ var preRequest = function preRequest(uri, type, data, opts) {
   }
 
   var r = {
-    uri: uri // 第2个参数可能为空，data
-
-  };
+    uri: uri
+  }; // 第2个参数可能为空，data
 
   if (type === undefined) {
     return r;
@@ -161,6 +157,20 @@ var preRequest = function preRequest(uri, type, data, opts) {
 
   return r;
 };
+
+function _async(f) {
+  return function () {
+    for (var args = [], i = 0; i < arguments.length; i++) {
+      args[i] = arguments[i];
+    }
+
+    try {
+      return Promise.resolve(f.apply(this, args));
+    } catch (e) {
+      return Promise.reject(e);
+    }
+  };
+}
 
 var utils = {
   getUriProtocol: function getUriProtocol(uri) {
@@ -204,9 +214,7 @@ var utils_1 = utils;
  * Class representing a matcher.
  */
 
-var Matcher =
-/*#__PURE__*/
-function () {
+var Matcher = /*#__PURE__*/function () {
   /**
    * create a matcher.
    * @param {Object} opts
@@ -295,10 +303,10 @@ function () {
 
 var matcher = Matcher;
 
-var DefaultRoute =
-/*#__PURE__*/
-function (_Route) {
+var DefaultRoute = /*#__PURE__*/function (_Route) {
   _inherits(DefaultRoute, _Route);
+
+  var _super = _createSuper(DefaultRoute);
 
   /**
    * create a route.
@@ -318,7 +326,7 @@ function (_Route) {
 
     _classCallCheck(this, DefaultRoute);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(DefaultRoute).call(this, opts.fn));
+    _this = _super.call(this, opts.fn);
     _this.name = "".concat(opts.type || '', " ").concat(opts.uri || '');
     _this.matcher = new matcher(opts);
     opts.router && (_this.router = opts.router);
@@ -337,234 +345,19 @@ function (_Route) {
 
 var route = DefaultRoute;
 
-function _for(test, update, body) {
-  var stage;
-
-  for (;;) {
-    var shouldContinue = test();
-
-    if (_isSettledPact(shouldContinue)) {
-      shouldContinue = shouldContinue.__value;
-    }
-
-    if (!shouldContinue) {
-      return result;
-    }
-
-    if (shouldContinue.then) {
-      stage = 0;
-      break;
-    }
-
-    var result = body();
-
-    if (result && result.then) {
-      if (_isSettledPact(result)) {
-        result = result.__state;
-      } else {
-        stage = 1;
-        break;
-      }
-    }
-
-    if (update) {
-      var updateValue = update();
-
-      if (updateValue && updateValue.then && !_isSettledPact(updateValue)) {
-        stage = 2;
-        break;
-      }
-    }
+function _await(value, then, direct) {
+  if (direct) {
+    return then ? then(value) : value;
   }
 
-  var pact = new _Pact();
-
-  var reject = _settle.bind(null, pact, 2);
-
-  (stage === 0 ? shouldContinue.then(_resumeAfterTest) : stage === 1 ? result.then(_resumeAfterBody) : updateValue.then(_resumeAfterUpdate)).then(void 0, reject);
-  return pact;
-
-  function _resumeAfterBody(value) {
-    result = value;
-
-    do {
-      if (update) {
-        updateValue = update();
-
-        if (updateValue && updateValue.then && !_isSettledPact(updateValue)) {
-          updateValue.then(_resumeAfterUpdate).then(void 0, reject);
-          return;
-        }
-      }
-
-      shouldContinue = test();
-
-      if (!shouldContinue || _isSettledPact(shouldContinue) && !shouldContinue.__value) {
-        _settle(pact, 1, result);
-
-        return;
-      }
-
-      if (shouldContinue.then) {
-        shouldContinue.then(_resumeAfterTest).then(void 0, reject);
-        return;
-      }
-
-      result = body();
-
-      if (_isSettledPact(result)) {
-        result = result.__value;
-      }
-    } while (!result || !result.then);
-
-    result.then(_resumeAfterBody).then(void 0, reject);
+  if (!value || !value.then) {
+    value = Promise.resolve(value);
   }
 
-  function _resumeAfterTest(shouldContinue) {
-    if (shouldContinue) {
-      result = body();
-
-      if (result && result.then) {
-        result.then(_resumeAfterBody).then(void 0, reject);
-      } else {
-        _resumeAfterBody(result);
-      }
-    } else {
-      _settle(pact, 1, result);
-    }
-  }
-
-  function _resumeAfterUpdate() {
-    if (shouldContinue = test()) {
-      if (shouldContinue.then) {
-        shouldContinue.then(_resumeAfterTest).then(void 0, reject);
-      } else {
-        _resumeAfterTest(shouldContinue);
-      }
-    } else {
-      _settle(pact, 1, result);
-    }
-  }
+  return then ? value.then(then) : value;
 }
 
-function _isSettledPact(thenable) {
-  return thenable instanceof _Pact && thenable.__state === 1;
-}
-
-var _Pact = function () {
-  function _Pact() {}
-
-  _Pact.prototype.then = function (onFulfilled, onRejected) {
-    var state = this.__state;
-
-    if (state) {
-      var callback = state == 1 ? onFulfilled : onRejected;
-
-      if (callback) {
-        var _result3 = new _Pact();
-
-        try {
-          _settle(_result3, 1, callback(this.__value));
-        } catch (e) {
-          _settle(_result3, 2, e);
-        }
-
-        return _result3;
-      } else {
-        return this;
-      }
-    }
-
-    var result = new _Pact();
-
-    this.__observer = function (_this) {
-      try {
-        var value = _this.__value;
-
-        if (_this.__state == 1) {
-          _settle(result, 1, onFulfilled ? onFulfilled(value) : value);
-        } else if (onRejected) {
-          _settle(result, 1, onRejected(value));
-        } else {
-          _settle(result, 2, value);
-        }
-      } catch (e) {
-        _settle(result, 2, e);
-      }
-    };
-
-    return result;
-  };
-
-  return _Pact;
-}();
-
-function _settle(pact, state, value) {
-  if (!pact.__state) {
-    if (value instanceof _Pact) {
-      if (value.__state) {
-        if (state === 1) {
-          state = value.__state;
-        }
-
-        value = value.__value;
-      } else {
-        value.__observer = _settle.bind(null, pact, state);
-        return;
-      }
-    }
-
-    if (value && value.then) {
-      value.then(_settle.bind(null, pact, state), _settle.bind(null, pact, 2));
-      return;
-    }
-
-    pact.__state = state;
-    pact.__value = value;
-    var observer = pact.__observer;
-
-    if (observer) {
-      observer(pact);
-    }
-  }
-}
-
-var _async$1 = function () {
-  try {
-    if (isNaN.apply(null, {})) {
-      return function (f) {
-        return function () {
-          try {
-            return Promise.resolve(f.apply(this, arguments));
-          } catch (e) {
-            return Promise.reject(e);
-          }
-        };
-      };
-    }
-  } catch (e) {}
-
-  return function (f) {
-    // Pre-ES5.1 JavaScript runtimes don't accept array-likes in Function.apply
-    return function () {
-      var args = [];
-
-      for (var i = 0; i < arguments.length; i++) {
-        args[i] = arguments[i];
-      }
-
-      try {
-        return Promise.resolve(f.apply(this, args));
-      } catch (e) {
-        return Promise.reject(e);
-      }
-    };
-  };
-}();
-
-function _continue(value, then) {
-  return value && value.then ? value.then(then) : then(value);
-}
+var Err = jmErr.Err;
 
 function _catch(body, recover) {
   try {
@@ -580,23 +373,16 @@ function _catch(body, recover) {
   return result;
 }
 
-function _await$1(value, then, direct) {
-  if (direct) {
-    return then ? then(value) : value;
-  }
-
-  value = Promise.resolve(value);
-  return then ? value.then(then) : value;
-}
-var Err = jmErr.Err;
 var slice = Array.prototype.slice;
 /**
  * Class representing a router.
  */
 
-var Router =
-/*#__PURE__*/
-function () {
+function _continue(value, then) {
+  return value && value.then ? value.then(then) : then(value);
+}
+
+var Router = /*#__PURE__*/function () {
   /**
    * create a router.
    * @param {Object} opts 参数
@@ -664,11 +450,11 @@ function () {
       var o = Object.assign({}, opts);
       if (o.sensitive === undefined) o.sensitive = this.sensitive;
       if (o.strict === undefined) o.strict = this.strict;
-      var route$$1 = new route(o);
-      route$$1.logging = this._logging;
-      route$$1.benchmark = this._benchmark;
+      var route$1 = new route(o);
+      route$1.logging = this._logging;
+      route$1.benchmark = this._benchmark;
 
-      this._routes.push(route$$1);
+      this._routes.push(route$1);
 
       return this;
     }
@@ -849,112 +635,123 @@ function () {
 
   }, {
     key: "request",
-    value: _async$1(function (opts) {
-      var _this = this,
-          _arguments = arguments;
+    value: function request(opts) {
+      try {
+        var _exit2 = false;
 
-      var t1 = 0;
+        var _this2 = this,
+            _arguments2 = arguments;
 
-      if (_this.logging) {
-        if (_this.benchmark) t1 = Date.now();
-        var msg = "Request";
-        _this.name && (msg += " ".concat(_this.name));
-        msg += " args: ".concat(JSON.stringify(opts));
-        console.info(msg);
-      }
+        var t1 = 0;
 
-      if (_typeof(opts) !== 'object') {
-        opts = utils_1.preRequest.apply(_this, _arguments);
-      }
-
-      var doc = null;
-      return _continue(_catch(function () {
-        return _await$1(_this.execute(opts), function (_this$execute) {
-          doc = _this$execute;
-        });
-      }, function (e) {
-        return _await$1(_this.emit('error', e, opts), function (ret) {
-          if (ret === undefined) {
-            throw e;
-          }
-
-          doc = ret;
-
-          if (_this.logging) {
-            console.info('error catched, return', doc);
-            console.error(e);
-          }
-        });
-      }), function (_result) {
-
-        if (_this.logging) {
-          var _msg = "Request";
-          _this.name && (_msg += " ".concat(_this.name));
-          if (doc !== undefined) _msg += " result: ".concat(JSON.stringify(doc));
-          if (_this.benchmark) _msg += " Elapsed time: ".concat(Date.now() - t1, "ms");
-          console.info(_msg);
+        if (_this2.logging) {
+          if (_this2.benchmark) t1 = Date.now();
+          var msg = "Request";
+          _this2.name && (msg += " ".concat(_this2.name));
+          msg += " args: ".concat(JSON.stringify(opts));
+          console.info(msg);
         }
 
-        return doc;
-      });
-    })
+        if (_typeof(opts) !== 'object') {
+          opts = utils_1.preRequest.apply(_this2, _arguments2);
+        }
+
+        var doc = null;
+        return _continue(_catch(function () {
+          return _await(_this2.execute(opts), function (_this$execute) {
+            doc = _this$execute;
+          });
+        }, function (e) {
+          return _await(_this2.emit('error', e, opts), function (ret) {
+            if (ret === undefined) {
+              throw e;
+            }
+
+            doc = ret;
+
+            if (_this2.logging) {
+              console.info('error catched, return', doc);
+              console.error(e);
+            }
+          });
+        }), function (_result) {
+          if (_exit2) return _result;
+
+          if (_this2.logging) {
+            var _msg = "Request";
+            _this2.name && (_msg += " ".concat(_this2.name));
+            if (doc !== undefined) _msg += " result: ".concat(JSON.stringify(doc));
+            if (_this2.benchmark) _msg += " Elapsed time: ".concat(Date.now() - t1, "ms");
+            console.info(_msg);
+          }
+
+          return doc;
+        });
+      } catch (e) {
+        return Promise.reject(e);
+      }
+    }
   }, {
     key: "execute",
-    value: _async$1(function (opts) {
-      var _this2 = this,
-          _exit2 = false;
+    value: function execute(opts) {
+      try {
+        var _exit4 = false;
 
-      var self = _this2;
-      var routes = self.routes;
-      var parentParams = opts.params;
-      var parentUri = opts.baseUri || '';
-      var done = restore(opts, opts.baseUri, opts.params);
-      opts.originalUri || (opts.originalUri = opts.uri);
-      var uri = opts.uri;
+        var _this4 = this;
 
-      // restore obj props after function
-      function restore(obj, baseUri, params) {
-        return function () {
-          obj.uri = obj.originalUri;
-          obj.baseUri = baseUri;
-          obj.params = params;
+        // restore obj props after function
+        var restore = function restore(obj, baseUri, params) {
+          return function () {
+            obj.uri = obj.originalUri;
+            obj.baseUri = baseUri;
+            obj.params = params;
+          };
         };
-      }
 
-      var i = 0,
-          len = routes.length;
-      return _for(function () {
-        return !_exit2 && i < len;
-      }, function () {
-        return i++;
-      }, function () {
-        opts.baseUri = parentUri;
-        opts.uri = uri;
-        var route$$1 = routes[i];
+        var self = _this4;
+        var routes = self.routes;
+        var parentParams = opts.params;
+        var parentUri = opts.baseUri || '';
+        var done = restore(opts, opts.baseUri, opts.params);
+        opts.originalUri || (opts.originalUri = opts.uri);
+        var uri = opts.uri;
+        var _i = 0,
+            _len = routes.length;
+        return _for(function () {
+          return !_exit4 && _i < _len;
+        }, function () {
+          return _i++;
+        }, function () {
+          opts.baseUri = parentUri;
+          opts.uri = uri;
+          var route = routes[_i];
 
-        if (!route$$1) {
-          return;
-        }
-
-        var match = route$$1.match(opts);
-        if (!match) return;
-        opts.params = Object.assign({}, parentParams, match.params);
-
-        if (route$$1.router) {
-          opts.baseUri = parentUri + match.uri;
-          opts.uri = opts.uri.replace(match.uri, '');
-        }
-
-        return _await$1(route$$1.execute(opts), function (doc) {
-          done();
-
-          if (doc !== undefined) {
-            _exit2 = true;
-            return doc;
+          if (!route) {
+            return;
           }
+
+          var match = route.match(opts);
+          if (!match) return;
+          opts.params = Object.assign({}, parentParams, match.params);
+
+          if (route.router) {
+            opts.baseUri = parentUri + match.uri;
+            opts.uri = opts.uri.replace(match.uri, '');
+          }
+
+          return _await(route.execute(opts), function (doc) {
+            done();
+
+            if (doc !== undefined) {
+              _exit4 = true;
+              return doc;
+            }
+          });
         });
-      });
-    })
+      } catch (e) {
+        return Promise.reject(e);
+      }
+    }
   }, {
     key: "logging",
     get: function get() {
@@ -963,8 +760,8 @@ function () {
     set: function set(value) {
       this._logging = value;
 
-      this._routes.forEach(function (route$$1) {
-        route$$1.loggint = value;
+      this._routes.forEach(function (route) {
+        route.loggint = value;
       });
     }
   }, {
@@ -975,8 +772,8 @@ function () {
     set: function set(value) {
       this._benchmark = value;
 
-      this._routes.forEach(function (route$$1) {
-        route$$1.benchmark = value;
+      this._routes.forEach(function (route) {
+        route.benchmark = value;
       });
     }
   }, {
@@ -989,7 +786,196 @@ function () {
   return Router;
 }();
 
+function _settle(pact, state, value) {
+  if (!pact.s) {
+    if (value instanceof _Pact) {
+      if (value.s) {
+        if (state & 1) {
+          state = value.s;
+        }
+
+        value = value.v;
+      } else {
+        value.o = _settle.bind(null, pact, state);
+        return;
+      }
+    }
+
+    if (value && value.then) {
+      value.then(_settle.bind(null, pact, state), _settle.bind(null, pact, 2));
+      return;
+    }
+
+    pact.s = state;
+    pact.v = value;
+    var observer = pact.o;
+
+    if (observer) {
+      observer(pact);
+    }
+  }
+}
+
 var router = Router;
+
+var _Pact = /*#__PURE__*/function () {
+  function _Pact() {}
+
+  _Pact.prototype.then = function (onFulfilled, onRejected) {
+    var result = new _Pact();
+    var state = this.s;
+
+    if (state) {
+      var callback = state & 1 ? onFulfilled : onRejected;
+
+      if (callback) {
+        try {
+          _settle(result, 1, callback(this.v));
+        } catch (e) {
+          _settle(result, 2, e);
+        }
+
+        return result;
+      } else {
+        return this;
+      }
+    }
+
+    this.o = function (_this) {
+      try {
+        var value = _this.v;
+
+        if (_this.s & 1) {
+          _settle(result, 1, onFulfilled ? onFulfilled(value) : value);
+        } else if (onRejected) {
+          _settle(result, 1, onRejected(value));
+        } else {
+          _settle(result, 2, value);
+        }
+      } catch (e) {
+        _settle(result, 2, e);
+      }
+    };
+
+    return result;
+  };
+
+  return _Pact;
+}();
+
+function _isSettledPact(thenable) {
+  return thenable instanceof _Pact && thenable.s & 1;
+}
+
+function _for(test, update, body) {
+  var stage;
+
+  for (;;) {
+    var shouldContinue = test();
+
+    if (_isSettledPact(shouldContinue)) {
+      shouldContinue = shouldContinue.v;
+    }
+
+    if (!shouldContinue) {
+      return result;
+    }
+
+    if (shouldContinue.then) {
+      stage = 0;
+      break;
+    }
+
+    var result = body();
+
+    if (result && result.then) {
+      if (_isSettledPact(result)) {
+        result = result.s;
+      } else {
+        stage = 1;
+        break;
+      }
+    }
+
+    if (update) {
+      var updateValue = update();
+
+      if (updateValue && updateValue.then && !_isSettledPact(updateValue)) {
+        stage = 2;
+        break;
+      }
+    }
+  }
+
+  var pact = new _Pact();
+
+  var reject = _settle.bind(null, pact, 2);
+
+  (stage === 0 ? shouldContinue.then(_resumeAfterTest) : stage === 1 ? result.then(_resumeAfterBody) : updateValue.then(_resumeAfterUpdate)).then(void 0, reject);
+  return pact;
+
+  function _resumeAfterBody(value) {
+    result = value;
+
+    do {
+      if (update) {
+        updateValue = update();
+
+        if (updateValue && updateValue.then && !_isSettledPact(updateValue)) {
+          updateValue.then(_resumeAfterUpdate).then(void 0, reject);
+          return;
+        }
+      }
+
+      shouldContinue = test();
+
+      if (!shouldContinue || _isSettledPact(shouldContinue) && !shouldContinue.v) {
+        _settle(pact, 1, result);
+
+        return;
+      }
+
+      if (shouldContinue.then) {
+        shouldContinue.then(_resumeAfterTest).then(void 0, reject);
+        return;
+      }
+
+      result = body();
+
+      if (_isSettledPact(result)) {
+        result = result.v;
+      }
+    } while (!result || !result.then);
+
+    result.then(_resumeAfterBody).then(void 0, reject);
+  }
+
+  function _resumeAfterTest(shouldContinue) {
+    if (shouldContinue) {
+      result = body();
+
+      if (result && result.then) {
+        result.then(_resumeAfterBody).then(void 0, reject);
+      } else {
+        _resumeAfterBody(result);
+      }
+    } else {
+      _settle(pact, 1, result);
+    }
+  }
+
+  function _resumeAfterUpdate() {
+    if (shouldContinue = test()) {
+      if (shouldContinue.then) {
+        shouldContinue.then(_resumeAfterTest).then(void 0, reject);
+      } else {
+        _resumeAfterTest(shouldContinue);
+      }
+    } else {
+      _settle(pact, 1, result);
+    }
+  }
+}
 
 var ERRCODE = 900;
 var err = {
@@ -999,54 +985,23 @@ var err = {
   }
 };
 
-var _async$2 = function () {
-  try {
-    if (isNaN.apply(null, {})) {
-      return function (f) {
-        return function () {
-          try {
-            return Promise.resolve(f.apply(this, arguments));
-          } catch (e) {
-            return Promise.reject(e);
-          }
-        };
-      };
-    }
-  } catch (e) {}
-
-  return function (f) {
-    // Pre-ES5.1 JavaScript runtimes don't accept array-likes in Function.apply
-    return function () {
-      var args = [];
-
-      for (var i = 0; i < arguments.length; i++) {
-        args[i] = arguments[i];
-      }
-
-      try {
-        return Promise.resolve(f.apply(this, args));
-      } catch (e) {
-        return Promise.reject(e);
-      }
-    };
-  };
-}();
-
-function _await$2(value, then, direct) {
-  if (direct) {
-    return then ? then(value) : value;
-  }
-
-  value = Promise.resolve(value);
-  return then ? value.then(then) : value;
-}
 /**
  * Class representing a root.
  */
 
-var Root =
-/*#__PURE__*/
-function () {
+function _await$1(value, then, direct) {
+  if (direct) {
+    return then ? then(value) : value;
+  }
+
+  if (!value || !value.then) {
+    value = Promise.resolve(value);
+  }
+
+  return then ? value.then(then) : value;
+}
+
+var Root = /*#__PURE__*/function () {
   /**
    * create a root.
    * @param {Object} opts 参数
@@ -1078,7 +1033,7 @@ function () {
 
   _createClass(Root, [{
     key: "router",
-    value: function router$$1() {
+    value: function router$1() {
       var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
       var self = this;
 
@@ -1098,7 +1053,7 @@ function () {
        * @param {boolean} changeOrigin 是否改变原始uri
        */
 
-      app.proxy = _async$2(function () {
+      app.proxy = _async$1(function () {
         var _this = this;
 
         var uri = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -1116,8 +1071,8 @@ function () {
 
         if (!opts.target) {
           var doc = jmErr.Err.FA_PARAMS;
-          var err$$1 = jmErr.err(doc);
-          throw err$$1;
+          var err = jmErr.err(doc);
+          throw err;
         }
 
         _this.emit('proxy', opts);
@@ -1128,7 +1083,7 @@ function () {
           };
         }
 
-        return _await$2(self.client(opts.target), function (client) {
+        return _await$1(self.client(opts.target), function (client) {
           if (opts.changeOrigin) {
             app.use(opts.uri, client.request.bind(client));
           } else {
@@ -1152,38 +1107,42 @@ function () {
 
   }, {
     key: "client",
-    value: _async$2(function () {
-      var _this2 = this;
-
+    value: function client() {
       var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-      if (typeof opts === 'string') {
-        opts = {
-          uri: opts
-        };
+      try {
+        var _this3 = this;
+
+        if (typeof opts === 'string') {
+          opts = {
+            uri: opts
+          };
+        }
+
+        if (!opts.uri) throw jmErr.err(jmErr.Err.FA_PARAMS);
+        var err$1 = null;
+        var doc = null;
+        var type = 'http';
+        opts.uri && (type = utils_1.getUriProtocol(opts.uri));
+        opts.type && (type = opts.type);
+        type = type.toLowerCase();
+        var fn = _this3.clientModules[type];
+
+        if (!fn) {
+          doc = err.FA_INVALID_TYPE;
+          err$1 = jmErr.err(doc);
+          throw err$1;
+        }
+
+        return _await$1(fn(opts), function (_fn) {
+          doc = _fn;
+          if (doc) utils_1.enableType(doc, ['get', 'post', 'put', 'delete']);
+          return doc;
+        });
+      } catch (e) {
+        return Promise.reject(e);
       }
-
-      if (!opts.uri) throw jmErr.err(jmErr.Err.FA_PARAMS);
-      var err$$1 = null;
-      var doc = null;
-      var type = 'http';
-      opts.uri && (type = utils_1.getUriProtocol(opts.uri));
-      opts.type && (type = opts.type);
-      type = type.toLowerCase();
-      var fn = _this2.clientModules[type];
-
-      if (!fn) {
-        doc = err.FA_INVALID_TYPE;
-        err$$1 = jmErr.err(doc);
-        throw err$$1;
-      }
-
-      return _await$2(fn(opts), function (_fn) {
-        doc = _fn;
-        if (doc) utils_1.enableType(doc, ['get', 'post', 'put', 'delete']);
-        return doc;
-      });
-    })
+    }
     /**
      * create a server
      * @param {Object} app
@@ -1200,31 +1159,36 @@ function () {
 
   }, {
     key: "server",
-    value: _async$2(function () {
-      var _this3 = this;
-
+    value: function server() {
       var app = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
       var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-      var err$$1 = null;
-      var doc = null;
-      var type = 'http';
-      opts.uri && (type = utils_1.getUriProtocol(opts.uri));
-      opts.type && (type = opts.type);
-      type = type.toLowerCase();
-      var fn = _this3.serverModules[type];
 
-      if (!fn) {
-        doc = err.FA_INVALID_TYPE;
-        err$$1 = jmErr.err(doc);
-        throw err$$1;
+      try {
+        var _this5 = this;
+
+        var err$1 = null;
+        var doc = null;
+        var type = 'http';
+        opts.uri && (type = utils_1.getUriProtocol(opts.uri));
+        opts.type && (type = opts.type);
+        type = type.toLowerCase();
+        var fn = _this5.serverModules[type];
+
+        if (!fn) {
+          doc = err.FA_INVALID_TYPE;
+          err$1 = jmErr.err(doc);
+          throw err$1;
+        }
+
+        app.emit('server', opts);
+        return _await$1(fn(app, opts), function (_fn2) {
+          doc = _fn2;
+          return doc;
+        });
+      } catch (e) {
+        return Promise.reject(e);
       }
-
-      app.emit('server', opts);
-      return _await$2(fn(app, opts), function (_fn2) {
-        doc = _fn2;
-        return doc;
-      });
-    })
+    }
     /**
      * 创建一个代理路由
      * 支持多种参数格式, 例如
@@ -1240,40 +1204,59 @@ function () {
 
   }, {
     key: "proxy",
-    value: _async$2(function () {
-      var _this4 = this;
-
+    value: function proxy() {
       var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-      var err$$1 = null;
-      var doc = null;
 
-      if (typeof opts === 'string') {
-        opts = {
-          uri: opts
-        };
+      try {
+        var _this7 = this;
+
+        var err = null;
+        var doc = null;
+
+        if (typeof opts === 'string') {
+          opts = {
+            uri: opts
+          };
+        }
+
+        if (!opts.uri) {
+          doc = jmErr.Err.FA_PARAMS;
+          err = jmErr.err(doc);
+          throw err;
+        }
+
+        var app = _this7.router();
+
+        return _await$1(_this7.client(opts), function (client) {
+          app.use(client.request.bind(client));
+          app.client = client;
+          return app;
+        });
+      } catch (e) {
+        return Promise.reject(e);
       }
-
-      if (!opts.uri) {
-        doc = jmErr.Err.FA_PARAMS;
-        err$$1 = jmErr.err(doc);
-        throw err$$1;
-      }
-
-      var app = _this4.router();
-
-      return _await$2(_this4.client(opts), function (client) {
-        app.use(client.request.bind(client));
-        app.client = client;
-        return app;
-      });
-    })
+    }
   }]);
 
   return Root;
 }();
 
+function _async$1(f) {
+  return function () {
+    for (var args = [], i = 0; i < arguments.length; i++) {
+      args[i] = arguments[i];
+    }
+
+    try {
+      return Promise.resolve(f.apply(this, args));
+    } catch (e) {
+      return Promise.reject(e);
+    }
+  };
+}
+
 Root.utils = utils_1;
 var lib = Root;
 
-exports.default = lib;
+module.exports = lib;
 //# sourceMappingURL=index.js.map

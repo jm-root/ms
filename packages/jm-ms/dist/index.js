@@ -1,7 +1,5 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', { value: true });
-
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 var jmMsCore = _interopDefault(require('jm-ms-core'));
@@ -63,6 +61,19 @@ function _setPrototypeOf(o, p) {
   return _setPrototypeOf(o, p);
 }
 
+function _isNativeReflectConstruct() {
+  if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+  if (Reflect.construct.sham) return false;
+  if (typeof Proxy === "function") return true;
+
+  try {
+    Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 function _assertThisInitialized(self) {
   if (self === void 0) {
     throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
@@ -79,8 +90,27 @@ function _possibleConstructorReturn(self, call) {
   return _assertThisInitialized(self);
 }
 
+function _createSuper(Derived) {
+  return function () {
+    var Super = _getPrototypeOf(Derived),
+        result;
+
+    if (_isNativeReflectConstruct()) {
+      var NewTarget = _getPrototypeOf(this).constructor;
+
+      result = Reflect.construct(Super, arguments, NewTarget);
+    } else {
+      result = Super.apply(this, arguments);
+    }
+
+    return _possibleConstructorReturn(this, result);
+  };
+}
+
 var $ = /*#__PURE__*/function (_MS) {
   _inherits($, _MS);
+
+  var _super = _createSuper($);
 
   function $() {
     var _this;
@@ -89,7 +119,7 @@ var $ = /*#__PURE__*/function (_MS) {
 
     _classCallCheck(this, $);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf($).call(this, opts));
+    _this = _super.call(this, opts);
 
     if (!opts.disable_client) {
       _this.use(jmMsHttpClient).use(jmMsWsClient);
@@ -107,5 +137,5 @@ var $ = /*#__PURE__*/function (_MS) {
 
 var lib = $;
 
-exports.default = lib;
+module.exports = lib;
 //# sourceMappingURL=index.js.map
