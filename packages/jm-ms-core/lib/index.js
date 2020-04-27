@@ -47,7 +47,7 @@ class Root {
      * @param {String} target
      * @param {boolean} changeOrigin 是否改变原始uri
      */
-    app.proxy = async function (uri = {}, target, changeOrigin) {
+    app.proxy = function (uri = {}, target, changeOrigin) {
       let opts = uri
       if (typeof uri === 'string') {
         opts = {
@@ -65,7 +65,7 @@ class Root {
       if (typeof opts.target === 'string') {
         opts.target = { uri: opts.target }
       }
-      let client = await self.client(opts.target)
+      let client = self.client(opts.target)
 
       if (opts.changeOrigin) {
         app.use(opts.uri, client.request.bind(client))
@@ -87,7 +87,7 @@ class Root {
    * }
    * @return {Promise}
    */
-  async client (opts = {}) {
+  client (opts = {}) {
     if (typeof opts === 'string') {
       opts = { uri: opts }
     }
@@ -104,7 +104,7 @@ class Root {
       err = error.err(doc)
       throw err
     }
-    doc = await fn(opts)
+    doc = fn(opts)
     if (doc) utils.enableType(doc, ['get', 'post', 'put', 'delete'])
     return doc
   }
@@ -122,7 +122,7 @@ class Root {
      * }
    * @return {Promise}
    */
-  async server (app = null, opts = {}) {
+  server (app = null, opts = {}) {
     let err = null
     let doc = null
     let type = 'http'
@@ -136,7 +136,7 @@ class Root {
       throw err
     }
     app.emit('server', opts)
-    doc = await fn(app, opts)
+    doc = fn(app, opts)
     return doc
   }
 
@@ -152,7 +152,7 @@ class Root {
      * }
    * @return {Promise}
    */
-  async proxy (opts = {}) {
+  proxy (opts = {}) {
     let err = null
     let doc = null
     if (typeof opts === 'string') {
@@ -164,7 +164,7 @@ class Root {
       throw err
     }
     let app = this.router()
-    let client = await this.client(opts)
+    let client = this.client(opts)
     app.use(client.request.bind(client))
     app.client = client
     return app

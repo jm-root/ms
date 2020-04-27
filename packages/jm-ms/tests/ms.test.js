@@ -1,7 +1,12 @@
+const log = require('jm-log4js')
+log.getLogger('ms-ws-server').level = 'debug'
+log.getLogger('ms-http-server').level = 'debug'
+
 const MS = require('../lib')
 
 const ms = new MS()
 const router = ms.router()
+router.config = { debug: true }
 router.use(opts => {
   return opts
 })
@@ -9,13 +14,13 @@ router.use(opts => {
 const uri = 'http://gateway.test.jamma.cn'
 describe('ms', async () => {
   test('server', async () => {
-    let doc = await ms.server(router, { type: 'http', port: 3000 })
+    let doc = ms.server(router, { type: 'ws', port: 3000 })
     console.log(doc)
     expect(doc).toBeTruthy()
   })
 
   test('http-client', async () => {
-    let client = await ms.client({ uri })
+    let client = ms.client({ uri })
     let doc = await client.get('/config')
     console.log(doc)
     expect(doc).toBeTruthy()
@@ -23,7 +28,7 @@ describe('ms', async () => {
 
   test('proxy', async () => {
     router.clear()
-    await router.proxy('/config', uri)
+    router.proxy('/config', uri)
     let doc = await router.get('/config')
     console.log(doc)
     expect(doc).toBeTruthy()

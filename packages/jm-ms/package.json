@@ -1,6 +1,6 @@
 {
   "name": "jm-ms",
-  "version": "2.2.0",
+  "version": "3.0.0-beta",
   "description": "microService lib, light and fast",
   "main": "index.js",
   "module": "./dist/index.esm.js",
@@ -26,7 +26,7 @@
   },
   "homepage": "https://github.com/jm-root/ms",
   "dependencies": {
-    "jm-ms-core": "^2.1.0",
+    "jm-ms-core": "^3.0.0-beta",
     "jm-ms-http-client": "^2.2.0",
     "jm-ms-http-server": "^2.1.0",
     "jm-ms-ws-client": "^2.2.0",

@@ -1,5 +1,9 @@
 # History
 
+## 3.0.0 / 2020-02-27
+- upgrade dependencies
+- client server proxy without async
+
 ## 2.0.6 / 2018-08-16
 - emit error event when request error
 

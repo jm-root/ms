@@ -62,13 +62,11 @@ describe('ms', () => {
   })
 
   test('use', () => {
-    ms
+    const client = ms
       .use(mdlTest)
       .client({ uri: 'http://api.jamma.cn' })
-      .then(doc => {
-        expect(doc).toBeTruthy()
-        return doc.get('/')
-      })
+
+    client.get('/')
       .then(function (doc) {
       })
       .catch(function (err) {

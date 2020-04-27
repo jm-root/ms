@@ -1,6 +1,6 @@
 {
   "name": "jm-ms-core",
-  "version": "2.1.1",
+  "version": "3.0.0-beta",
   "description": "MicroService core lib",
   "main": "./dist/index.js",
   "module": "./dist/index.esm.js",
@@ -27,8 +27,8 @@
   },
   "homepage": "https://github.com/jm-root/jm-ms-core",
   "dependencies": {
-    "jm-err": "^1.0.4",
-    "jm-event": "^2.0.1",
+    "jm-err": "^1.0.7",
+    "jm-event": "^2.0.9",
     "jm-module": "^1.0.1",
     "jm-route": "^0.1.0",
     "path-to-regexp": "^1.7.0"
