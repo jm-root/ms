@@ -1,6 +1,6 @@
 {
   "name": "jm-ms-ws-client",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "websocket client plugin for jm-ms-core",
   "main": "index.js",
   "module": "./dist/index.esm.js",
