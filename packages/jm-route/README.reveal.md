@@ -1,25 +1,51 @@
-# 路由式编程 jm-route
+---
+theme : "white"
+---
 
-路由式编程模式，别名：流水线式编程模式
+# jm-route
+
+### 路由式编程模式
+
+别名：流水线式编程模式
+
+<small>作者：[鱼哥](https://github.com/jammacn)</small>
+
+---
+
+## 流水线历史
+
+- 1769年，英国人乔赛亚·韦奇伍德开办埃特鲁利亚陶瓷工厂
+
+- 20世纪初美国工程师泰勒发明流水线理论
+
+- 1913年，福特汽车公司开发出了世界上第一条流水线
+
+---
 
 ## install
 
-```bash
+```
 npm i jm-route
 ```
 
-## use
+---
 
-```javascript
+## use:
+
+```
 const Route = require('jm-route')
 const route = new Route(opts=>{}))
 ```
+
+---
 
 ## 两个概念
 
 - 工序函数 fn
 
 - 路由 Route
+
+---
 
 ## 工序函数 fn
 
@@ -28,6 +54,8 @@ const route = new Route(opts=>{}))
 - 加工函数
 
 - 混合函数
+
+--
 
 ### 成品函数
 
@@ -38,6 +66,8 @@ function fn1(){
     return {name: '鱼哥'}
 }
 ```
+
+--
 
 ### 加工函数
 
@@ -50,6 +80,8 @@ function fn1(opts){
 }
 ```
 
+--
+
 ### 混合函数
 
 成品函数和加工函数的混合写法
@@ -60,6 +92,8 @@ function fn1(opts){
     opts.name = '鱼哥'
 }
 ```
+
+--
 
 ### 支持异步函数
 
@@ -76,6 +110,8 @@ function async fn1(opts){
 
 一个以上工序函数的组合
 
+--
+
 ### 构造函数
 
 接受一个以上函数作为参数
@@ -89,11 +125,15 @@ new Route(fn1, fn2, ..., fnn)
 
 ```
 
+--
+
 ### 路由执行 execute
 
 - 顺序执行 route 中的函数
 
 - 遇到结果返回 promise
+
+--
 
 ### 配置参数
 
@@ -101,11 +141,15 @@ new Route(fn1, fn2, ..., fnn)
 
 - benchmark 是否计算耗时，默认false
 
+---
+
 ## 例子
+
+--
 
 ### 最小例子
 
-```javascript
+```
 // 成品函数
 const fn = () => {
     return {ret: 1}
@@ -121,9 +165,11 @@ const doc = await route.execute()
 
 ```
 
+--
+
 ### 最小例子 async
 
-```javascript
+```
 // 成品函数
 const fn = async () => {
     return {ret: 1}
@@ -137,9 +183,11 @@ const doc = await route.execute()
 
 ```
 
+--
+
 ### 工序函数
 
-```javascript
+```
 const filter1 = () => {
     console.log('加工函数')
 }
@@ -153,6 +201,8 @@ const route = new Route(filter1, filter2,fn)
 const doc = await route.execute()
 
 ```
+
+---
 
 ## 已知问题
 
