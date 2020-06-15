@@ -1,6 +1,7 @@
 const error = require('jm-err')
 const event = require('jm-event')
 const mdl = require('jm-module')
+const { getUriProtocol } = require('jm-utils')
 const utils = require('./utils')
 const Router = require('./router')
 const Err = require('./err')
@@ -34,9 +35,9 @@ class Root {
    * @return {Router}
    */
   router (opts = {}) {
-    let self = this
-    let _opts = Object.assign({}, { logging: this.logging, benchmark: this.benchmark }, opts)
-    let app = new Router(_opts)
+    const self = this
+    const _opts = Object.assign({}, { logging: this.logging, benchmark: this.benchmark }, opts)
+    const app = new Router(_opts)
 
     /**
      * 添加代理
@@ -57,15 +58,15 @@ class Root {
         }
       }
       if (!opts.target) {
-        let doc = error.Err.FA_PARAMS
-        let err = error.err(doc)
+        const doc = error.Err.FA_PARAMS
+        const err = error.err(doc)
         throw err
       }
       this.emit('proxy', opts)
       if (typeof opts.target === 'string') {
         opts.target = { uri: opts.target }
       }
-      let client = await self.client(opts.target)
+      const client = await self.client(opts.target)
 
       if (opts.changeOrigin) {
         app.use(opts.uri, client.request.bind(client))
@@ -95,10 +96,10 @@ class Root {
     let err = null
     let doc = null
     let type = 'http'
-    opts.uri && (type = utils.getUriProtocol(opts.uri))
+    opts.uri && (type = getUriProtocol(opts.uri))
     opts.type && (type = opts.type)
     type = type.toLowerCase()
-    let fn = this.clientModules[type]
+    const fn = this.clientModules[type]
     if (!fn) {
       doc = Err.FA_INVALID_TYPE
       err = error.err(doc)
@@ -126,10 +127,10 @@ class Root {
     let err = null
     let doc = null
     let type = 'http'
-    opts.uri && (type = utils.getUriProtocol(opts.uri))
+    opts.uri && (type = getUriProtocol(opts.uri))
     opts.type && (type = opts.type)
     type = type.toLowerCase()
-    let fn = this.serverModules[type]
+    const fn = this.serverModules[type]
     if (!fn) {
       doc = Err.FA_INVALID_TYPE
       err = error.err(doc)
@@ -163,8 +164,8 @@ class Root {
       err = error.err(doc)
       throw err
     }
-    let app = this.router()
-    let client = await this.client(opts)
+    const app = this.router()
+    const client = await this.client(opts)
     app.use(client.request.bind(client))
     app.client = client
     return app

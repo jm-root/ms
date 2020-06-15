@@ -2,7 +2,7 @@ const Matcher = require('../lib/matcher')
 
 describe('matcher', () => {
   test('Matcher', () => {
-    let o = new Matcher()
+    const o = new Matcher()
     expect(o).toBeTruthy()
   })
 

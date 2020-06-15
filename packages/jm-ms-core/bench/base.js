@@ -5,9 +5,9 @@ function test (name, value) {
   name = name + value
 }
 
-let o = {}
+const o = {}
 
-let v = {
+const v = {
   a: 1,
   b: 2,
   c: 3,
@@ -15,24 +15,24 @@ let v = {
   e: 5
 }
 
-let a = ['a', 'b']
+const a = ['a', 'b']
 
 suite
   .add('for', () => {
-    let vals = new Array(a.length)
+    const vals = new Array(a.length)
     for (let i = 0; i < a.length; i++) {
       vals[i] = v[a[i]]
     }
   })
   .add('forEach', () => {
-    let o = {}
+    const o = {}
     a.forEach(function (key) {
       o[key] = v[key]
     })
   })
   .add('for in', () => {
-    let o = {}
-    for (let key in v) {
+    const o = {}
+    for (const key in v) {
       o[key] = v[key]
     }
   })

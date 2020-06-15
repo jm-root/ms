@@ -17,7 +17,7 @@ class Matcher {
    * }
    */
   constructor (opts = {}) {
-    let uri = opts.uri || '/'
+    const uri = opts.uri || '/'
     let type = opts.type
     type && (type = type.toLowerCase())
     this.type = type
@@ -62,17 +62,17 @@ class Matcher {
       }
     }
 
-    let m = this.regexp.exec(uri)
+    const m = this.regexp.exec(uri)
 
     if (!m) return false
 
     // store values
     params = {}
     uri = m[0]
-    let keys = this.keys
+    const keys = this.keys
     for (let i = 1; i < m.length; i++) {
-      let key = keys[i - 1]
-      let prop = key.name
+      const key = keys[i - 1]
+      const prop = key.name
       params[prop] = m[i]
     }
 

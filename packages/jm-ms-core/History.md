@@ -1,5 +1,12 @@
 # History
 
+## 2.2.2 / 2020-06-15
+- feat: uniteParams for Router.use and Router.add
+- feat: opts.fn support array flattern
+- feat: opts.fn support function, object, router as params together. router.use(fn, router, {request: function(opts={})})
+- feat: quick route for Router
+- lint
+
 ## 2.0.6 / 2018-08-16
 - emit error event when request error
 

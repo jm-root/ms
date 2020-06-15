@@ -1,33 +1,65 @@
 const Router = require('../lib/router')
 
-let handle1 = (opts) => {}
+const handle1 = (opts) => { opts.handle1 = true }
 
-let handle2 = (opts) => {
+const handle2 = () => {
   throw new Error('err handle')
 }
 
-let handle3 = (opts) => {
-  return opts
+const handle = (opts) => {
+  return { ...opts }
 }
 
-let handle = (opts) => {
-  return opts
-}
-
-let o = new Router({
+const o = new Router({
   sensitive: true,
   strict: true,
   logging: true,
   benchmark: true
 })
+o.on('add', (...args) => { console.log('add', ...args) })
 
-let o2 = new Router()
-o2.add('/:id', (opts) => {
-  console.log('o2 %j:', opts)
-  return opts
-})
+const o2 = new Router()
+o2
+  .add('/:id', (opts) => {
+    return { ...opts }
+  })
 
+let doc = null
 describe('router', () => {
+  test('_add', async () => {
+    o
+      .clear()
+      .use(handle1, o2)
+      ._add({
+        type: 'get',
+        fn: [{ request: handle }]
+      })
+
+    doc = await o.get('/')
+    expect(doc.handle1).toBeTruthy()
+
+    doc = await o.get('/abc')
+    expect(doc.handle1 && doc.params.id === 'abc').toBeTruthy()
+  })
+
+  test('use vs add', () => {
+    o
+      .clear()
+      .use(handle)
+      .get('/t1')
+      .then(doc => {
+        expect(doc).toBeTruthy()
+      })
+
+    o
+      .clear()
+      .add(handle)
+      .get('/t1')
+      .then(doc => {
+        expect(doc === undefined).toBeTruthy()
+      })
+  })
+
   test('add', () => {
     o
       .clear()
@@ -120,7 +152,7 @@ describe('router', () => {
         fn: () => { throw new Error('request err') }
       })
 
-    o.on('error', (e, opts) => {
+    o.on('error', (e) => {
       e.message = 'asdfsdfsd'
     })
     try {
@@ -131,10 +163,10 @@ describe('router', () => {
   })
 
   test('use', () => {
-    let uri = '/test'
-    let fn = handle
-    let fns = [handle1, handle3]
-    let router = new Router()
+    const uri = '/test'
+    const fn = handle
+    const fns = [handle1, handle]
+    const router = new Router()
     router.use(fn)
     o
     // * use({uri:uri, fn:fn})
@@ -373,10 +405,10 @@ describe('router', () => {
   test('emit err', async () => {
     o
       .off()
-      .on('error', (e, opts) => {
+      .on('error', () => {
         console.log('not cached.')
       })
-      .on('error', (e, opts) => {
+      .on('error', (e) => {
         console.log('cached.')
         return e.data || null
       })
@@ -385,6 +417,27 @@ describe('router', () => {
       .request('/abc/name', {}, { params: { id: 12663 }, headers: { sso: '123' } })
       .then(doc => {
         expect(doc === null).toBeTruthy()
+      })
+  })
+
+  test('quick route', () => {
+    o
+      .clear()
+      .route('/abc')
+      .get({
+        uri: '/t1',
+        fn: handle
+      })
+
+    console.log(o.routes)
+
+    o
+      .get('/abc/t1')
+      .then(doc => {
+        expect(doc).toBeTruthy()
+      })
+      .catch(e => {
+        console.log(e)
       })
   })
 })

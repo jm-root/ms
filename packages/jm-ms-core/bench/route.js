@@ -3,13 +3,13 @@ const suite = new benchmark.Suite()
 
 const Route = require('../lib/route')
 
-const handle1 = opts => {}
+const handle1 = () => {}
 
-const handle2 = opts => {
+const handle2 = () => {
   throw new Error('err')
 }
 
-const handle = opts => {
+const handle = () => {
   return { ret: 1 }
 }
 
@@ -29,7 +29,7 @@ suite
     o2
       .execute({})
       .then(() => {})
-      .catch(e => {})
+      .catch(() => {})
   })
   .on('cycle', function (event) {
     console.log(String(event.target))

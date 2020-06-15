@@ -1,10 +1,11 @@
+const { Types } = require('./consts')
 const Route = require('./route')
-const utils = require('./utils')
+const { enableType, uniteParams, preRequest } = require('./utils')
+const QuickRoute = require('./quickroute')
 const error = require('jm-err')
 const event = require('jm-event')
-
-let Err = error.Err
-let slice = Array.prototype.slice
+const { slice } = require('jm-utils')
+const Err = error.Err
 
 /**
  * Class representing a router.
@@ -28,7 +29,7 @@ class Router {
     this._logging = opts.logging || false
     this._benchmark = opts.benchmark || false
     // alias methods
-    utils.enableType(this, ['get', 'post', 'put', 'delete'])
+    enableType(this, Types)
     event.enableEvent(this)
   }
 
@@ -39,7 +40,7 @@ class Router {
   set logging (value) {
     this._logging = value
     this._routes.forEach(route => {
-      route.loggint = value
+      route.logging = value
     })
   }
 
@@ -73,26 +74,62 @@ class Router {
    * @param {Object} opts 参数
    * @example
    * opts参数:{
-   *  uri: 接口路径(必填)
+   *  uri: 接口路径(可选)，
    *  type: 请求类型(可选)
-   *  fn: 接口处理函数 function(opts, cb){}, 支持数组(必填)
+   *  fn: 接口处理函数 function(opts){}, 支持数组(必填)
    * }
    * @return {Router} for chaining
    */
   _add (opts = {}) {
-    let err = null
-    let doc = null
-    if (!opts.uri || !opts.fn) {
-      doc = Err.FA_PARAMS
-      err = error.err(doc)
-      throw err
+    let { fn } = opts
+    if (!fn) {
+      throw error.err(Err.FA_PARAMS)
+    }
+
+    // fn 为数组时的处理
+    if (Array.isArray(fn)) {
+      const { length } = fn
+      if (!length) {
+        // 数组为空时, 参数错误
+        throw error.err(Err.FA_PARAMS)
+      } else if (length === 1) {
+        // 数组只有一个元素时, 直接取出元素再处理
+        fn = fn[0]
+      } else {
+        // 检查数组中是否存在对象，如果存在需要拆分后再添加
+        for (let i = 0; i < fn.length; i++) {
+          if (typeof fn[i] === 'object') {
+            if (i > 0) {
+              this._add({ ...opts, fn: slice(fn, 0, i) })
+            }
+            this._add({ ...opts, fn: fn[i] })
+            if (i < fn.length - 1) {
+              this._add({ ...opts, fn: slice(fn, i + 1) })
+            }
+            return this
+          }
+        }
+      }
     }
 
     this.emit('add', opts)
-    let o = Object.assign({}, opts)
+
+    const o = { ...opts }
+
+    if (typeof fn === 'object') {
+      o.router = fn
+      const { request, execute } = fn
+      if (request) {
+        o.fn = request.bind(fn)
+      } else if (execute) {
+        o.fn = execute.bind(fn)
+      }
+    }
+
+    o.uri || (o.uri = '/')
     if (o.sensitive === undefined) o.sensitive = this.sensitive
     if (o.strict === undefined) o.strict = this.strict
-    let route = new Route(o)
+    const route = new Route(o)
     route.logging = this._logging
     route.benchmark = this._benchmark
     this._routes.push(route)
@@ -100,7 +137,7 @@ class Router {
   }
 
   /**
-   * 添加接口定义
+   * 添加接口定义, 精确匹配 uri
    * 支持多种参数格式, 例如
    * add({uri:uri, type:type, fn:fn})
    * add({uri:uri, type:type, fn:[fn1, fn2, ..., fnn]})
@@ -120,71 +157,13 @@ class Router {
    * }
    * @return {Router} for chaining
    */
-  add (opts) {
-    if (typeof opts === 'string') {
-      opts = {
-        uri: opts
-      }
-      if (typeof arguments[1] === 'string') {
-        opts.type = arguments[1]
-        if (Array.isArray(arguments[2])) {
-          opts.fn = arguments[2]
-        } else {
-          opts.fn = slice.call(arguments, 2)
-        }
-      } else if (Array.isArray(arguments[1])) {
-        opts.fn = arguments[1]
-      } else {
-        opts.fn = slice.call(arguments, 1)
-      }
-    }
+  add (...args) {
+    const opts = uniteParams(...args)
     return this._add(opts)
   }
 
   /**
-   * 引用路由定义
-   * @function Router#_use
-   * @param {Object} opts 参数
-   * @example
-   * opts参数:{
-   *  uri: 接口路径(可选)
-   *  fn: 接口处理函数 router实例 或者 function(opts){}(支持函数数组) 或者含有request或execute函数的对象(必填)
-   * }
-   * @return {Router} for chaining
-   */
-  _use (opts = {}) {
-    let err = null
-    let doc = null
-    if (opts && typeof opts === 'object' && !opts.fn) {
-      opts = {
-        fn: opts
-      }
-    }
-    if (!opts.fn) {
-      doc = Err.FA_PARAMS
-      err = error.err(doc)
-      throw err
-    }
-
-    this.emit('use', opts)
-    opts.strict = false
-    opts.end = false
-    opts.uri || (opts.uri = '/')
-    if (typeof opts.fn === 'object') {
-      let router = opts.fn
-      if (router.request) {
-        opts.router = router
-        opts.fn = router.request.bind(router)
-      } else if (router.execute) {
-        opts.router = router
-        opts.fn = router.execute.bind(router)
-      }
-    }
-    return this._add(opts)
-  }
-
-  /**
-   * 引用路由定义
+   * 引用路由定义, 匹配所有 uri
    * use({uri:uri, fn:fn})
    * use({uri:uri, fn:[fn1, fn2, ..., fnn]})
    * use({uri:uri, fn:router})
@@ -208,33 +187,12 @@ class Router {
    * }
    * @return {Router} for chaining
    */
-  use (opts) {
-    if (typeof opts === 'string') {
-      opts = {
-        uri: opts
-      }
-      if (typeof arguments[1] === 'object') { // object 或者 数组
-        opts.fn = arguments[1]
-      } else {
-        opts.fn = slice.call(arguments, 1)
-      }
-    } else if (typeof opts === 'function') {
-      opts = {
-        fn: slice.call(arguments, 0)
-      }
-    } else if (Array.isArray(opts)) {
-      opts = {
-        fn: opts
-      }
-    } else if (typeof opts === 'object') {
-      if (!opts.fn) {
-        opts = {
-          fn: opts
-        }
-      }
-    }
-
-    return this._use(opts)
+  use (...args) {
+    const opts = uniteParams(...args)
+    this.emit('use', opts)
+    opts.strict = false
+    opts.end = false
+    return this.add(opts)
   }
 
   /**
@@ -260,13 +218,13 @@ class Router {
     let t1 = 0
     if (this.logging) {
       if (this.benchmark) t1 = Date.now()
-      let msg = `Request`
+      let msg = 'Request'
       this.name && (msg += ` ${this.name}`)
       msg += ` args: ${JSON.stringify(opts)}`
       console.info(msg)
     }
     if (typeof opts !== 'object') {
-      opts = utils.preRequest.apply(this, arguments)
+      opts = preRequest.apply(this, arguments)
     }
     let doc = null
     try {
@@ -283,7 +241,7 @@ class Router {
       }
     }
     if (this.logging) {
-      let msg = `Request`
+      let msg = 'Request'
       this.name && (msg += ` ${this.name}`)
       if (doc !== undefined) msg += ` result: ${JSON.stringify(doc)}`
       if (this.benchmark) msg += ` Elapsed time: ${Date.now() - t1}ms`
@@ -293,22 +251,22 @@ class Router {
   }
 
   async execute (opts) {
-    let self = this
-    let routes = self.routes
-    let parentParams = opts.params
-    let parentUri = opts.baseUri || ''
-    let done = restore(opts, opts.baseUri, opts.params)
+    const self = this
+    const routes = self.routes
+    const parentParams = opts.params
+    const parentUri = opts.baseUri || ''
+    const done = restore(opts, opts.baseUri, opts.params)
     opts.originalUri || (opts.originalUri = opts.uri)
-    let uri = opts.uri
+    const uri = opts.uri
 
     for (let i = 0, len = routes.length; i < len; i++) {
       opts.baseUri = parentUri
       opts.uri = uri
-      let route = routes[i]
+      const route = routes[i]
       if (!route) {
         continue
       }
-      let match = route.match(opts)
+      const match = route.match(opts)
       if (!match) continue
 
       opts.params = Object.assign({}, parentParams, match.params)
@@ -317,7 +275,7 @@ class Router {
         opts.baseUri = parentUri + match.uri
         opts.uri = opts.uri.replace(match.uri, '')
       }
-      let doc = await route.execute(opts)
+      const doc = await route.execute(opts)
       done()
       if (doc !== undefined) {
         return doc
@@ -332,6 +290,21 @@ class Router {
         obj.params = params
       }
     }
+  }
+
+  /**
+   * 快捷的路由增加方式
+   * Router.route('/xx/xxxx')
+   * .get
+   * .post
+   * .put
+   * .delete
+   * .use
+   * .add
+   * @param uri
+   */
+  route (uri) {
+    return new QuickRoute(this, uri)
   }
 }
 

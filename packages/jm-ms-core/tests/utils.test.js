@@ -1,3 +1,4 @@
+const { isEqual } = require('lodash')
 const utils = require('../lib/utils')
 
 const $ = utils
@@ -16,7 +17,7 @@ describe('utils', () => {
   test('enableType', async () => {
     let o = null
     let doc = null
-    let request = opts => {
+    const request = () => {
       return 1
     }
     o = { request }
@@ -29,27 +30,81 @@ describe('utils', () => {
     doc = await o.post()
     expect(doc === 1).toBeTruthy()
   })
+  test('uniteParams', () => {
+    const uri = '/test'
+    const type = 'get'
+    const fn = opts => opts
+    const fn1 = opts => opts
+
+    function check (obj1, obj2) {
+      const ret = isEqual(obj1, obj2)
+      if (!ret) {
+        console.dir(obj1, obj2)
+      }
+      return ret
+    }
+
+    const pre = $.uniteParams
+
+    // ({uri:uri, type:type, fn:fn})
+    // ({uri:uri, type:type, fn:[fn1, fn2, ..., fnn]})
+    // ({uri:uri, fn:fn})
+    // ({uri:uri, fn:[fn1, fn2, ..., fnn]})
+    // ({type:type, fn:fn})
+    // ({type:type, fn:[fn1, fn2, ..., fnn]})
+    // ({fn:fn})
+    // ({fn:[fn1, fn2, ..., fnn]})
+    expect(check(pre({ uri, type, fn }), { uri, type, fn })).toBeTruthy()
+    expect(check(pre({ uri, type, fn: [fn, fn1] }), { uri, type, fn: [fn, fn1] })).toBeTruthy()
+    expect(check(pre({ uri, fn }), { uri, fn })).toBeTruthy()
+    expect(check(pre({ type, fn }), { type, fn })).toBeTruthy()
+    expect(check(pre({ fn }), { fn })).toBeTruthy()
+
+    // (uri, type, fn)
+    // (uri, type, fn1, fn2, ..., fnn)
+    // (uri, type, [fn1, fn2, ..,fnn])
+    // (uri, fn)
+    // (uri, fn1, fn2, ..., fnn)
+    // (uri, [fn1, fn2, ..,fnn])
+    // (fn)
+    // (fn1, fn2, ..., fnn)
+    // ([fn1, fn2, ..,fnn])
+    expect(check(pre(uri, type, fn), { uri, type, fn })).toBeTruthy()
+    expect(check(pre(uri, type, fn, fn1), { uri, type, fn: [fn, fn1] })).toBeTruthy()
+    expect(check(pre(uri, type, [fn, fn1]), { uri, type, fn: [fn, fn1] })).toBeTruthy()
+    expect(check(pre(uri, fn), { uri, fn })).toBeTruthy()
+    expect(check(pre(fn), { fn })).toBeTruthy()
+
+    expect(check(pre(fn, [fn1]), { fn: [fn, fn1] })).toBeTruthy()
+    expect(check(pre([fn, [fn1]]), { fn: [fn, fn1] })).toBeTruthy()
+
+    // (object)
+    const obj = {}
+    const obj1 = { name: 'obj1' }
+    expect(check(pre(obj), { fn: obj })).toBeTruthy()
+    expect(check(pre(obj, obj1), { fn: [obj, obj1] })).toBeTruthy()
+  })
   test('preRequest', () => {
-    let v = ['uri', 'type', 'data', 'params', 'timeout']
-    let uri = '/test'
-    let type = 'get'
-    let data = {
+    const v = ['uri', 'type', 'data', 'params', 'timeout']
+    const uri = '/test'
+    const type = 'get'
+    const data = {
       name: 'jeff',
       age: 18
     }
-    let params = {
+    const params = {
       token: 'asdfasdjfk'
     }
-    let timeout = 1000
-    let opts = {
+    const timeout = 1000
+    const opts = {
       uri,
       type,
       data,
       params,
       timeout
     }
-    let check = (obj1, obj2) => {
-      for (let key of v) {
+    const check = (obj1, obj2) => {
+      for (const key of v) {
         if (obj1[key] !== obj2[key]) {
           console.log('obj1: %s !== obj2: %s', obj1, obj2)
           return false
@@ -57,7 +112,7 @@ describe('utils', () => {
       }
       return true
     }
-    let pre = $.preRequest
+    const pre = $.preRequest
 
     // request({uri:uri, type:type, data:data, params:params, timeout:timeout}, cb)
     expect(check(pre(opts), opts)).toBeTruthy()

@@ -1,20 +1,20 @@
 const MS = require('../lib')
 const utils = require('../lib/utils')
 
-let handle = opts => {
+const handle = opts => {
   return opts
 }
 
-let ms = new MS({
+const ms = new MS({
   logging: true,
   benchmark: true
 })
-let app = ms.router()
+const app = ms.router()
 
-let mdlTest = function (opts) {
-  let app = this
-  app.clientModules.http = (opts) => {
-    let client = {
+const mdlTest = function () {
+  const app = this
+  app.clientModules.http = () => {
+    const client = {
       request: function (opts) {
         opts = utils.preRequest.apply(this, arguments)
         return opts
@@ -37,7 +37,7 @@ describe('ms', () => {
     app
       .add('/', 'get', handle)
       .get('/')
-      .then(function (doc) {
+      .then(function () {
       })
       .catch(function (err) {
         console.log(err)
@@ -45,16 +45,16 @@ describe('ms', () => {
   })
 
   test('router use', () => {
-    let r1 = ms.router()
+    const r1 = ms.router()
     r1.add('/', 'get', () => { return { ret: 1 } })
-    let r2 = ms.router()
+    const r2 = ms.router()
     r2.add('/', 'get', () => { return { ret: 2 } })
     app
       .clear()
       .use(r1)
       .use('/r2', r2)
       .get('/r2')
-      .then(function (doc) {
+      .then(function () {
       })
       .catch(function (err) {
         console.log(err)
@@ -69,7 +69,7 @@ describe('ms', () => {
         expect(doc).toBeTruthy()
         return doc.get('/')
       })
-      .then(function (doc) {
+      .then(function () {
       })
       .catch(function (err) {
         console.log(err)
