@@ -6,7 +6,7 @@ function isPromise (obj) {
  * Class representing a route.
  */
 class Route {
-  constructor (fns) {
+  constructor () {
     this.logging = false
     this.benchmark = false
     this.fns = [...arguments]
@@ -17,9 +17,9 @@ class Route {
   }
 
   set fns (value) {
-    let fns = []
+    const fns = []
     for (let i = 0, len = value.length; i < len; i++) {
-      let o = value[i]
+      const o = value[i]
       if (Array.isArray(o)) {
         fns.push(...o)
       } else {
@@ -29,20 +29,20 @@ class Route {
     this._fns = fns
   }
 
-  async execute (opts) {
+  async execute () {
     let t1 = 0
     let t2 = 0
     let doc
-    let fns = this.fns
+    const fns = this.fns
     if (this.logging) {
       if (this.benchmark) t1 = Date.now()
-      let msg = `Execute`
+      let msg = 'Execute'
       this.name && (msg += ` ${this.name}`)
       msg += ` args: ${JSON.stringify([...arguments])}`
       console.info(msg)
     }
     for (let i = 0, len = fns.length; i < len; i++) {
-      let fn = fns[i]
+      const fn = fns[i]
       if (this.logging && this.benchmark) t2 = Date.now()
       doc = fn(...arguments)
       if (isPromise(doc)) {
@@ -56,7 +56,7 @@ class Route {
       if (doc !== undefined) break
     }
     if (this.logging) {
-      let msg = `Executed`
+      let msg = 'Executed'
       this.name && (msg += ` ${this.name}`)
       if (doc !== undefined) msg += ` result: ${JSON.stringify(doc)}`
       if (this.benchmark) msg += ` Elapsed time: ${Date.now() - t1}ms`

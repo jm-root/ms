@@ -1,39 +1,46 @@
-const Route = require('../lib')
+const Route = require('../')
 
-let fn = (opts) => {
+const fn = opts => {
   opts.name = 'jeff'
   return opts
 }
 
-let fnFilter = (opts) => {
+const fnFilter = opts => {
   opts.gender = 1
 }
 
-let fnErr = () => {
+const fnErr = () => {
   throw new Error('err message')
 }
 
 describe('simple', async () => {
   test('one function', async () => {
-    let o = new Route(fn)
-    let doc = await o.execute({})
+    const o = new Route(fn)
+    const doc = await o.execute({})
     console.log(doc)
     expect(doc.name === 'jeff').toBeTruthy()
   })
 
   test('chain', async () => {
-    let o = new Route([fnFilter, fn])
-    let doc = await o.execute({})
+    const o = new Route([fnFilter, fn])
+    const doc = await o.execute({})
     console.log(doc)
     expect(doc.gender === 1 && doc.name === 'jeff').toBeTruthy()
   })
 
-  test('chain with error', async () => {
-    let o = new Route(fnFilter, fnErr, fn)
+  test('chain with error', async done => {
+    const o = new Route(fnFilter, fnErr, fn)
     try {
       await o.execute({})
     } catch (e) {
       expect(e).toBeTruthy()
     }
+
+    o
+      .execute({})
+      .catch(e => {
+        expect(e).toBeTruthy()
+        done()
+      })
   })
 })

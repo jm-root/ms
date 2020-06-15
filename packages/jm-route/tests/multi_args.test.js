@@ -1,27 +1,30 @@
+const { isEqual } = require('lodash')
 const Route = require('../lib')
 
-let fn = (opts, age) => {
-  opts.name = 'jeff'
-  opts.age = age
+const name = 'jeff'
+const age = 18
+const gender = 1
+const fn = (opts, age) => {
+  Object.assign(opts, { name, age })
   return opts
 }
 
-let fnFilter = (opts) => {
-  opts.gender = 1
+const fnFilter = (opts) => {
+  Object.assign(opts, { gender })
 }
 
 describe('multi args', async () => {
   test('one function', async () => {
-    let o = new Route(fn)
-    let doc = await o.execute({}, 18)
+    const o = new Route(fn)
+    const doc = await o.execute({}, age)
     console.log(doc)
-    expect(doc.name === 'jeff' && doc.age === 18).toBeTruthy()
+    expect(isEqual(doc, { name, age })).toBeTruthy()
   })
 
   test('chain', async () => {
-    let o = new Route([fnFilter, fn])
-    let doc = await o.execute({}, 18)
+    const o = new Route([fnFilter, fn])
+    const doc = await o.execute({}, age)
     console.log(doc)
-    expect(doc.gender === 1 && doc.name === 'jeff' && doc.age === 18).toBeTruthy()
+    expect(isEqual(doc, { name, age, gender })).toBeTruthy()
   })
 })

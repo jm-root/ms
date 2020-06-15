@@ -1,20 +1,19 @@
 const benchmark = require('benchmark')
 const suite = new benchmark.Suite()
 
-let Route = require('../lib')
+const Route = require('../lib')
 
-let handle1 = (opts) => {
-}
+const handle1 = () => {}
 
-let handle = (opts) => {
+const handle = () => {
   return { ret: 1 }
 }
 
-let o1 = new Route(handle)
-let o2 = new Route(handle1, handle)
+const o1 = new Route(handle)
+const o2 = new Route(handle1, handle)
 suite
   .add('handle function', async () => {
-    let opts = {}
+    const opts = {}
     await handle1(opts)
     await handle1(opts)
     await handle(opts)

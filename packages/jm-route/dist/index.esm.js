@@ -53,7 +53,7 @@ function _unsupportedIterableToArray(o, minLen) {
   if (typeof o === "string") return _arrayLikeToArray(o, minLen);
   var n = Object.prototype.toString.call(o).slice(8, -1);
   if (n === "Object" && o.constructor) n = o.constructor.name;
-  if (n === "Map" || n === "Set") return Array.from(n);
+  if (n === "Map" || n === "Set") return Array.from(o);
   if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
 }
 
@@ -293,7 +293,7 @@ function isPromise(obj) {
 }
 
 var Route = /*#__PURE__*/function () {
-  function Route(fns) {
+  function Route() {
     _classCallCheck(this, Route);
 
     this.logging = false;
@@ -303,7 +303,7 @@ var Route = /*#__PURE__*/function () {
 
   _createClass(Route, [{
     key: "execute",
-    value: function execute(opts) {
+    value: function execute() {
       try {
         var _interrupt2 = false;
 
@@ -317,7 +317,7 @@ var Route = /*#__PURE__*/function () {
 
         if (_this2.logging) {
           if (_this2.benchmark) t1 = Date.now();
-          var msg = "Execute";
+          var msg = 'Execute';
           _this2.name && (msg += " ".concat(_this2.name));
           msg += " args: ".concat(JSON.stringify(_toConsumableArray(_arguments2)));
           console.info(msg);
@@ -353,7 +353,7 @@ var Route = /*#__PURE__*/function () {
           });
         }), function () {
           if (_this2.logging) {
-            var _msg2 = "Executed";
+            var _msg2 = 'Executed';
             _this2.name && (_msg2 += " ".concat(_this2.name));
             if (doc !== undefined) _msg2 += " result: ".concat(JSON.stringify(doc));
             if (_this2.benchmark) _msg2 += " Elapsed time: ".concat(Date.now() - t1, "ms");
