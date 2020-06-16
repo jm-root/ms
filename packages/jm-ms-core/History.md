@@ -1,6 +1,6 @@
 # History
 
-## 2.2.4 / 2020-06-16
+## 2.2.5 / 2020-06-16
 - feat: uniteParams for Router.use and Router.add
 - feat: opts.fn support array flattern
 - feat: opts.fn support function, object, router as params together. router.use(fn, router, {request: function(opts={})})
