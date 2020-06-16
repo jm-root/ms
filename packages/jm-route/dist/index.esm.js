@@ -69,109 +69,41 @@ function _nonIterableSpread() {
   throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 
-function _await(value, then, direct) {
-  if (direct) {
-    return then ? then(value) : value;
-  }
+var _async = function () {
+  try {
+    if (isNaN.apply(null, {})) {
+      return function (f) {
+        return function () {
+          try {
+            return Promise.resolve(f.apply(this, arguments));
+          } catch (e) {
+            return Promise.reject(e);
+          }
+        };
+      };
+    }
+  } catch (e) {}
 
-  if (!value || !value.then) {
-    value = Promise.resolve(value);
-  }
+  return function (f) {
+    // Pre-ES5.1 JavaScript runtimes don't accept array-likes in Function.apply
+    return function () {
+      var args = [];
 
-  return then ? value.then(then) : value;
-}
-/**
- * Class representing a route.
- */
-
-
-function _invoke(body, then) {
-  var result = body();
-
-  if (result && result.then) {
-    return result.then(then);
-  }
-
-  return then(result);
-}
-
-function _settle(pact, state, value) {
-  if (!pact.s) {
-    if (value instanceof _Pact) {
-      if (value.s) {
-        if (state & 1) {
-          state = value.s;
-        }
-
-        value = value.v;
-      } else {
-        value.o = _settle.bind(null, pact, state);
-        return;
+      for (var i = 0; i < arguments.length; i++) {
+        args[i] = arguments[i];
       }
-    }
 
-    if (value && value.then) {
-      value.then(_settle.bind(null, pact, state), _settle.bind(null, pact, 2));
-      return;
-    }
-
-    pact.s = state;
-    pact.v = value;
-    var observer = pact.o;
-
-    if (observer) {
-      observer(pact);
-    }
-  }
-}
-
-var _Pact = /*#__PURE__*/function () {
-  function _Pact() {}
-
-  _Pact.prototype.then = function (onFulfilled, onRejected) {
-    var result = new _Pact();
-    var state = this.s;
-
-    if (state) {
-      var callback = state & 1 ? onFulfilled : onRejected;
-
-      if (callback) {
-        try {
-          _settle(result, 1, callback(this.v));
-        } catch (e) {
-          _settle(result, 2, e);
-        }
-
-        return result;
-      } else {
-        return this;
-      }
-    }
-
-    this.o = function (_this) {
       try {
-        var value = _this.v;
-
-        if (_this.s & 1) {
-          _settle(result, 1, onFulfilled ? onFulfilled(value) : value);
-        } else if (onRejected) {
-          _settle(result, 1, onRejected(value));
-        } else {
-          _settle(result, 2, value);
-        }
+        return Promise.resolve(f.apply(this, args));
       } catch (e) {
-        _settle(result, 2, e);
+        return Promise.reject(e);
       }
     };
-
-    return result;
   };
-
-  return _Pact;
 }();
 
-function _isSettledPact(thenable) {
-  return thenable instanceof _Pact && thenable.s & 1;
+function _continue(value, then) {
+  return value && value.then ? value.then(then) : then(value);
 }
 
 function _for(test, update, body) {
@@ -181,7 +113,7 @@ function _for(test, update, body) {
     var shouldContinue = test();
 
     if (_isSettledPact(shouldContinue)) {
-      shouldContinue = shouldContinue.v;
+      shouldContinue = shouldContinue.__value;
     }
 
     if (!shouldContinue) {
@@ -197,7 +129,7 @@ function _for(test, update, body) {
 
     if (result && result.then) {
       if (_isSettledPact(result)) {
-        result = result.s;
+        result = result.__state;
       } else {
         stage = 1;
         break;
@@ -236,7 +168,7 @@ function _for(test, update, body) {
 
       shouldContinue = test();
 
-      if (!shouldContinue || _isSettledPact(shouldContinue) && !shouldContinue.v) {
+      if (!shouldContinue || _isSettledPact(shouldContinue) && !shouldContinue.__value) {
         _settle(pact, 1, result);
 
         return;
@@ -250,7 +182,7 @@ function _for(test, update, body) {
       result = body();
 
       if (_isSettledPact(result)) {
-        result = result.v;
+        result = result.__value;
       }
     } while (!result || !result.then);
 
@@ -284,13 +216,114 @@ function _for(test, update, body) {
   }
 }
 
-function _continue(value, then) {
-  return value && value.then ? value.then(then) : then(value);
+function _isSettledPact(thenable) {
+  return thenable instanceof _Pact && thenable.__state === 1;
+}
+
+var _Pact = function () {
+  function _Pact() {}
+
+  _Pact.prototype.then = function (onFulfilled, onRejected) {
+    var state = this.__state;
+
+    if (state) {
+      var callback = state == 1 ? onFulfilled : onRejected;
+
+      if (callback) {
+        var _result = new _Pact();
+
+        try {
+          _settle(_result, 1, callback(this.__value));
+        } catch (e) {
+          _settle(_result, 2, e);
+        }
+
+        return _result;
+      } else {
+        return this;
+      }
+    }
+
+    var result = new _Pact();
+
+    this.__observer = function (_this) {
+      try {
+        var value = _this.__value;
+
+        if (_this.__state == 1) {
+          _settle(result, 1, onFulfilled ? onFulfilled(value) : value);
+        } else if (onRejected) {
+          _settle(result, 1, onRejected(value));
+        } else {
+          _settle(result, 2, value);
+        }
+      } catch (e) {
+        _settle(result, 2, e);
+      }
+    };
+
+    return result;
+  };
+
+  return _Pact;
+}();
+
+function _settle(pact, state, value) {
+  if (!pact.__state) {
+    if (value instanceof _Pact) {
+      if (value.__state) {
+        if (state === 1) {
+          state = value.__state;
+        }
+
+        value = value.__value;
+      } else {
+        value.__observer = _settle.bind(null, pact, state);
+        return;
+      }
+    }
+
+    if (value && value.then) {
+      value.then(_settle.bind(null, pact, state), _settle.bind(null, pact, 2));
+      return;
+    }
+
+    pact.__state = state;
+    pact.__value = value;
+    var observer = pact.__observer;
+
+    if (observer) {
+      observer(pact);
+    }
+  }
+}
+
+function _invoke(body, then) {
+  var result = body();
+
+  if (result && result.then) {
+    return result.then(then);
+  }
+
+  return then(result);
+}
+
+function _await(value, then, direct) {
+  if (direct) {
+    return then ? then(value) : value;
+  }
+
+  value = Promise.resolve(value);
+  return then ? value.then(then) : value;
 }
 
 function isPromise(obj) {
   return !!obj && (_typeof(obj) === 'object' || typeof obj === 'function') && typeof obj.then === 'function';
 }
+/**
+ * Class representing a route.
+ */
+
 
 var Route = /*#__PURE__*/function () {
   function Route() {
@@ -303,69 +336,64 @@ var Route = /*#__PURE__*/function () {
 
   _createClass(Route, [{
     key: "execute",
-    value: function execute() {
-      try {
-        var _interrupt2 = false;
+    value: _async(function () {
+      var _this = this,
+          _arguments = arguments,
+          _interrupt = false;
 
-        var _this2 = this,
-            _arguments2 = arguments;
+      var t1 = 0;
+      var t2 = 0;
+      var doc;
+      var fns = _this.fns;
 
-        var t1 = 0;
-        var t2 = 0;
-        var doc;
-        var fns = _this2.fns;
+      if (_this.logging) {
+        if (_this.benchmark) t1 = Date.now();
+        var msg = 'Execute';
+        _this.name && (msg += " ".concat(_this.name));
+        msg += " args: ".concat(JSON.stringify(_toConsumableArray(_arguments)));
+        console.info(msg);
+      }
 
-        if (_this2.logging) {
-          if (_this2.benchmark) t1 = Date.now();
-          var msg = 'Execute';
-          _this2.name && (msg += " ".concat(_this2.name));
-          msg += " args: ".concat(JSON.stringify(_toConsumableArray(_arguments2)));
-          console.info(msg);
-        }
-
-        var _i = 0,
-            _len = fns.length;
-        return _continue(_for(function () {
-          return !_interrupt2 && _i < _len;
+      var i = 0,
+          len = fns.length;
+      return _continue(_for(function () {
+        return !_interrupt && i < len;
+      }, function () {
+        return i++;
+      }, function () {
+        var fn = fns[i];
+        if (_this.logging && _this.benchmark) t2 = Date.now();
+        doc = fn.apply(void 0, _toConsumableArray(_arguments));
+        return _invoke(function () {
+          if (isPromise(doc)) {
+            return _await(doc, function (_doc) {
+              doc = _doc;
+            });
+          }
         }, function () {
-          return _i++;
-        }, function () {
-          var fn = fns[_i];
-          if (_this2.logging && _this2.benchmark) t2 = Date.now();
-          doc = fn.apply(void 0, _toConsumableArray(_arguments2));
-          return _invoke(function () {
-            if (isPromise(doc)) {
-              return _await(doc, function (_doc) {
-                doc = _doc;
-              });
-            }
-          }, function () {
-            if (_this2.logging) {
-              var _msg = "Step: ".concat(_i, " ").concat(fn.name, " args: ").concat(JSON.stringify(_toConsumableArray(_arguments2)));
+          if (_this.logging) {
+            var _msg = "Step: ".concat(i, " ").concat(fn.name, " args: ").concat(JSON.stringify(_toConsumableArray(_arguments)));
 
-              if (_this2.benchmark) _msg += " Elapsed time: ".concat(Date.now() - t2, "ms");
-              console.info(_msg);
-            }
-
-            if (doc !== undefined) {
-              _interrupt2 = true;
-            }
-          });
-        }), function () {
-          if (_this2.logging) {
-            var _msg2 = 'Executed';
-            _this2.name && (_msg2 += " ".concat(_this2.name));
-            if (doc !== undefined) _msg2 += " result: ".concat(JSON.stringify(doc));
-            if (_this2.benchmark) _msg2 += " Elapsed time: ".concat(Date.now() - t1, "ms");
-            console.info(_msg2);
+            if (_this.benchmark) _msg += " Elapsed time: ".concat(Date.now() - t2, "ms");
+            console.info(_msg);
           }
 
-          if (doc !== undefined) return doc;
+          if (doc !== undefined) {
+            _interrupt = true;
+          }
         });
-      } catch (e) {
-        return Promise.reject(e);
-      }
-    }
+      }), function () {
+        if (_this.logging) {
+          var _msg2 = 'Executed';
+          _this.name && (_msg2 += " ".concat(_this.name));
+          if (doc !== undefined) _msg2 += " result: ".concat(JSON.stringify(doc));
+          if (_this.benchmark) _msg2 += " Elapsed time: ".concat(Date.now() - t1, "ms");
+          console.info(_msg2);
+        }
+
+        if (doc !== undefined) return doc;
+      });
+    })
   }, {
     key: "fns",
     get: function get() {
@@ -374,8 +402,8 @@ var Route = /*#__PURE__*/function () {
     set: function set(value) {
       var fns = [];
 
-      for (var _i2 = 0, _len2 = value.length; _i2 < _len2; _i2++) {
-        var o = value[_i2];
+      for (var _i = 0, _len = value.length; _i < _len; _i++) {
+        var o = value[_i];
 
         if (Array.isArray(o)) {
           fns.push.apply(fns, _toConsumableArray(o));

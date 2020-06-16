@@ -1,6 +1,6 @@
 {
   "name": "jm-ms-core",
-  "version": "2.2.2",
+  "version": "2.2.4",
   "description": "MicroService core lib",
   "main": "./dist/index.js",
   "module": "./dist/index.esm.js",
