@@ -3,6 +3,7 @@ const https = require('https')
 const express = require('express')
 const error = require('jm-err')
 const log = require('jm-log4js')
+const { splitAndTrim } = require('jm-utils')
 
 const Err = error.Err
 const logger = log.getLogger('ms-http-server')
@@ -55,6 +56,12 @@ module.exports = function (router, opts = {}) {
 
   app.use(function (req, res) {
     const data = Object.assign({}, req.query, req.body)
+    let { headers, ip, ips } = req
+    if (headers['x-original-forwarded-for'] && app.get('trust proxy')) {
+      const _ips = splitAndTrim(headers['x-original-forwarded-for'])
+      ips = [..._ips, ...ips]
+      ips.length && (ip = ips[0])
+    }
     const opts = {
       uri: req.path,
       type: req.method.toLowerCase(),
@@ -62,8 +69,8 @@ module.exports = function (router, opts = {}) {
       protocol: req.protocol,
       hostname: req.hostname,
       headers: req.headers,
-      ip: req.ip,
-      ips: req.ips
+      ip,
+      ips
     }
     if (req.headers.lng) opts.lng = req.headers.lng
     router.request(opts)
