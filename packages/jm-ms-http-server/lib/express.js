@@ -56,9 +56,11 @@ module.exports = function (router, opts = {}) {
 
   app.use(function (req, res) {
     const data = Object.assign({}, req.query, req.body)
-    let { headers, ip, ips } = req
+    const headers = { ...req.headers }
+    let { ip, ips } = req
     if (headers['x-original-forwarded-for'] && app.get('trust proxy')) {
       const _ips = splitAndTrim(headers['x-original-forwarded-for'])
+      delete headers['x-original-forwarded-for']
       ips = [..._ips, ...ips]
       ips.length && (ip = ips[0])
     }
@@ -68,7 +70,7 @@ module.exports = function (router, opts = {}) {
       data,
       protocol: req.protocol,
       hostname: req.hostname,
-      headers: req.headers,
+      headers,
       ip,
       ips
     }
