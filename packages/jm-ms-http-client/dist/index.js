@@ -1,27 +1,63 @@
 'use strict';
 
-function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+var axios = require('axios');
+var http = require('http');
+var https = require('https');
+var qs = require('qs');
+var jmEvent = require('jm-event');
+var jmErr = require('jm-err');
+var jmMsCore = require('jm-ms-core');
 
-var axios = _interopDefault(require('axios'));
-var http = _interopDefault(require('http'));
-var https = _interopDefault(require('https'));
-var jmEvent = _interopDefault(require('jm-event'));
-var jmErr = _interopDefault(require('jm-err'));
-var jmMsCore = _interopDefault(require('jm-ms-core'));
+function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
-function _await(value, then, direct) {
-  if (direct) {
-    return then ? then(value) : value;
+var axios__default = /*#__PURE__*/_interopDefaultLegacy(axios);
+var http__default = /*#__PURE__*/_interopDefaultLegacy(http);
+var https__default = /*#__PURE__*/_interopDefaultLegacy(https);
+var qs__default = /*#__PURE__*/_interopDefaultLegacy(qs);
+var jmEvent__default = /*#__PURE__*/_interopDefaultLegacy(jmEvent);
+var jmErr__default = /*#__PURE__*/_interopDefaultLegacy(jmErr);
+var jmMsCore__default = /*#__PURE__*/_interopDefaultLegacy(jmMsCore);
+
+function _awaitIgnored(value, direct) {
+  if (!direct) {
+    return Promise.resolve(value).then(_empty);
   }
-
-  if (!value || !value.then) {
-    value = Promise.resolve(value);
-  }
-
-  return then ? value.then(then) : value;
 }
 
-var utils = jmMsCore.utils;
+function _empty() {}
+
+var _async = function () {
+  try {
+    if (isNaN.apply(null, {})) {
+      return function (f) {
+        return function () {
+          try {
+            return Promise.resolve(f.apply(this, arguments));
+          } catch (e) {
+            return Promise.reject(e);
+          }
+        };
+      };
+    }
+  } catch (e) {}
+
+  return function (f) {
+    // Pre-ES5.1 JavaScript runtimes don't accept array-likes in Function.apply
+    return function () {
+      var args = [];
+
+      for (var i = 0; i < arguments.length; i++) {
+        args[i] = arguments[i];
+      }
+
+      try {
+        return Promise.resolve(f.apply(this, args));
+      } catch (e) {
+        return Promise.reject(e);
+      }
+    };
+  };
+}();
 
 function _catch(body, recover) {
   try {
@@ -37,6 +73,16 @@ function _catch(body, recover) {
   return result;
 }
 
+function _await(value, then, direct) {
+  if (direct) {
+    return then ? then(value) : value;
+  }
+
+  value = Promise.resolve(value);
+  return then ? value.then(then) : value;
+}
+var utils = jmMsCore__default['default'].utils;
+
 var fnclient = function fnclient(_adapter) {
   return function () {
     var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -47,94 +93,78 @@ var fnclient = function fnclient(_adapter) {
       };
     }
 
-    if (!opts.uri) throw jmErr.err(jmErr.Err.FA_PARAMS);
+    if (!opts.uri) throw jmErr__default['default'].err(jmErr__default['default'].Err.FA_PARAMS);
     var adapter = opts.adapter || _adapter;
     var uri = opts.uri;
     var timeout = opts.timeout || 0;
     var doc = {
-      request: function request(opts) {
-        try {
-          var _this2 = this,
-              _arguments2 = arguments;
+      request: _async(function (opts) {
+        var _this = this,
+            _arguments = arguments;
 
-          opts = utils.preRequest.apply(_this2, _arguments2);
-          var headers = opts.headers || {};
-          var noHeaders = ['host', 'if-none-match', 'content-type', 'content-length', 'connection'];
-          noHeaders.forEach(function (key) {
-            if (headers[key]) delete headers[key];
-          });
+        opts = utils.preRequest.apply(_this, _arguments);
+        var headers = opts.headers || {};
+        var noHeaders = ['host', 'if-none-match', 'content-type', 'content-length', 'connection'];
+        noHeaders.forEach(function (key) {
+          if (headers[key]) delete headers[key];
+        });
 
-          if (opts.ips) {
-            headers['x-forwarded-for'] = opts.ips.toString();
-          }
+        if (opts.ips) {
+          headers['x-forwarded-for'] = opts.ips.toString();
+        }
 
-          if (opts.lng) {
-            headers['lng'] = opts.lng;
-          }
+        if (opts.lng) {
+          headers['lng'] = opts.lng;
+        }
 
-          var _opts = {
-            method: opts.type || 'get',
-            timeout: opts.timeout || timeout,
-            headers: headers
-          };
-          var url = uri + opts.uri;
-          return _catch(function () {
-            return _await(adapter.request(url, opts.data, _opts), function (doc) {
-              var data = doc.data;
-
-              if (data && data.err) {
-                var _e = jmErr.err(data);
-
-                throw _e;
-              }
-
-              return data;
-            });
-          }, function (e) {
-            var data = null;
-            e.response && e.response.data && (data = e.response.data);
+        var _opts = {
+          method: opts.type || 'get',
+          timeout: opts.timeout || timeout,
+          headers: headers
+        };
+        var url = uri + opts.uri;
+        return _catch(function () {
+          return _await(adapter.request(url, opts.data, _opts), function (doc) {
+            var data = doc.data;
 
             if (data && data.err) {
-              var _e2 = jmErr.err(data);
+              var _e = jmErr__default['default'].err(data);
 
-              throw _e2;
+              throw _e;
             }
 
-            data && (e.data = data);
-            throw e;
+            return data;
           });
-        } catch (e) {
-          return Promise.reject(e);
-        }
-      },
-      notify: function notify(opts) {
-        try {
-          var _this4 = this,
-              _arguments4 = arguments;
+        }, function (e) {
+          var data = null;
+          e.response && e.response.data && (data = e.response.data);
 
-          return _awaitIgnored(_this4.request.apply(_this4, _arguments4));
-        } catch (e) {
-          return Promise.reject(e);
-        }
-      },
+          if (data && data.err) {
+            var _e2 = jmErr__default['default'].err(data);
+
+            throw _e2;
+          }
+
+          data && (e.data = data);
+          throw e;
+        });
+      }),
+      notify: _async(function (opts) {
+        var _this2 = this,
+            _arguments2 = arguments;
+
+        return _awaitIgnored(_this2.request.apply(_this2, _arguments2));
+      }),
       onReady: function onReady() {
         return true;
       }
     };
-    jmEvent.enableEvent(doc);
+    jmEvent__default['default'].enableEvent(doc);
     return doc;
   };
 };
 
-function _empty() {}
-
 var fnclient_1 = fnclient;
-
-function _awaitIgnored(value, direct) {
-  if (!direct) {
-    return value && value.then ? value.then(_empty) : Promise.resolve();
-  }
-}
 
 var mdl = function mdl(adapter) {
   var client = fnclient_1(adapter);
@@ -157,37 +187,71 @@ var mdl = function mdl(adapter) {
   return $;
 };
 
-var httpAgent = new http.Agent({
+var _async$1 = function () {
+  try {
+    if (isNaN.apply(null, {})) {
+      return function (f) {
+        return function () {
+          try {
+            return Promise.resolve(f.apply(this, arguments));
+          } catch (e) {
+            return Promise.reject(e);
+          }
+        };
+      };
+    }
+  } catch (e) {}
+
+  return function (f) {
+    // Pre-ES5.1 JavaScript runtimes don't accept array-likes in Function.apply
+    return function () {
+      var args = [];
+
+      for (var i = 0; i < arguments.length; i++) {
+        args[i] = arguments[i];
+      }
+
+      try {
+        return Promise.resolve(f.apply(this, args));
+      } catch (e) {
+        return Promise.reject(e);
+      }
+    };
+  };
+}();
+var httpAgent = new http__default['default'].Agent({
   keepAlive: true
 });
-var httpsAgent = new https.Agent({
+var httpsAgent = new https__default['default'].Agent({
   keepAlive: true
 }); // axios 比 flyio 快3倍, 所以服务器端选用 axios
 
 var adapter = {
-  request: function request(url, data, opts) {
-    try {
-      var o = Object.assign({
-        url: url,
-        httpAgent: httpAgent,
-        httpsAgent: httpsAgent
-      }, opts);
+  request: _async$1(function (url, data, opts) {
+    var o = Object.assign({
+      url: url,
+      httpAgent: httpAgent,
+      httpsAgent: httpsAgent
+    }, opts);
 
-      if (data) {
-        var method = o.method;
+    if (data) {
+      var method = o.method;
 
-        if (method === 'post' || method === 'put' || method === 'patch') {
-          o.data = data;
-        } else {
-          o.params = data;
-        }
+      if (method === 'post' || method === 'put' || method === 'patch') {
+        o.data = data;
+      } else {
+        o.params = data;
+
+        o.paramsSerializer = function (params) {
+          return qs__default['default'].stringify(params, {
+            encodeValuesOnly: true
+          });
+        };
       }
-
-      return axios(o);
-    } catch (e) {
-      return Promise.reject(e);
     }
-  }
+
+    return axios__default['default'](o);
+  })
 };
 var lib = mdl(adapter);
 

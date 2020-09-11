@@ -1,6 +1,6 @@
 {
   "name": "jm-ms-http-client",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "http client plugin for jm-ms-core",
   "main": "index.js",
   "module": "./dist/index.esm.js",
@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/jm-root/ms",
   "dependencies": {
-    "axios": "^0.19.2"
+    "axios": "^0.19.2",
+    "qs": "^6.9.4"
   }
 }

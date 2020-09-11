@@ -1,6 +1,7 @@
 const axios = require('axios')
 const http = require('http')
 const https = require('https')
+const qs = require('qs')
 const mdl = require('./mdl')
 
 const httpAgent = new http.Agent({ keepAlive: true })
@@ -16,6 +17,9 @@ const adapter = {
         o.data = data
       } else {
         o.params = data
+        o.paramsSerializer = function (params) {
+          return qs.stringify(params, { encodeValuesOnly: true })
+        }
       }
     }
     return axios(o)

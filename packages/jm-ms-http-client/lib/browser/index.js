@@ -1,4 +1,5 @@
 const axios = require('axios')
+const qs = require('qs')
 const mdl = require('../mdl')
 
 const adapter = {
@@ -10,6 +11,9 @@ const adapter = {
         o.data = data
       } else {
         o.params = data
+        o.paramsSerializer = function (params) {
+          return qs.stringify(params, { encodeValuesOnly: true })
+        }
       }
     }
     return axios(o)
