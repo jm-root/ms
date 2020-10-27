@@ -2,21 +2,21 @@ const event = require('jm-event')
 const error = require('jm-err')
 const utils = require('jm-ms-core').utils
 
-let fnclient = function (_adapter) {
+const fnclient = function (_adapter) {
   return function (opts = {}) {
     if (typeof opts === 'string') {
       opts = { uri: opts }
     }
     if (!opts.uri) throw error.err(error.Err.FA_PARAMS)
-    let adapter = opts.adapter || _adapter
-    let uri = opts.uri
-    let timeout = opts.timeout || 0
+    const adapter = opts.adapter || _adapter
+    const uri = opts.uri
+    const timeout = opts.timeout || 0
 
-    let doc = {
+    const doc = {
       async request (opts) {
         opts = utils.preRequest.apply(this, arguments)
-        let headers = opts.headers || {}
-        let noHeaders = ['host', 'if-none-match', 'content-type', 'content-length', 'connection']
+        const headers = opts.headers || {}
+        const noHeaders = ['host', 'if-none-match', 'content-type', 'content-length', 'connection']
         noHeaders.forEach(function (key) {
           if (headers[key]) delete headers[key]
         })
@@ -24,20 +24,25 @@ let fnclient = function (_adapter) {
           headers['x-forwarded-for'] = opts.ips.toString()
         }
         if (opts.lng) {
-          headers['lng'] = opts.lng
+          headers.lng = opts.lng
         }
 
-        let _opts = {
+        const _opts = {
           method: opts.type || 'get',
           timeout: opts.timeout || timeout,
           headers: headers
         }
-        let url = uri + opts.uri
+
+        if (opts.options) {
+          Object.assign(_opts, opts.options)
+        }
+
+        const url = uri + opts.uri
         try {
-          let doc = await adapter.request(url, opts.data, _opts)
-          let data = doc.data
+          const doc = await adapter.request(url, opts.data, _opts)
+          const data = doc.data
           if (data && data.err) {
-            let e = error.err(data)
+            const e = error.err(data)
             throw e
           }
           return data
@@ -45,14 +50,14 @@ let fnclient = function (_adapter) {
           let data = null
           e.response && e.response.data && (data = e.response.data)
           if (data && data.err) {
-            let e = error.err(data)
+            const e = error.err(data)
             throw e
           }
           data && (e.data = data)
           throw e
         }
       },
-      async notify (opts) {
+      async notify () {
         await this.request.apply(this, arguments)
       },
       onReady () {
