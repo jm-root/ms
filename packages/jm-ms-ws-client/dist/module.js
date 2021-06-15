@@ -1,32 +1,204 @@
 'use strict';
 
-function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+var jmLogger = require('jm-logger');
+var jmMsCore = require('jm-ms-core');
+var jmErr = require('jm-err');
+var jmNet = require('jm-net');
+var jmMsSession = require('jm-ms-session');
 
-var jmEvent = _interopDefault(require('jm-event'));
-var jmLogger = _interopDefault(require('jm-logger'));
-var jmMsCore = _interopDefault(require('jm-ms-core'));
-var jmErr = _interopDefault(require('jm-err'));
-var jmNet = _interopDefault(require('jm-net'));
+function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
-function _await(value, then, direct) {
-  if (direct) {
-    return then ? then(value) : value;
+var jmLogger__default = /*#__PURE__*/_interopDefaultLegacy(jmLogger);
+var jmMsCore__default = /*#__PURE__*/_interopDefaultLegacy(jmMsCore);
+var jmErr__default = /*#__PURE__*/_interopDefaultLegacy(jmErr);
+var jmNet__default = /*#__PURE__*/_interopDefaultLegacy(jmNet);
+var jmMsSession__default = /*#__PURE__*/_interopDefaultLegacy(jmMsSession);
+
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
   }
-
-  if (!value || !value.then) {
-    value = Promise.resolve(value);
-  }
-
-  return then ? value.then(then) : value;
 }
 
-var utils = jmMsCore.utils;
-var WS = jmNet.WebSocket;
-var Err = jmErr.Err;
-var Timeout = 60000; // 请求超时时间 60 秒
+function _defineProperties(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+    Object.defineProperty(target, descriptor.key, descriptor);
+  }
+}
 
-var MAXID = 999999;
-var errNetwork = jmErr.err(Err.FA_NETWORK);
+function _createClass(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties(Constructor, staticProps);
+  return Constructor;
+}
+
+function _inherits(subClass, superClass) {
+  if (typeof superClass !== "function" && superClass !== null) {
+    throw new TypeError("Super expression must either be null or a function");
+  }
+
+  subClass.prototype = Object.create(superClass && superClass.prototype, {
+    constructor: {
+      value: subClass,
+      writable: true,
+      configurable: true
+    }
+  });
+  if (superClass) _setPrototypeOf(subClass, superClass);
+}
+
+function _getPrototypeOf(o) {
+  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+    return o.__proto__ || Object.getPrototypeOf(o);
+  };
+  return _getPrototypeOf(o);
+}
+
+function _setPrototypeOf(o, p) {
+  _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
+    o.__proto__ = p;
+    return o;
+  };
+
+  return _setPrototypeOf(o, p);
+}
+
+function _isNativeReflectConstruct() {
+  if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+  if (Reflect.construct.sham) return false;
+  if (typeof Proxy === "function") return true;
+
+  try {
+    Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function _assertThisInitialized(self) {
+  if (self === void 0) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }
+
+  return self;
+}
+
+function _possibleConstructorReturn(self, call) {
+  if (call && (typeof call === "object" || typeof call === "function")) {
+    return call;
+  }
+
+  return _assertThisInitialized(self);
+}
+
+function _createSuper(Derived) {
+  var hasNativeReflectConstruct = _isNativeReflectConstruct();
+
+  return function _createSuperInternal() {
+    var Super = _getPrototypeOf(Derived),
+        result;
+
+    if (hasNativeReflectConstruct) {
+      var NewTarget = _getPrototypeOf(this).constructor;
+
+      result = Reflect.construct(Super, arguments, NewTarget);
+    } else {
+      result = Super.apply(this, arguments);
+    }
+
+    return _possibleConstructorReturn(this, result);
+  };
+}
+
+function _superPropBase(object, property) {
+  while (!Object.prototype.hasOwnProperty.call(object, property)) {
+    object = _getPrototypeOf(object);
+    if (object === null) break;
+  }
+
+  return object;
+}
+
+function _get(target, property, receiver) {
+  if (typeof Reflect !== "undefined" && Reflect.get) {
+    _get = Reflect.get;
+  } else {
+    _get = function _get(target, property, receiver) {
+      var base = _superPropBase(target, property);
+
+      if (!base) return;
+      var desc = Object.getOwnPropertyDescriptor(base, property);
+
+      if (desc.get) {
+        return desc.get.call(receiver);
+      }
+
+      return desc.value;
+    };
+  }
+
+  return _get(target, property, receiver || target);
+}
+
+var utils = jmMsCore__default['default'].utils;
+var WS = jmNet__default['default'].WebSocket;
+
+var ClientSession = /*#__PURE__*/function (_Session) {
+  _inherits(ClientSession, _Session);
+
+  var _super = _createSuper(ClientSession);
+
+  function ClientSession() {
+    _classCallCheck(this, ClientSession);
+
+    return _super.apply(this, arguments);
+  }
+
+  _createClass(ClientSession, [{
+    key: "request",
+    value: function request(opts) {
+      opts = utils.preRequest.apply(this, arguments);
+      opts.uri = this.prefix + (opts.uri || '');
+      return _get(_getPrototypeOf(ClientSession.prototype), "request", this).call(this, opts);
+    }
+  }, {
+    key: "notify",
+    value: function notify(opts) {
+      opts = utils.preRequest.apply(this, arguments);
+      opts.uri = this.prefix + (opts.uri || '');
+      return _get(_getPrototypeOf(ClientSession.prototype), "notify", this).call(this, opts);
+    }
+  }, {
+    key: "onRequest",
+    value: function onRequest(opts) {
+      opts.session = this;
+      opts.ips && opts.ips.length && (opts.ip = opts.ips[0]);
+      opts.protocol = 'ws';
+      return _get(_getPrototypeOf(ClientSession.prototype), "onRequest", this).call(this, opts);
+    }
+  }, {
+    key: "toJSON",
+    value: function toJSON() {
+      var prefix = this.prefix,
+          uri = this.uri,
+          timeout = this.timeout,
+          debug = this.debug;
+      return {
+        prefix: prefix,
+        uri: uri,
+        timeout: timeout,
+        debug: debug
+      };
+    }
+  }]);
+
+  return ClientSession;
+}(jmMsSession__default['default']);
 
 var fnclient = function fnclient(_Adapter) {
   return function () {
@@ -40,148 +212,66 @@ var fnclient = function fnclient(_Adapter) {
 
     var _opts = opts,
         uri = _opts.uri,
-        _opts$timeout = _opts.timeout,
-        timeout = _opts$timeout === void 0 ? Timeout : _opts$timeout,
+        timeout = _opts.timeout,
         _opts$logger = _opts.logger,
-        logger = _opts$logger === void 0 ? jmLogger.logger : _opts$logger;
+        logger = _opts$logger === void 0 ? jmLogger__default['default'].logger : _opts$logger,
+        debug = _opts.debug;
     var _opts2 = opts,
         _opts2$prefix = _opts2.prefix,
         prefix = _opts2$prefix === void 0 ? '' : _opts2$prefix;
-    if (!uri) throw jmErr.err(jmErr.Err.FA_PARAMS);
+    if (!uri) throw jmErr__default['default'].err(jmErr__default['default'].Err.FA_PARAMS);
     var path = utils.getUriPath(uri);
     prefix = path + prefix;
-    var id = 0;
-    var cbs = {};
     var ws = new WS(Object.assign({
       Adapter: _Adapter
     }, opts));
     ws.connect(uri);
-    var doc = {
+    var session = new ClientSession({
+      debug: debug,
+      logger: logger,
+      timeout: timeout
+    });
+    Object.assign(session, {
       uri: uri,
       prefix: prefix,
-      onReady: function onReady() {
-        return ws.onReady();
-      },
-      request: function request(opts) {
-        try {
-          var _this2 = this,
-              _arguments2 = arguments;
-
-          return _await(_this2.onReady(), function () {
-            opts = utils.preRequest.apply(_this2, _arguments2);
-            opts.uri = _this2.prefix + (opts.uri || '');
-            if (id >= MAXID) id = 0;
-            id++;
-            opts.id = id;
-
-            _this2.send(JSON.stringify(opts));
-
-            return new Promise(function (resolve, reject) {
-              cbs[id] = {
-                resolve: resolve,
-                reject: reject
-              };
-              var t = opts.timeout || timeout;
-              setTimeout(function () {
-                if (cbs[id]) {
-                  delete cbs[id];
-
-                  var _e = jmErr.err(Err.FA_TIMEOUT);
-
-                  reject(_e);
-                }
-              }, t);
-            });
-          });
-        } catch (e) {
-          return Promise.reject(e);
-        }
-      },
-      notify: function notify(opts) {
-        try {
-          var _this4 = this,
-              _arguments4 = arguments;
-
-          return _await(_this4.onReady(), function () {
-            opts = utils.preRequest.apply(_this4, _arguments4);
-            if (!_this4.connected) throw errNetwork;
-            opts.uri = _this4.prefix + (opts.uri || '');
-
-            _this4.send(JSON.stringify(opts));
-          });
-        } catch (e) {
-          return Promise.reject(e);
-        }
-      },
       send: function send() {
         ws.send.apply(ws, arguments);
       },
       close: function close() {
-        ws.close();
+        ws.close.apply(ws, arguments);
       }
-    };
-    jmEvent.enableEvent(doc);
-
-    var onmessage = function onmessage(message) {
-      doc.emit('message', message);
-      var json = null;
-
-      try {
-        json = JSON.parse(message);
-      } catch (err) {
-        return;
-      }
-
-      if (json.id) {
-        if (cbs[json.id]) {
-          var p = cbs[json.id];
-          var err = null;
-          var _doc = json.data;
-
-          if (_doc.err) {
-            err = jmErr.err(_doc);
-            p.reject(err);
-          } else {
-            p.resolve(_doc);
-          }
-
-          delete cbs[json.id];
-        }
-      }
-    };
-
+    });
     ws.on('message', function (message) {
-      onmessage(message);
+      session.emit('message', message);
     }).on('open', function () {
-      id = 0;
-      cbs = {};
-      doc.emit('open');
+      session.emit('open');
       logger.info('ws.opened', uri);
     }).on('error', function (e) {
-      doc.emit('error', e);
+      session.emit('error', e);
       logger.error('ws.error', uri);
       logger.error(e);
     }).on('close', function (event) {
-      doc.emit('close', event);
+      session.reset();
+      session.emit('close', event);
       logger.info('ws.closed', uri);
     }).on('heartBeat', function () {
-      if (doc.emit('heartBeat')) return true;
-      doc.request('/', 'get')["catch"](function (e) {});
+      if (session.emit('heartBeat')) return true;
+      session.notify('/', 'get');
       return true;
     }).on('heartDead', function () {
       logger.info('ws.heartDead', uri);
-      return doc.emit('heartDead');
+      return session.emit('heartDead');
     }).on('connect', function () {
-      doc.emit('connect');
+      session.emit('connect');
       logger.info('ws.connect', uri);
     }).on('reconnect', function () {
-      doc.emit('reconnect');
+      session.emit('reconnect');
       logger.info('ws.reconnect', uri);
     }).on('connectFail', function () {
-      doc.emit('connectFail');
+      session.emit('connectFail');
       logger.info('ws.connectFail', uri);
     });
-    return doc;
+    return session;
   };
 };
 

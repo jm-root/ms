@@ -10,7 +10,9 @@ const pongTimeout = 1000
 
 let $ = null
 beforeAll(async () => {
-  $ = await ms.client({ uri, pingTimeout, pongTimeout })
+  $ = await ms.client({ uri, pingTimeout, pongTimeout, debug: true })
+
+  $.router.use(() => { return { client: 'pong' } })
 })
 
 afterAll(async () => {
@@ -19,19 +21,24 @@ afterAll(async () => {
 
 describe('ms-client', async () => {
   test('request', async (done) => {
-    let doc = await $.request('/config')
+    const doc = await $.request('/config')
     expect(doc).toBeTruthy()
-    setTimeout(() => {
-      done()
-    }, 3000)
+    setTimeout(done, 3000)
   })
 
-  test('request timeout', async () => {
+  test('request pingpong', async (done) => {
+    const doc = await $.request('/ping')
+    console.log('sdddddddddddd', doc)
+    expect(doc).toBeTruthy()
+    setTimeout(done, 3000)
+  })
+
+  test('request timeout', async (done) => {
     try {
       await $.request('/config', {}, { timeout: 1 })
     } catch (e) {
       console.error(e)
-      expect(e).toBeTruthy()
     }
+    setTimeout(done, 1000)
   })
 })

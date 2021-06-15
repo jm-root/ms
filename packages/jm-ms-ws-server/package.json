@@ -1,6 +1,6 @@
 {
   "name": "jm-ms-ws-server",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "ws server plugin for jm-ms-core",
   "main": "./lib/index",
   "scripts": {
@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/jm-root/ms",
   "dependencies": {
+    "jm-ms-session": "^0.0.1",
     "proxy-addr": "^2.0.6",
     "ws": "^7.2.1"
   },

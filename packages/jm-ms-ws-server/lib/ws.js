@@ -1,12 +1,9 @@
 const WebSocket = require('ws')
 const proxyaddr = require('proxy-addr')
 const event = require('jm-event')
-const { EventEmitter } = require('jm-event')
-const error = require('jm-err')
 const log = require('jm-log4js')
-
+const Session = require('jm-ms-session')
 const logger = log.getLogger('ms-ws-server')
-const Err = error.Err
 const defaultPort = 80
 
 const defineGetter = function (obj, name, getter) {
@@ -21,24 +18,31 @@ const trust = function () {
   return true
 }
 
-class Session extends EventEmitter {
-  constructor () {
-    super({ async: true })
+class ServerSession extends Session {
+  async onRequest (opts) {
+    opts.session = this
+    opts.ip || (opts.ip = this.ip)
+    opts.ips || (opts.ips = this.ips)
+    opts.ips && opts.ips.length && (opts.ip = opts.ips[0])
+    opts.protocol = 'ws'
+    return super.onRequest(opts)
+  }
+
+  toJSON () {
+    const { id, uri, timeout, debug } = this
+    return { id, uri, timeout, debug }
   }
 }
 
 module.exports = function (router, opts = { port: defaultPort }) {
-  const { config: { debug } = {} } = router
-  debug && (logger.setLevel('debug'))
-
   let id = 0
-  let sessions = {}
+  const sessions = {}
 
   const doc = {
     sessions,
     broadcast: function (data) {
-      let sessions = this.sessions
-      for (let i in sessions) {
+      const sessions = this.sessions
+      for (const i in sessions) {
         sessions[i].send(data, err => {}) // eslint-disable-line
       }
     }
@@ -51,7 +55,11 @@ module.exports = function (router, opts = { port: defaultPort }) {
     const { config = {} } = router
     const { debug = false } = config
 
-    const session = new Session()
+    const session = new ServerSession({
+      debug,
+      logger,
+      router
+    })
     Object.assign(session, {
       id: id++,
       headers,
@@ -71,7 +79,7 @@ module.exports = function (router, opts = { port: defaultPort }) {
     })
 
     defineGetter(req, 'ips', function () {
-      let addrs = proxyaddr.all(this, trust)
+      const addrs = proxyaddr.all(this, trust)
       return addrs.slice(1).reverse()
     })
 
@@ -83,46 +91,8 @@ module.exports = function (router, opts = { port: defaultPort }) {
     ws.on('message', function (message) {
       doc.emit('message', message, session)
       session.emit('message', message)
-      let json = null
-      try {
-        json = JSON.parse(message)
-      } catch (err) {
-        return
-      }
-      json.session = session
-      json.ip || (json.ip = session.ip)
-      json.ips || (json.ips = session.ips)
-      json.ips && json.ips.length && (json.ip = json.ips[0])
-      json.protocol = 'ws'
-      let p = router.request(json)
-      if (json.id) {
-        p
-          .then(doc => {
-            if (debug) {
-              logger.debug(`ok. request:\n${JSON.stringify(json, null, 2)}\nresponse:\n${JSON.stringify(doc, null, 2)}`)
-            }
-            doc = {
-              id: json.id,
-              data: doc || {}
-            }
-            ws.send(JSON.stringify(doc))
-          })
-          .catch(e => {
-            if (debug) {
-              logger.debug(`fail. request:\n${JSON.stringify(json, null, 2)}\nresponse:\n${JSON.stringify(e.data, null, 2)}`)
-            }
-            logger.error(e)
-            let doc = e.data
-            doc || (doc = Object.assign({ status: e.status || error.Err.FA_INTERNALERROR.err }, Err.FA_INTERNALERROR, { msg: e.message }))
-            doc = {
-              id: json.id,
-              data: doc
-            }
-            ws.send(JSON.stringify(doc))
-          })
-      }
     })
-    ws.onclose = function (event) {
+    ws.onclose = function () {
       logger.info(`session ${session.id} disconnected.`)
       delete sessions[session.id]
       doc.emit('close', session)

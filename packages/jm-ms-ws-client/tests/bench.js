@@ -18,8 +18,7 @@ async function main () {
   const t = Date.now()
   try {
     for (let i = 0; i < 10000; i++) {
-      const doc = await $.request('/', 'get')
-      if (!doc.status) throw new Error('err', i, doc)
+      await $.request('/', 'get')
     }
     console.log('t', Date.now() - t)
     $.close()
