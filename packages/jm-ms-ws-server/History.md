@@ -1,5 +1,8 @@
 # History
 
+## 2.1.2 / 2021-06-15
+- use jm-ms-session
+
 ## 2.1.0 / 2020-02-27
 - upgrade dependencies
 - export function without async
