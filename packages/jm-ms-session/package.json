@@ -1,0 +1,32 @@
+{
+  "name": "jm-ms-session",
+  "version": "0.0.1",
+  "description": "session lib for jm-ms-core",
+  "main": "./dist/index.js",
+  "module": "./dist/index.esm.js",
+  "files": [ "/dist" ],
+  "scripts": {
+    "build": "npx rollup -c rollup.config.js",
+    "test": "npx jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jm-root/ms.git"
+  },
+  "keywords": [
+    "javascript",
+    "jm-ms-session"
+  ],
+  "author": {
+    "name": "Jeff YU"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jm-root/ms/issues"
+  },
+  "homepage": "https://github.com/jm-root/ms",
+  "dependencies": {
+    "jm-logger": "^2.1.0",
+    "jm-ms-core": "^2.1.0"
+  }
+}
