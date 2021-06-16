@@ -32,7 +32,8 @@ module.exports = class extends EventEmitter {
   reset () {
     Object.assign(this, {
       requestId: 0,
-      cbs: {}
+      cbs: {},
+      timers: {}
     })
   }
 
@@ -46,7 +47,7 @@ module.exports = class extends EventEmitter {
     opts = utils.preRequest.apply(this, arguments)
     opts.id || (opts.id = this.nextRequestId())
 
-    const { cbs, timeout: defaultTimeout } = this
+    const { cbs, timers, timeout: defaultTimeout } = this
     const { id, timeout = defaultTimeout } = opts
 
     const p = new Promise((resolve, reject) => {
@@ -55,7 +56,8 @@ module.exports = class extends EventEmitter {
         reject
       }
 
-      setTimeout(() => {
+      timers[id] = setTimeout(() => {
+        delete timers[id]
         if (cbs[id]) {
           delete cbs[id]
           reject(err(Err.FA_TIMEOUT))
@@ -106,6 +108,11 @@ module.exports = class extends EventEmitter {
     if (!p) return
 
     delete this.cbs[id]
+
+    if (this.timers[id]) {
+      clearTimeout(this.timers[id])
+      delete this.timers[id]
+    }
 
     if (doc && doc.err) {
       p.reject(err(doc))

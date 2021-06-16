@@ -95,13 +95,11 @@ function _possibleConstructorReturn(self, call) {
 }
 
 function _createSuper(Derived) {
-  var hasNativeReflectConstruct = _isNativeReflectConstruct();
-
-  return function _createSuperInternal() {
+  return function () {
     var Super = _getPrototypeOf(Derived),
         result;
 
-    if (hasNativeReflectConstruct) {
+    if (_isNativeReflectConstruct()) {
       var NewTarget = _getPrototypeOf(this).constructor;
 
       result = Reflect.construct(Super, arguments, NewTarget);
@@ -222,7 +220,8 @@ var lib = /*#__PURE__*/function (_EventEmitter) {
     value: function reset() {
       Object.assign(this, {
         requestId: 0,
-        cbs: {}
+        cbs: {},
+        timers: {}
       });
     }
   }, {
@@ -238,6 +237,7 @@ var lib = /*#__PURE__*/function (_EventEmitter) {
       opts = utils.preRequest.apply(this, arguments);
       opts.id || (opts.id = this.nextRequestId());
       var cbs = this.cbs,
+          timers = this.timers,
           defaultTimeout = this.timeout;
       var _opts = opts,
           id = _opts.id,
@@ -248,7 +248,9 @@ var lib = /*#__PURE__*/function (_EventEmitter) {
           resolve: resolve,
           reject: reject
         };
-        setTimeout(function () {
+        timers[id] = setTimeout(function () {
+          delete timers[id];
+
           if (cbs[id]) {
             delete cbs[id];
             reject(err(Err.FA_TIMEOUT));
@@ -313,6 +315,11 @@ var lib = /*#__PURE__*/function (_EventEmitter) {
       var p = this.cbs[id];
       if (!p) return;
       delete this.cbs[id];
+
+      if (this.timers[id]) {
+        clearTimeout(this.timers[id]);
+        delete this.timers[id];
+      }
 
       if (doc && doc.err) {
         p.reject(err(doc));
