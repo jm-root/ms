@@ -88,13 +88,11 @@ function _possibleConstructorReturn(self, call) {
 }
 
 function _createSuper(Derived) {
-  var hasNativeReflectConstruct = _isNativeReflectConstruct();
-
-  return function _createSuperInternal() {
+  return function () {
     var Super = _getPrototypeOf(Derived),
         result;
 
-    if (hasNativeReflectConstruct) {
+    if (_isNativeReflectConstruct()) {
       var NewTarget = _getPrototypeOf(this).constructor;
 
       result = Reflect.construct(Super, arguments, NewTarget);

@@ -1,6 +1,6 @@
 {
   "name": "jm-ms-ws-client",
-  "version": "2.2.4",
+  "version": "2.2.5",
   "description": "websocket client plugin for jm-ms-core",
   "main": "index.js",
   "module": "./dist/index.esm.js",
@@ -27,7 +27,7 @@
   "homepage": "https://github.com/jm-root/ms",
   "dependencies": {
     "jm-logger": "^2.1.0",
-    "jm-ms-session": "^0.0.1",
+    "jm-ms-session": "^1.0.0",
     "jm-net": "^0.0.5",
     "ws": "^7.2.1"
   }

@@ -1,6 +1,6 @@
 {
   "name": "jm-ms-session",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "description": "session lib for jm-ms-core",
   "main": "./dist/index.js",
   "module": "./dist/index.esm.js",
